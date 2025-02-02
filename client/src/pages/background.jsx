@@ -3,7 +3,6 @@
 import { ShootingStars } from "../components/ui/shooting-stars";
 import { StarsBackground } from "../components/ui/stars-background";
 import PlaceholdersAndVanishInputDemo from "./input";
-import  TextGenerateEffectDemo  from "./Output";
 import FoodAnalyzer from "./Text";
 // import  TypewriterEffectSmoothDemo  from "./title";
 
@@ -17,9 +16,11 @@ function ShootingStarsAndStarsBackgroundDemo({foodName,setFoodName, output, setO
         <span className="text-white text-lg font-thin">x</span>
         <span>fit</span>
       </h2>
+      <h3 className="text-white text-lg font-thin">Discover nutritional information for any food</h3>
       <PlaceholdersAndVanishInputDemo foodName={foodName} setFoodName={setFoodName} output={output} setOutput={setOutput}/>
+      <div className="relative z-10">
       <FoodAnalyzer foodName={foodName} setFoodName={setFoodName} output={output} setOutput={setOutput}/> 
-      <TextGenerateEffectDemo />
+      </div>
       <ShootingStars />
       <StarsBackground />
     </div>

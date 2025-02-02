@@ -2,6 +2,7 @@ export const fetchFoodData = async (foodName) => {
     const API_KEY = "ziQ3fnCsGky3pOU6uLEYBQ==aVoKSZaT7UM0KTFz"; 
     const url = `https://api.calorieninjas.com/v1/nutrition?query=${foodName}`;
   
+    
     try {
       const response = await fetch(url, {
         headers: { "X-Api-Key": API_KEY },
