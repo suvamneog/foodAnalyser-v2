@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
-const foodSchema = new mongoose.Schema({
+const Schema = mongoose.Schema;
+const foodSchema = new Schema({
 name: {
     type: String
 },
@@ -20,9 +21,15 @@ pros: {
 },
 cons: {
     type: String
+},
+createdBy: {
+    type: Schema.Types.ObjectId,
+    ref : "User"
 }
 });
 module.exports=mongoose.model("Food", foodSchema);
+
+
 // •	name (String) → Food name (e.g., “orange”)
 // •	calories (Number) → Total calories
 // •	protein (Number) → Protein content
