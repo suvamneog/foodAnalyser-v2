@@ -2,6 +2,9 @@ const express = require("express");
 const router = express.Router();
 const User = require("../models/user");
 const user = require("../models/user");
+const bcrypt = require("bcryptjs");
+const jwt = require('jsonwebtoken');
+require("dotenv").config();
 
 //routes
 router.get("/", (req, res) => {
@@ -13,6 +16,7 @@ router.post("/signup", async (req, res, next) => {
   let newUser = new User({
    name, email, password
   });
+  if (user) return res.status(400).json({ message: "User already exists" });
   await newUser.save();
   console.log(newUser);
   res.send("user signed");
@@ -21,7 +25,9 @@ router.post("/signup", async (req, res, next) => {
 router.post("/login", async (req,res,next) => {
   let { email, password } = req.body;
   let user = await User.findOne({email});
-  const isMatch = await bcrypt.compare(password, user.password);
+  if (!user) return res.status(400).json({ message: "User not found" });
+  const isMatch = bcrypt.compare(password, user.password);
+  if (!isMatch) return res.status(400).json({ message: "Invalid credentials" });
   const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: "1h" });
   res.json({ message: "Login successful", token });
 })
