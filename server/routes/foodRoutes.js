@@ -16,6 +16,7 @@ router.post("/signup", async (req, res, next) => {
   let newUser = new User({
    name, email, password
   });
+  let user = await User.findOne({ email });
   if (user) return res.status(400).json({ message: "User already exists" });
   await newUser.save();
   console.log(newUser);
