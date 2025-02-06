@@ -40,9 +40,6 @@ app.get("/food", async (req,res) => {
   res.send("User saved!");
 });
 
-
-
-
 app.listen(PORT, () => {
     console.log(`Server running on http://localhost:${PORT}`);
   });
