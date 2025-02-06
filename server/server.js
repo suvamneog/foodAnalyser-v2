@@ -4,13 +4,15 @@ const connectDB = require("./db");
 const User = require("./models/user");
 const Food = require("./models/food");
 const jwt = require('jsonwebtoken');
-const userRoutes= require('./routes/foodRoutes');
+const userRoutes= require('./routes/userRoutes');
+const foodRoutes= require('./routes/foodRoutes');
 const dotenv = require("dotenv");
 const PORT = process.env.PORT || 3000;
 
 app.use(express.json());
 
 app.use("/api/auth", userRoutes);
+app.use("/api/food", foodRoutes);
 
 // app.get("/", (req, res) => {
 //   res.send("hello");
