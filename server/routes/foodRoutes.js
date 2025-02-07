@@ -2,7 +2,6 @@ const express = require("express");
 const router = express.Router();
 const Food = require("../models/food");
 const auth = require("../middleware/authMiddleware");
-const user = require("../models/user");
 require("dotenv").config();
 
 //create food
@@ -48,6 +47,6 @@ router.delete("/:id", auth, async (req, res) => {
     let deleteFood = await Food.findByIdAndDelete(req.params.id, {new : true});
     console.log(deleteFood);
     res.send("Food Deleted");
-})
+});
 
 module.exports = router;
