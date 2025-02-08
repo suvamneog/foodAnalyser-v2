@@ -13,7 +13,7 @@ router.post("/", auth, async (req, res) => {
       carbs,
       protein,
       fats,
-      user: req.user.id,
+      userID: req.user.id,
     });
     await addFood.save();
     console.log(addFood);
@@ -22,7 +22,7 @@ router.post("/", auth, async (req, res) => {
 
 //get food
 router.get("/", auth, async (req, res) => {
-    let food = await Food.find({user : req.user.id});
+    let food = await Food.find({userID : req.user.id});
     console.log(food);
     res.send("Food!");
 });

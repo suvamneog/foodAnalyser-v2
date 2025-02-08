@@ -27,7 +27,7 @@ fats: {
 // cons: {
 //     type: String
 // },
-user: {
+userID: {
     type: Schema.Types.ObjectId,
     ref : "User",
     required: true,

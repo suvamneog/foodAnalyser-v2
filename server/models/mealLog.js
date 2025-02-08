@@ -17,7 +17,7 @@ const mealLogSchema = new Schema({
     totalProtein: Number,
     totalCarbs: Number,
     totalFat: Number,
-    loggedAt: { type: Date, default: Date.now }  // Timestamp
+    loggedAt: { type: Date, default: Date.now }
   });
   
   module.exports = mongoose.model("MealLog", mealLogSchema);
