@@ -66,8 +66,38 @@ router.get("/logs", auth, async (req, res) => {
     }
   });
 
+//daily-intake
+router.get("/daily-intake", auth, async (req, res) => {
+    try {
+      const userID = req.user.id;
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+  
+      const logs = await MealLog.find({ userID, loggedAt: { $gte: today } });
+  
+      let totalCalories = 0, totalProtein = 0, totalCarbs = 0, totalFat = 0;
+      logs.forEach(log => {
+        totalCalories += log.totalCalories;
+        totalProtein += log.totalProtein;
+        totalCarbs += log.totalCarbs;
+        totalFat += log.totalFat;
+      });
+  
+      res.json({ totalCalories, totalProtein, totalCarbs, totalFat });
+    } catch (error) {
+      res.status(500).json({ message: "Error fetching daily intake", error: error.message });
+    }
+  });
 
-
-
+  //edit log
+  router.put("/logs/:id", auth, async (req,res) => {
+    const mealLog = await MealLog.findById(req.params.id);
+    if (!mealLog) {
+        return res.status(404).json({ message: "Meal log not found" });
+      }
+    let newLog = await MealLog.findByIdAndUpdate( req.params.id, req.body, {new : true});
+    console.log(newLog);
+    res.json(newLog);
+  });
 
 module.exports = router;
