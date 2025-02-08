@@ -36,7 +36,7 @@ router.get("/:id", auth, async (req, res) => {
 });
 
 //update food
-router.post("/:id", auth, async (req, res) => {
+router.put("/:id", auth, async (req, res) => {
     let newFood = await Food.findByIdAndUpdate(req.params.id, req.body, {new : true});
     console.log(newFood);
     res.send("Food Edited");

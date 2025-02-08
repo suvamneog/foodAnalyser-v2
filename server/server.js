@@ -13,7 +13,8 @@ const PORT = process.env.PORT || 3000;
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use("/api/auth", userRoutes);
-app.use("/api/food", apiRoutes, mealRoutes,foodRoutes);
+app.use("/api/food", apiRoutes, foodRoutes);
+app.use("/api/meal", mealRoutes);
 
 // app.get("/", (req, res) => {
 //   res.send("hello");

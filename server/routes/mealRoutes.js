@@ -57,14 +57,32 @@ router.post("/log", auth, async (req, res) => {
 
 //show logged food
 router.get("/logs", auth, async (req, res) => {
-    try {
-      const userID= req.user.id;
-      const logs = await MealLog.find({ userID }).sort({ loggedAt: -1 });
-      res.json(logs);
-    } catch (error) {
-      res.status(500).json({ message: "Error fetching meal logs", error: error.message });
+  try {
+    const userID = req.user.id;
+    const { startDate, endDate, mealType, calories } = req.query;
+
+    let filter = { userID };
+
+    if (startDate && endDate) {
+      filter.loggedAt = { $gte: new Date(startDate), $lte: new Date(endDate) };
     }
-  });
+
+    if (mealType) {
+      filter.mealName = mealType;
+    }
+    if (calories) {
+      const targetCalories = Number(calories);
+      filter.totalCalories = { 
+        $gte: targetCalories - 10, // Allow ±10 variation
+        $lte: targetCalories + 10 
+      };
+    }
+    const logs = await MealLog.find(filter).sort({ loggedAt: -1 });
+    res.json(logs);
+  } catch (error) {
+    res.status(500).json({ message: "Error fetching meal logs", error: error.message });
+  }
+});
 
 //daily-intake
 router.get("/daily-intake", auth, async (req, res) => {
