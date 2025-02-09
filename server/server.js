@@ -5,6 +5,7 @@ const User = require("./models/user");
 const Food = require("./models/food");
 const userRoutes= require('./routes/userRoutes');
 const foodRoutes= require('./routes/foodRoutes');
+const calRoutes= require('./routes/calculator');
 const apiRoutes= require('./routes/api');
 const mealRoutes= require('./routes/mealRoutes');
 const dotenv = require("dotenv");
@@ -15,6 +16,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use("/api/auth", userRoutes);
 app.use("/api/food", apiRoutes, foodRoutes);
 app.use("/api/meal", mealRoutes);
+app.use("/api/calories", calRoutes);
 
 // app.get("/", (req, res) => {
 //   res.send("hello");
