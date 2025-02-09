@@ -1,10 +1,9 @@
-import {  useState } from "react";
-import ShootingStarsAndStarsBackgroundDemo from "./pages/background";
+
+import CalorieCalculator from "./pages/Calculator";
 
 
 function App() {
-  const [foodName, setFoodName] = useState("");
-  const [output, setOutput] = useState("");
+
 
   // useEffect(() => {
   //    const data = fetchFoodData(foodName);
@@ -13,12 +12,7 @@ function App() {
   
   return (
     <>
-      <ShootingStarsAndStarsBackgroundDemo
-        foodName={foodName}
-        setFoodName={setFoodName}
-        output={output}
-        setOutput={setOutput}
-      />
+     < CalorieCalculator />
     </>
   );
 }
