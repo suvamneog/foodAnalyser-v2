@@ -18,7 +18,7 @@ function ShootingStarsAndStarsBackgroundDemo({foodName,setFoodName, output, setO
       </h2>
       <h3 className="text-white text-lg font-thin">Discover nutritional information for any food</h3>
       <PlaceholdersAndVanishInputDemo foodName={foodName} setFoodName={setFoodName} output={output} setOutput={setOutput}/>
-      <div className="relative z-10">
+      <div className="absolute z-10">
       <FoodAnalyzer foodName={foodName} setFoodName={setFoodName} output={output} setOutput={setOutput}/> 
       </div>
       <ShootingStars />

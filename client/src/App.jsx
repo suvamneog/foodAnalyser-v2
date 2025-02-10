@@ -1,33 +1,34 @@
-import CalorieCalculator from "./pages/Calculator";
-
-function App() {
-
-  return (
-    <>
-     < CalorieCalculator />
-    </>
-  );
-}
-export default App;
-
-
-// import {  useState } from "react";
-// import ShootingStarsAndStarsBackgroundDemo from "./pages/background";
-
-
+// import CalorieCalculator from "./pages/Calculator";
+// import SignupFormDemo from "./pages/signup";
+// import Navbar from "./pages/navBar";
 // function App() {
-//   const [foodName, setFoodName] = useState("");
-//   const [output, setOutput] = useState("");
-  
 //   return (
 //     <>
-//       <ShootingStarsAndStarsBackgroundDemo
-//         foodName={foodName}
-//         setFoodName={setFoodName}
-//         output={output}
-//         setOutput={setOutput}
-//       />
+//       <Navbar />
 //     </>
 //   );
 // }
 // export default App;
+
+import {  useState } from "react";
+import ShootingStarsAndStarsBackgroundDemo from "./pages/background";
+import Navbar from "./pages/navBar";
+
+function App() {
+  const [foodName, setFoodName] = useState("");
+  const [output, setOutput] = useState("");
+
+  return (
+    <>
+    <Navbar/>
+      <ShootingStarsAndStarsBackgroundDemo
+        foodName={foodName}
+        setFoodName={setFoodName}
+        output={output}
+        setOutput={setOutput}
+      />
+      
+    </>
+  );
+}
+export default App;
