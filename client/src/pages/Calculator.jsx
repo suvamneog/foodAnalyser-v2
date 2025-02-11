@@ -82,7 +82,6 @@ export default function CalorieCalculator() {
 
   return (
     <div className="relative min-h-screen bg-black text-white flex items-center justify-center p-6">
-      {/* Background Elements */}
       <div className="absolute inset-0 pointer-events-none">
       <StarsBackground />
       <ShootingStars />
