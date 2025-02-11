@@ -9,6 +9,8 @@ import {
 } from "../components/ui/card";
 import { Input } from "../components/ui/input";
 import { Label } from "../components/ui/label";
+import { ShootingStars } from "../components/ui/shooting-stars";
+import { StarsBackground } from "../components/ui/stars-background";
 import {
   Select,
   SelectContent,
@@ -78,7 +80,13 @@ export default function CalorieCalculator() {
   };
 
   return (
-    <div className="min-h-screen bg-black text-white p-6">
+    <div className="relative min-h-screen bg-black text-white flex items-center justify-center p-6">
+      {/* Background Elements */}
+      <div className="absolute inset-0 pointer-events-none">
+      <StarsBackground />
+      <ShootingStars />
+      </div>
+    <div className="min-h-screen bg-black text-white p-6 mt-20">
       <Card className="max-w-4xl mx-auto bg-zinc-900 border-zinc-800">
         <CardHeader className="border-b border-zinc-800">
           <CardTitle className="text-3xl font-bold tracking-tight">
@@ -254,6 +262,7 @@ export default function CalorieCalculator() {
           )}
         </CardContent>
       </Card>
+    </div>
     </div>
   );
 }

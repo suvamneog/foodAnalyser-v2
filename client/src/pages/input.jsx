@@ -7,6 +7,7 @@ import { fetchFoodData } from "../utils/fetchFoodData"
 function PlaceholdersAndVanishInputDemo({ foodName, setFoodName, setOutput }) {
   const placeholders = [
     "You know the business and I know the chemistry",
+    "One whey to a healthy life!",
     "Enter the food name!",
     "Searching for some protein?",
   ]

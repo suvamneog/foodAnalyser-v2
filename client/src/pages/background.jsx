@@ -2,27 +2,23 @@
 "use client";
 import { ShootingStars } from "../components/ui/shooting-stars";
 import { StarsBackground } from "../components/ui/stars-background";
-import PlaceholdersAndVanishInputDemo from "./input";
-import FoodAnalyzer from "./Text";
-// import  TypewriterEffectSmoothDemo  from "./title";
+import Home from "./home";
 
-function ShootingStarsAndStarsBackgroundDemo({foodName,setFoodName, output, setOutput}) {
+function ShootingStarsAndStarsBackgroundDemo({ foodName, setFoodName, output, setOutput}) {
   return (
-    <div
-      className="h-screen w-screen rounded-none bg-neutral-900 flex flex-col items-center justify-center relative">
-      <h2
-        className="relative flex-col md:flex-row z-10 text-3xl md:text-5xl md:leading-tight max-w-5xl mx-auto text-center tracking-tight font-medium bg-clip-text text-transparent bg-gradient-to-b from-neutral-800 via-white to-white flex items-center gap-2 md:gap-8">
-        <span>Food Analyser</span>
-        <span className="text-white text-lg font-thin">x</span>
-        <span>fit</span>
-      </h2>
-      <h3 className="text-white text-lg font-thin">Discover nutritional information for any food</h3>
-      <PlaceholdersAndVanishInputDemo foodName={foodName} setFoodName={setFoodName} output={output} setOutput={setOutput}/>
-      <div className="absolute z-10">
-      <FoodAnalyzer foodName={foodName} setFoodName={setFoodName} output={output} setOutput={setOutput}/> 
+<div className="h-screen w-screen flex flex-col items-center justify-center relative bg-neutral-900">
+      {/* Background Effects */}
+      <div className="absolute inset-0 pointer-events-none">
+        <ShootingStars />
+        <StarsBackground />
       </div>
-      <ShootingStars />
-      <StarsBackground />
+
+      <div className="relative z-10 w-full flex flex-col items-center">
+        <Home  foodName={foodName}
+    setFoodName={setFoodName}
+    output={output}
+    setOutput={setOutput}/>
+      </div>
     </div>
   );
 }

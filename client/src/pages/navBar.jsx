@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Menu, X } from 'lucide-react';
-
+import { Link } from "react-router-dom";
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
 
@@ -14,12 +14,11 @@ const Navbar = () => {
               Food Analyser <span className="text-gray-400">×</span><span className="text-gray-900"> fit</span>
             </span>
           </div>
-
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center space-x-8">
-            <a href="/features" className="text-gray-600 hover:text-gray-900 px-3 py-2 text-sm font-medium transition-colors">
+          <Link to="/calculator" className="text-gray-600 hover:text-gray-900 px-3 py-2 text-sm font-medium transition-colors">
               Calories Calculator
-            </a>
+            </Link>
             <a href="/documentation" className="text-gray-600 hover:text-gray-900 px-3 py-2 text-sm font-medium transition-colors">
             Log Meals
             </a>
@@ -30,9 +29,9 @@ const Navbar = () => {
             Track Intake
             </a>
             <div className="flex items-center space-x-4">
-              <a href="/sign-in" className="text-gray-600 hover:text-gray-900 px-3 py-2 text-sm font-medium transition-colors">
-                Sign in
-              </a>
+            <Link to="/signup" className="text-gray-600 hover:text-gray-900 px-3 py-2 text-sm font-medium transition-colors">
+                Sign up
+              </Link>
               <a href="/get-started" className="bg-gray-900 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-gray-800 transition-colors">
                 Login
               </a>
