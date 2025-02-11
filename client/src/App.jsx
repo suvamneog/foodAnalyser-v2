@@ -37,6 +37,7 @@ function App() {
         </ShootingStarsAndStarsBackgroundDemo>
       }
     />
+    <Route path="/" element={<Home/>} />
     <Route path="/signup" element={<SignupFormDemo />} />
     <Route path="/calculator" element={<CalorieCalculator />} />
   </Routes>

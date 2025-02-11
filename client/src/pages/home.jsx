@@ -13,7 +13,7 @@ function Home({ foodName, setFoodName, output, setOutput }) {
     </h2>
     <h3 className="text-white text-lg font-thin">Discover nutritional information for any food</h3>
     <PlaceholdersAndVanishInputDemo foodName={foodName} setFoodName={setFoodName} output={output} setOutput={setOutput}/>
-    <div className="absolute z-10">
+    <div className="grid gap-6 max-w-4xl mx-auto p-4 sm:p-8 md:p-12 lg:p-20 absolute z-10 mb-20 min-h-[500px] max-h-screen overflow-auto">
     <FoodAnalyzer foodName={foodName} setFoodName={setFoodName} output={output} setOutput={setOutput}/> 
     </div>
   </div>

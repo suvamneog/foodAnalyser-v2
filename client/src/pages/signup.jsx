@@ -52,7 +52,7 @@ function SignupFormDemo() {
             className="flex flex-col md:flex-row space-y-2 md:space-y-0 md:space-x-2 mb-4"
           >
             <LabelInputContainer>
-              <Label htmlFor="firstname">First name</Label>
+              <Label htmlFor="firstname">Your name</Label>
               <Input id="firstname" className="text-white" placeholder="Tyler" type="text" />
             </LabelInputContainer>
           </motion.div>

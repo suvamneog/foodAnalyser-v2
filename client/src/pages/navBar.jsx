@@ -10,9 +10,11 @@ const Navbar = () => {
         <div className="flex justify-between h-16">
           {/* Logo Section */}
           <div className="flex-shrink-0 flex items-center">
+            <Link to="/">
             <span className="text-xl font-semibold text-gray-900">
               Food Analyser <span className="text-gray-400">×</span><span className="text-gray-900"> fit</span>
             </span>
+            </Link>
           </div>
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center space-x-8">
