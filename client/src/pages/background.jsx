@@ -14,7 +14,7 @@ function ShootingStarsAndStarsBackgroundDemo({ foodName, setFoodName, output, se
       </div>
 
       <div className="relative z-10 w-full flex flex-col items-center">
-        <Home  foodName={foodName}
+        <Home foodName={foodName}
     setFoodName={setFoodName}
     output={output}
     setOutput={setOutput}/>

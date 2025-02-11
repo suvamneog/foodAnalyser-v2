@@ -24,13 +24,11 @@ function SignupFormDemo() {
 
   return (
     <div className="h-screen w-screen flex flex-col items-center justify-center relative bg-neutral-900">
-      {/* Background Effects */}
       <div className="absolute inset-0 pointer-events-none">
         <StarsBackground />
         <ShootingStars />
       </div>
 
-      {/* Animated Form Container */}
       <motion.div
         initial={{ opacity: 0, scale: 0.9 }}
         animate={{ opacity: 1, scale: 1 }}

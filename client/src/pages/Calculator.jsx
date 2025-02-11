@@ -8,6 +8,7 @@ import {
   CardTitle,
 } from "../components/ui/card";
 import { Input } from "../components/ui/input";
+import { motion } from "framer-motion";
 import { Label } from "../components/ui/label";
 import { ShootingStars } from "../components/ui/shooting-stars";
 import { StarsBackground } from "../components/ui/stars-background";
@@ -86,6 +87,12 @@ export default function CalorieCalculator() {
       <StarsBackground />
       <ShootingStars />
       </div>
+      <motion.div
+        initial={{ opacity: 0, scale: 0.9 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ duration: 0.5, ease: "easeOut" }}
+      
+      >
     <div className="min-h-screen bg-black text-white p-6 mt-20">
       <Card className="max-w-4xl mx-auto bg-zinc-900 border-zinc-800">
         <CardHeader className="border-b border-zinc-800">
@@ -214,6 +221,7 @@ export default function CalorieCalculator() {
                 />
               </div>
             </div>
+            
 
             <button
               type="submit"
@@ -263,6 +271,7 @@ export default function CalorieCalculator() {
         </CardContent>
       </Card>
     </div>
+    </motion.div>
     </div>
   );
 }
