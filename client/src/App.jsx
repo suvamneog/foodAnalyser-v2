@@ -1,9 +1,8 @@
-
-// import LogMeals from "./pages/logMeals";
+// import History from "./pages/history";
 // function App() {
 //   return (
 //     <>
-//       <LogMeals />
+//       <History />
 //     </>
 //   );
 // }
@@ -11,6 +10,7 @@
 
 import { useState } from "react";
 import ShootingStarsAndStarsBackgroundDemo from "./pages/background";
+import AddFood from "./pages/addFood";
 import Navbar from "./pages/navBar";
 import LogMeals from "./pages/logMeals";
 import SignupFormDemo from "./pages/signup";
@@ -41,6 +41,7 @@ function App() {
     <Route path="/signup" element={<SignupFormDemo />} />
     <Route path="/calculator" element={<CalorieCalculator />} />
     <Route path="/logmeals" element={<LogMeals />} />
+    <Route path="/history" element={<AddFood />} />
   </Routes>
 </Router>
 )

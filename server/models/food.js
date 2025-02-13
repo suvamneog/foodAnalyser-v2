@@ -21,12 +21,6 @@ fats: {
     type: Number,
     default: 0
 },
-// pros: {
-//     type: String
-// },
-// cons: {
-//     type: String
-// },
 userID: {
     type: Schema.Types.ObjectId,
     ref : "User",

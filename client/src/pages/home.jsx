@@ -27,3 +27,5 @@ function Home({ foodName, setFoodName, output, setOutput }) {
 }
 
 export default Home;
+
+

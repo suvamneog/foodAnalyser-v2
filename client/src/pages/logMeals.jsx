@@ -2,6 +2,7 @@
 import { useState } from 'react';
 import { ShootingStars } from "../components/ui/shooting-stars";
 import { StarsBackground } from "../components/ui/stars-background";
+import { motion } from "framer-motion";
 
 function logMeals() {
   const [meals, setMeals] = useState([]);
@@ -63,6 +64,12 @@ function logMeals() {
     <StarsBackground />
     <ShootingStars />
 </div>
+<motion.div
+        initial={{ opacity: 0, scale: 0.9 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ duration: 0.5, ease: "easeOut" }}
+      
+      >
     <div className="min-h-screen p-8 mt-20">
       <div className="max-w-4xl mx-auto">
 
@@ -201,6 +208,7 @@ function logMeals() {
         </div>
       </div>
     </div>
+    </motion.div>
     </div>
   );
 }

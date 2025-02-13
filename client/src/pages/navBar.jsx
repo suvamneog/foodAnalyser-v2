@@ -24,12 +24,12 @@ const Navbar = () => {
             <Link to="logmeals" className="text-gray-600 hover:text-gray-900 px-3 py-2 text-sm font-medium transition-colors">
             Log Meals
             </Link>
-            <a href="/pricing" className="text-gray-600 hover:text-gray-900 px-3 py-2 text-sm font-medium transition-colors">
+            <Link to="/history" className="text-gray-600 hover:text-gray-900 px-3 py-2 text-sm font-medium transition-colors">
             History 
-            </a>
-            <a href="/about" className="text-gray-600 hover:text-gray-900 px-3 py-2 text-sm font-medium transition-colors">
-            Track Intake
-            </a>
+            </Link>
+            <Link to="/history" className="text-gray-600 hover:text-gray-900 px-3 py-2 text-sm font-medium transition-colors">
+            Add Food
+            </Link>
             <div className="flex items-center space-x-4">
             <Link to="/signup" className="text-gray-600 hover:text-gray-900 px-3 py-2 text-sm font-medium transition-colors">
                 Sign up
