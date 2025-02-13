@@ -1,8 +1,8 @@
-// import History from "./pages/history";
+// import Historymeal from "./pages/History";
 // function App() {
 //   return (
 //     <>
-//       <History />
+//       <Historymeal />
 //     </>
 //   );
 // }
