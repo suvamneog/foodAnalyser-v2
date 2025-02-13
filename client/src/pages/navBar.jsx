@@ -24,7 +24,7 @@ const Navbar = () => {
             <Link to="logmeals" className="text-gray-600 hover:text-gray-900 px-3 py-2 text-sm font-medium transition-colors">
             Log Meals
             </Link>
-            <Link to="/history" className="text-gray-600 hover:text-gray-900 px-3 py-2 text-sm font-medium transition-colors">
+            <Link to="/xyz" className="text-gray-600 hover:text-gray-900 px-3 py-2 text-sm font-medium transition-colors">
             History 
             </Link>
             <Link to="/history" className="text-gray-600 hover:text-gray-900 px-3 py-2 text-sm font-medium transition-colors">

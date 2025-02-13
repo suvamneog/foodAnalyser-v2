@@ -170,6 +170,7 @@ transition={{ duration: 0.5, ease: "easeOut" }}
                       type="number"
                       value={newFood.calories}
                       onChange={(e) => setNewFood(prev => ({ ...prev, calories: e.target.value }))}
+                       className="text-white"
                     />
                   </div>
                   <div className="grid gap-2">
@@ -179,6 +180,7 @@ transition={{ duration: 0.5, ease: "easeOut" }}
                       type="number"
                       value={newFood.protein}
                       onChange={(e) => setNewFood(prev => ({ ...prev, protein: e.target.value }))}
+                       className="text-white"
                     />
                   </div>
                 </div>
@@ -190,6 +192,7 @@ transition={{ duration: 0.5, ease: "easeOut" }}
                       type="number"
                       value={newFood.carbs}
                       onChange={(e) => setNewFood(prev => ({ ...prev, carbs: e.target.value }))}
+                       className="text-white"
                     />
                   </div>
                   <div className="grid gap-2">
@@ -199,6 +202,7 @@ transition={{ duration: 0.5, ease: "easeOut" }}
                       type="number"
                       value={newFood.fats}
                       onChange={(e) => setNewFood(prev => ({ ...prev, fats: e.target.value }))}
+                       className="text-white"
                     />
                   </div>
                 </div>
@@ -209,6 +213,7 @@ transition={{ duration: 0.5, ease: "easeOut" }}
                     value={newFood.pros}
                     onChange={(e) => setNewFood(prev => ({ ...prev, pros: e.target.value }))}
                     placeholder="High protein, Low fat, etc."
+                     className="text-white"
                   />
                 </div>
                 <div className="grid gap-2">
@@ -218,10 +223,13 @@ transition={{ duration: 0.5, ease: "easeOut" }}
                     value={newFood.cons}
                     onChange={(e) => setNewFood(prev => ({ ...prev, cons: e.target.value }))}
                     placeholder="High in sodium, Contains allergens, etc."
+                     className="text-white"
                   />
                 </div>
                 <div className="flex gap-2 justify-end">
-                  <Button variant="outline" onClick={handleDialogClose}>Cancel</Button>
+                  <Button variant="outline" onClick={handleDialogClose}
+                    className="text-white border-white hover:bg-white hover:text-black transition"
+                  >Cancel</Button>
                   <Button onClick={handleAddOrUpdateFood}>
                     {isEditing ? 'Update Food' : 'Add Food'}
                   </Button>

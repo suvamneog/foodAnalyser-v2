@@ -113,7 +113,7 @@ export default function CalorieCalculator() {
                   onChange={(e) =>
                     setInputData({
                       ...inputData,
-                      weight: Number(e.target.value),
+                      weight: e.target.value === "" ? "" : Number(e.target.value),
                     })
                   }
                   className="bg-zinc-800 border-zinc-700"
@@ -129,7 +129,7 @@ export default function CalorieCalculator() {
                   onChange={(e) =>
                     setInputData({
                       ...inputData,
-                      currentBodyfat: Number(e.target.value),
+                      currentBodyfat: e.target.value === "" ? "" : Number(e.target.value),
                     })
                   }
                   className="bg-zinc-800 border-zinc-700"
@@ -197,7 +197,7 @@ export default function CalorieCalculator() {
                   onChange={(e) =>
                     setInputData({
                       ...inputData,
-                      height: Number(e.target.value),
+                      height: e.target.value === "" ? "" : Number(e.target.value),
                     })
                   }
                   className="bg-zinc-800 border-zinc-700"
@@ -213,7 +213,7 @@ export default function CalorieCalculator() {
                   onChange={(e) =>
                     setInputData({
                       ...inputData,
-                      goalBodyfat: Number(e.target.value),
+                      goalBodyfat: e.target.value === "" ? "" : Number(e.target.value),
                     })
                   }
                   className="bg-zinc-800 border-zinc-700"
