@@ -24,19 +24,19 @@ const Navbar = () => {
             <Link to="logmeals" className="text-gray-600 hover:text-gray-900 px-3 py-2 text-sm font-medium transition-colors">
             Log Meals
             </Link>
-            <Link to="/xyz" className="text-gray-600 hover:text-gray-900 px-3 py-2 text-sm font-medium transition-colors">
+            <Link to="/history" className="text-gray-600 hover:text-gray-900 px-3 py-2 text-sm font-medium transition-colors">
             History 
             </Link>
-            <Link to="/history" className="text-gray-600 hover:text-gray-900 px-3 py-2 text-sm font-medium transition-colors">
+            <Link to="/addfoods" className="text-gray-600 hover:text-gray-900 px-3 py-2 text-sm font-medium transition-colors">
             Add Food
             </Link>
             <div className="flex items-center space-x-4">
             <Link to="/signup" className="text-gray-600 hover:text-gray-900 px-3 py-2 text-sm font-medium transition-colors">
                 Sign up
               </Link>
-              <a href="/get-started" className="bg-gray-900 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-gray-800 transition-colors">
+              <Link to="/login" className="bg-gray-900 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-gray-800 transition-colors">
                 Login
-              </a>
+              </Link>
             </div>
           </div>
 

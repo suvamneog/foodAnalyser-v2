@@ -1,8 +1,10 @@
-// import Historymeal from "./pages/History";
+// import Login from "./pages/login";
 // function App() {
 //   return (
 //     <>
-//       <Historymeal />
+    
+//       < Login />
+
 //     </>
 //   );
 // }
@@ -14,8 +16,10 @@ import AddFood from "./pages/addFood";
 import Navbar from "./pages/navBar";
 import LogMeals from "./pages/logMeals";
 import SignupFormDemo from "./pages/signup";
+import Login from "./pages/login";
 import CalorieCalculator from "./pages/Calculator";
 import Home from "./pages/home";
+import History from "./pages/history";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 function App() {
   const [foodName, setFoodName] = useState("");
@@ -39,9 +43,11 @@ function App() {
     />
     <Route path="/" element={<Home/>} />
     <Route path="/signup" element={<SignupFormDemo />} />
+    <Route path="/login" element={<Login />} />
     <Route path="/calculator" element={<CalorieCalculator />} />
     <Route path="/logmeals" element={<LogMeals />} />
-    <Route path="/history" element={<AddFood />} />
+    <Route path="/history" element={<History />} />
+    <Route path="/addfoods" element={<AddFood />} />
   </Routes>
 </Router>
 )
