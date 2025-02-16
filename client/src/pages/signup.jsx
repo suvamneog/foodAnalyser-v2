@@ -27,8 +27,12 @@ function SignupFormDemo() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     console.log(user);
-    const response = await axios.post("http://localhost:3000/api/auth/signup", user);
-    alert(response.data.message);
+    try {
+      const response = await axios.post("http://localhost:3000/api/auth/signup", user);
+      alert(response.data);
+    } catch (error) {
+      alert(error.response?.data?.message || "Error signing up");
+    }
   };
 
   return (
