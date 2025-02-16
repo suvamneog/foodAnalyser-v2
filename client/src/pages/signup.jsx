@@ -7,6 +7,7 @@ import { Input } from "../components/ui/input";
 import { ShootingStars } from "../components/ui/shooting-stars";
 import { StarsBackground } from "../components/ui/stars-background";
 import { cn } from "../utils/cn";
+import axios from "axios";
 import {
   IconBrandGithub,
   IconBrandGoogle,
@@ -16,10 +17,18 @@ import { IconEye, IconEyeOff } from "@tabler/icons-react";
 
 function SignupFormDemo() {
   const [showPassword, setShowPassword] = useState(false);
+  const [user , setUser] = useState({name: "", email: "", password: "" });
 
-  const handleSubmit = (e) => {
+  const handleChange = (e) => {
+    setUser({ ...user, [e.target.name]: e.target.value });
+    console.log(e.target.value);
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("Form submitted");
+    console.log(user);
+    const response = await axios.post("http://localhost:3000/api/auth/signup", user);
+    alert(response.data.message);
   };
 
   return (
@@ -36,10 +45,10 @@ function SignupFormDemo() {
         className="max-w-md w-full mx-auto rounded-2xl p-8 shadow-lg bg-white dark:bg-black mt-20 relative z-10"
       >
         <h2 className="font-bold text-xl text-neutral-800 dark:text-neutral-200">
-          Welcome to Aceternity
+          Welcome to Food Analyser x fit
         </h2>
         <p className="text-neutral-600 text-sm max-w-sm mt-2 dark:text-neutral-300">
-          Login to aceternity if you can because we don&apos;t have a login flow yet
+          Sign up here
         </p>
 
         <form className="my-8" onSubmit={handleSubmit}>
@@ -51,7 +60,7 @@ function SignupFormDemo() {
           >
             <LabelInputContainer>
               <Label htmlFor="firstname">Your name</Label>
-              <Input id="firstname" className="text-white" placeholder="Tyler" type="text" />
+              <Input id="name" className="text-white" placeholder="Tyler" type="text" value={user.name} onChange={handleChange} name="name"/>
             </LabelInputContainer>
           </motion.div>
 
@@ -63,7 +72,7 @@ function SignupFormDemo() {
           >
             <LabelInputContainer>
               <Label htmlFor="email">Email Address</Label>
-              <Input id="email" className="text-white" placeholder="youremail@gmail.com" type="email" />
+              <Input id="email" className="text-white" placeholder="youremail@gmail.com" type="email" value={user.email} onChange={handleChange} name="email"/>
             </LabelInputContainer>
           </motion.div>
 
@@ -82,6 +91,9 @@ function SignupFormDemo() {
                   className="text-white pr-10"
                   placeholder="••••••••"
                   type={showPassword ? "text" : "password"}
+                  value={user.password}
+                  onChange={handleChange}
+                  name="password"
                 />
                 <button
                   type="button"

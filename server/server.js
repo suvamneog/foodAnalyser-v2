@@ -3,6 +3,7 @@ const app = express();
 const connectDB = require("./db");
 const User = require("./models/user");
 const Food = require("./models/food");
+const cors = require("cors");
 const userRoutes= require('./routes/userRoutes');
 const foodRoutes= require('./routes/foodRoutes');
 const calRoutes= require('./routes/calculator');
@@ -12,6 +13,8 @@ const dotenv = require("dotenv");
 const PORT = process.env.PORT || 3000;
 
 app.use(express.json());
+app.use(cors()); // Allow frontend requests
+
 app.use(express.urlencoded({ extended: true }));
 app.use("/api/auth", userRoutes);
 app.use("/api/food", apiRoutes, foodRoutes);
