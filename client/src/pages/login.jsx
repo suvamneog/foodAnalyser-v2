@@ -7,18 +7,28 @@ import { ShootingStars } from "../components/ui/shooting-stars";
 import { StarsBackground } from "../components/ui/stars-background";
 import { Eye, EyeOff, Mail, Lock } from "lucide-react";
 import { Link } from "react-router-dom";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 function Login() {
+  const navigate = useNavigate(); 
   const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({
     email: "",
     password: "",
   });
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Handle login logic here
-    console.log("Login attempt with:", formData);
+    console.log(formData);
+    try {
+      const response = await axios.post("http://localhost:3000/api/auth/login", formData);
+      alert(response.data);
+      console.log(response.data);
+      navigate("/");
+    } catch (error) {
+      alert(error.response?.data?.message || "Error signing up");
+    }
   };
 
   return (
