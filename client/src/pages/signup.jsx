@@ -4,10 +4,12 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import { Label } from "../components/ui/label";
 import { Input } from "../components/ui/input";
+import { useNavigate } from "react-router-dom"
 import { ShootingStars } from "../components/ui/shooting-stars";
 import { StarsBackground } from "../components/ui/stars-background";
 import { cn } from "../utils/cn";
 import axios from "axios";
+import { useAuth } from "../utils/AuthContext"
 import {
   IconBrandGithub,
   IconBrandGoogle,
@@ -17,6 +19,8 @@ import { IconEye, IconEyeOff } from "@tabler/icons-react";
 
 function SignupFormDemo() {
   const [showPassword, setShowPassword] = useState(false);
+  const { login } = useAuth()
+  const navigate = useNavigate()
   const [user , setUser] = useState({name: "", email: "", password: "" });
 
   const handleChange = (e) => {
@@ -29,7 +33,8 @@ function SignupFormDemo() {
     console.log(user);
     try {
       const response = await axios.post("http://localhost:3000/api/auth/signup", user);
-      alert(response.data);
+      login(response.data);
+      navigate("/")
     } catch (error) {
       alert(error.response?.data?.message || "Error signing up");
     }

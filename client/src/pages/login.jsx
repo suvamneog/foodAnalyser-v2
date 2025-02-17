@@ -9,9 +9,11 @@ import { Eye, EyeOff, Mail, Lock } from "lucide-react";
 import { Link } from "react-router-dom";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-
+import { useAuth } from "../utils/AuthContext"
 function Login() {
-  const navigate = useNavigate(); 
+    const navigate = useNavigate(); 
+      const { login } = useAuth()
+
   const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({
     email: "",
@@ -23,8 +25,7 @@ function Login() {
     console.log(formData);
     try {
       const response = await axios.post("http://localhost:3000/api/auth/login", formData);
-      alert(response.data);
-      console.log(response.data);
+      login(response.data);
       navigate("/");
     } catch (error) {
       alert(error.response?.data?.message || "Error signing up");

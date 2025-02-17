@@ -1,55 +1,46 @@
-// import Login from "./pages/login";
-// function App() {
-//   return (
-//     <>
-    
-//       < Login />
+import { useState } from "react"
+import { Routes, Route } from "react-router-dom"
+import { AuthProvider } from "./utils/AuthContext"
+import ShootingStarsAndStarsBackgroundDemo from "./pages/background"
+import AddFood from "./pages/addFood"
+import Navbar from "./pages/Navbar" // Ensure correct casing
+import LogMeals from "./pages/logMeals"
+import SignupFormDemo from "./pages/signup"
+import Login from "./pages/login"
+import CalorieCalculator from "./pages/Calculator"
+import Home from "./pages/home"
+import History from "./pages/history"
 
-//     </>
-//   );
-// }
-// export default App;
-
-import { useState } from "react";
-import ShootingStarsAndStarsBackgroundDemo from "./pages/background";
-import AddFood from "./pages/addFood";
-import Navbar from "./pages/navBar";
-import LogMeals from "./pages/logMeals";
-import SignupFormDemo from "./pages/signup";
-import Login from "./pages/login";
-import CalorieCalculator from "./pages/Calculator";
-import Home from "./pages/home";
-import History from "./pages/history";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 function App() {
-  const [foodName, setFoodName] = useState("");
-  const [output, setOutput] = useState("");
- return (
-  <Router>
-  <Navbar />
-  <Routes>
-    <Route
-      path="/"
-      element={
-        <ShootingStarsAndStarsBackgroundDemo
-          foodName={foodName}
-          setFoodName={setFoodName}
-          output={output}
-          setOutput={setOutput}
-        >
-          <Home foodName={foodName} setFoodName={setFoodName} output={output} setOutput={setOutput} />
-        </ShootingStarsAndStarsBackgroundDemo>
-      }
-    />
-    <Route path="/" element={<Home/>} />
-    <Route path="/signup" element={<SignupFormDemo />} />
-    <Route path="/login" element={<Login />} />
-    <Route path="/calculator" element={<CalorieCalculator />} />
-    <Route path="/logmeals" element={<LogMeals />} />
-    <Route path="/history" element={<History />} />
-    <Route path="/addfoods" element={<AddFood />} />
-  </Routes>
-</Router>
-)
+  const [foodName, setFoodName] = useState("")
+  const [output, setOutput] = useState("")
+
+  return (
+    <AuthProvider>
+      <Navbar />
+      <Routes>
+        <Route
+          path="/"
+          element={
+            <ShootingStarsAndStarsBackgroundDemo
+              foodName={foodName}
+              setFoodName={setFoodName}
+              output={output}
+              setOutput={setOutput}
+            >
+              <Home foodName={foodName} setFoodName={setFoodName} output={output} setOutput={setOutput} />
+            </ShootingStarsAndStarsBackgroundDemo>
+          }
+        />
+        <Route path="/signup" element={<SignupFormDemo />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/calculator" element={<CalorieCalculator />} />
+        <Route path="/logmeals" element={<LogMeals />} />
+        <Route path="/history" element={<History />} />
+        <Route path="/addfoods" element={<AddFood />} />
+      </Routes>
+    </AuthProvider>
+  )
 }
-export default App;
+
+export default App
