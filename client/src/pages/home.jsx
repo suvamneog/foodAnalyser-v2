@@ -2,7 +2,7 @@
 import PlaceholdersAndVanishInputDemo from "./input";
 import FoodAnalyzer from "./Text";
 import { motion } from "framer-motion";
-function Home({ foodName, setFoodName, output, setOutput }) {
+function Home({ foodName, setFoodName, output, setOutput}) {
   return (
     <motion.div
       initial={{ opacity: 0, scale: 0.9 }}
@@ -17,7 +17,7 @@ function Home({ foodName, setFoodName, output, setOutput }) {
       <span>fit</span>
     </h2>
     <h3 className="text-white text-lg font-thin">Discover nutritional information for any food</h3>
-    <PlaceholdersAndVanishInputDemo foodName={foodName} setFoodName={setFoodName} output={output} setOutput={setOutput}/>
+    <PlaceholdersAndVanishInputDemo foodName={foodName} setFoodName={setFoodName} output={output} setOutput={setOutput} />
     <div className="grid gap-6 max-w-4xl mx-auto p-4 sm:p-8 md:p-12 lg:p-20 absolute z-10 mb-20 min-h-[500px] max-h-screen overflow-auto">
     <FoodAnalyzer foodName={foodName} setFoodName={setFoodName} output={output} setOutput={setOutput}/> 
     </div>

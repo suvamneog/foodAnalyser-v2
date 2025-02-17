@@ -9,11 +9,12 @@ import SignupFormDemo from "./pages/signup"
 import Login from "./pages/login"
 import CalorieCalculator from "./pages/Calculator"
 import Home from "./pages/home"
-import History from "./pages/history"
+import History from "./pages/History"
 
 function App() {
   const [foodName, setFoodName] = useState("")
   const [output, setOutput] = useState("")
+
 
   return (
     <AuthProvider>
@@ -27,6 +28,7 @@ function App() {
               setFoodName={setFoodName}
               output={output}
               setOutput={setOutput}
+          
             >
               <Home foodName={foodName} setFoodName={setFoodName} output={output} setOutput={setOutput} />
             </ShootingStarsAndStarsBackgroundDemo>
@@ -36,7 +38,7 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/calculator" element={<CalorieCalculator />} />
         <Route path="/logmeals" element={<LogMeals />} />
-        <Route path="/history" element={<History />} />
+        <Route path="/history" element={<History history={history}/>} />
         <Route path="/addfoods" element={<AddFood />} />
       </Routes>
     </AuthProvider>

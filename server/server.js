@@ -13,7 +13,10 @@ const dotenv = require("dotenv");
 const PORT = process.env.PORT || 3000;
 
 app.use(express.json());
-app.use(cors()); // Allow frontend requests
+const corsOptions = {
+  origin: 'http://localhost:5173', // Allow only your frontend to access
+};
+app.use(cors(corsOptions));
 
 app.use(express.urlencoded({ extended: true }));
 app.use("/api/auth", userRoutes);

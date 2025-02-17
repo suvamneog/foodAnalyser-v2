@@ -13,15 +13,19 @@ router.get('/search', auth, async (req,res) => {
     });
     await FoodSearch.create({ userID, query, result: response.data.items });
     res.json(response.data);
-    console.log(response.data);
+    console.log(response.data.items);
 });
 
 //retrieve history
 router.get('/history', auth, async (req, res) => {
-    let userID = req.user.id;
-    let historyResult = await FoodSearch.find({userID}).sort({ createdAt: -1 });
-    console.log(historyResult);
-    res.send("History retrieved!");
-});
-
+    try {
+      let userID = req.user.id;  // Get userID from the authenticated user
+      let historyResult = await FoodSearch.find({ userID }).sort({ createdAt: -1 });  // Sort by createdAt in descending order
+      console.log(historyResult); // Log the result to verify it
+      res.json(historyResult); // Return the search history
+    } catch (error) {
+      console.error(error);
+      res.status(500).send('Error retrieving search history');
+    }
+  });
 module.exports = router;

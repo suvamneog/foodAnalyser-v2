@@ -25,7 +25,7 @@ function Login() {
     console.log(formData);
     try {
       const response = await axios.post("http://localhost:3000/api/auth/login", formData);
-      login(response.data);
+      login(response.data.token);
       navigate("/");
     } catch (error) {
       alert(error.response?.data?.message || "Error signing up");
