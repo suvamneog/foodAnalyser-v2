@@ -10,6 +10,7 @@ import Login from "./pages/login"
 import CalorieCalculator from "./pages/Calculator"
 import Home from "./pages/home"
 import History from "./pages/history"
+import  Text from "./pages/Text"
 
 function App() {
   const [foodName, setFoodName] = useState("")
@@ -36,6 +37,7 @@ function App() {
         />
         <Route path="/signup" element={<SignupFormDemo />} />
         <Route path="/login" element={<Login />} />
+        <Route path="/login" element={<Text/>} />
         <Route path="/calculator" element={<CalorieCalculator />} />
         <Route path="/logmeals" element={<LogMeals />} />
         <Route path="/history" element={<History />} />

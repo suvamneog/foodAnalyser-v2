@@ -2,9 +2,10 @@
 "use client"
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Sparkles, Info } from "lucide-react"
+import { Sparkles, Info, LogIn } from "lucide-react"
 import { CardBody, CardContainer, CardItem } from "../components/ui/3D-card"
-
+import { useAuth } from "../utils/AuthContext"
+import { Link } from "react-router-dom"
 function analyzeFood(food) {
   const pros = []
   const cons = []
@@ -62,6 +63,8 @@ function analyzeFood(food) {
 }
 
 function FoodAnalyzer({ output }) {
+  const { isAuthenticated } = useAuth()
+
   if (!output || output.length === 0) {
     return <p>No data available</p>
   }
@@ -70,7 +73,6 @@ function FoodAnalyzer({ output }) {
     <div className="grid gap-6 max-w-4xl mx-auto p-4 sm:p-8 md:p-12 lg:p-20 relative z-10 mt-40">
       {output.map((food, index) => {
         const { pros, cons } = analyzeFood(food)
-
         return (
           <CardContainer key={index}>
             <CardBody className="bg-[#0C0C0C]/90 rounded-xl p-4 sm:p-6 backdrop-blur-sm">
@@ -79,6 +81,15 @@ function FoodAnalyzer({ output }) {
                   <CardHeader>
                     <CardTitle className="text-2xl text-white">{food.name}</CardTitle>
                     <CardDescription>Nutritional Analysis</CardDescription>
+                    {!isAuthenticated && (
+                      <CardDescription className="mt-2 text-blue-400 flex items-center gap-2">
+                        <LogIn className="w-4 h-4" />
+                       <Link
+                    to="/login" className="underline text-red-400 hover:text-blue-300">
+                        Log in and search to save your search history!
+                        </Link>
+                      </CardDescription>
+                    )}
                   </CardHeader>
                 </CardItem>
 
@@ -168,4 +179,3 @@ function FoodAnalyzer({ output }) {
 }
 
 export default FoodAnalyzer
-

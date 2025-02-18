@@ -78,10 +78,11 @@ function History() {
           <ShootingStars />
         </div>
         <motion.div
-           initial={{ opacity: 0, scale: 0.9 }}
-           animate={{ opacity: 1, scale: 1 }}
-           transition={{ duration: 0.5, ease: "easeOut" }}
-        >
+        initial={{ opacity: 0, scale: 0.9 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ duration: 0.5, ease: "easeOut" }}
+      
+      >
           <h1 className="text-4xl font-bold mb-8 text-white text-center">
             Food Search History
           </h1>
@@ -141,3 +142,6 @@ function History() {
 }
 
 export default History;
+
+
+
