@@ -14,7 +14,8 @@ const PORT = process.env.PORT || 3000;
 
 app.use(express.json());
 const corsOptions = {
-  origin: 'http://localhost:5173', // Allow only your frontend to access
+  origin: 'http://localhost:5173',// Allow only your frontend to access
+  credentials: true  
 };
 app.use(cors(corsOptions));
 
