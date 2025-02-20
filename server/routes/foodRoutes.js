@@ -4,49 +4,93 @@ const Food = require("../models/food");
 const auth = require("../middleware/authMiddleware");
 require("dotenv").config();
 
-//create food
+// Create food
 router.post("/", auth, async (req, res) => {
-    let { name, calories, protein, carbs, fats } = req.body;
-    let addFood = new Food({
+  try {
+    const { name, calories, protein, carbs, fats, pros, cons } = req.body;
+    
+    const addFood = new Food({
       name,
       calories,
-      carbs,
       protein,
+      carbs,
       fats,
+      pros,
+      cons,
       userID: req.user.id,
     });
-    await addFood.save();
-    console.log(addFood);
-    res.send("Food added!");
-  });
+    
+    const savedFood = await addFood.save();
+    res.status(201).json(savedFood);
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
+});
 
-//get food
+// Get all foods for user
 router.get("/", auth, async (req, res) => {
-    let food = await Food.find({userID : req.user.id});
-    console.log(food);
-    res.send("Food!");
+  try {
+    const foods = await Food.find({ userID: req.user.id })
+      .sort({ date: -1 });
+    res.json(foods);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
 });
 
-//specific food
+// Get specific food
 router.get("/:id", auth, async (req, res) => {
-    let oneFood = await Food.findById(req.params.id);
-    if (!oneFood) return res.status(404).json({ message: "Food not found" });
-    console.log(oneFood);
-    res.send("Food!");
+  try {
+    const food = await Food.findOne({ 
+      _id: req.params.id,
+      userID: req.user.id 
+    });
+    
+    if (!food) {
+      return res.status(404).json({ message: "Food not found" });
+    }
+    
+    res.json(food);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
 });
 
-//update food
+// Update food
 router.put("/:id", auth, async (req, res) => {
-    let newFood = await Food.findByIdAndUpdate(req.params.id, req.body, {new : true});
-    console.log(newFood);
-    res.send("Food Edited");
+  try {
+    const food = await Food.findOneAndUpdate(
+      { _id: req.params.id, userID: req.user.id },
+      req.body,
+      { new: true }
+    );
+    
+    if (!food) {
+      return res.status(404).json({ message: "Food not found" });
+    }
+    
+    res.json(food);
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
 });
 
-//delete food
+// Delete food
 router.delete("/:id", auth, async (req, res) => {
-    let deleteFood = await Food.findByIdAndDelete(req.params.id, {new : true});
-    console.log(deleteFood);
-    res.send("Food Deleted");
+  try {
+    const food = await Food.findOneAndDelete({ 
+      _id: req.params.id,
+      userID: req.user.id 
+    });
+    
+    if (!food) {
+      return res.status(404).json({ message: "Food not found" });
+    }
+    
+    res.json({ message: "Food deleted successfully" });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
 });
 
 module.exports = router;

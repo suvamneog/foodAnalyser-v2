@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/rules-of-hooks */
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { ScrollArea } from '../components/ui/scroll-area';
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
 import { Badge } from '../components/ui/badge';
@@ -14,44 +14,12 @@ import { StarsBackground } from "../components/ui/stars-background";
 import { motion } from "framer-motion";
 
 function addFood() {
-  const [foodHistory, setFoodHistory] = useState([
-    {
-      id: 1,
-      name: "Grilled Chicken Breast",
-      calories: 165,
-      protein: 31,
-      carbs: 0,
-      fats: 3.6,
-      pros: ["High protein", "Low fat", "Zero carbs"],
-      cons: ["Can be dry if overcooked"],
-      date: "2024-03-20"
-    },
-    {
-      id: 2,
-      name: "Quinoa Bowl",
-      calories: 222,
-      protein: 8,
-      carbs: 39,
-      fats: 3.6,
-      pros: ["High fiber", "Complete protein", "Rich in minerals"],
-      cons: ["Higher in carbs", "Needs flavoring"],
-      date: "2024-03-20"
-    },
-    {
-      id: 3,
-      name: "Greek Yogurt",
-      calories: 130,
-      protein: 12,
-      carbs: 7,
-      fats: 4,
-      pros: ["High protein", "Probiotics", "Calcium rich"],
-      cons: ["Contains lactose"],
-      date: "2024-03-19"
-    }
-  ]);
-
+  const [foodHistory, setFoodHistory] = useState([]);
   const [isEditing, setIsEditing] = useState(false);
   const [editingId, setEditingId] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
+  
   const emptyFood = {
     name: '',
     calories: '',
@@ -61,45 +29,72 @@ function addFood() {
     pros: '',
     cons: ''
   };
+  
   const [newFood, setNewFood] = useState(emptyFood);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
-  const handleAddOrUpdateFood = () => {
-    const prosArray = newFood.pros.split(',').map(pro => pro.trim());
-    const consArray = newFood.cons.split(',').map(con => con.trim());
+  useEffect(() => {
+    fetchFoods();
+  }, []);
 
-    if (isEditing) {
-      setFoodHistory(prev => prev.map(food => {
-        if (food.id === editingId) {
-          return {
-            ...food,
-            ...newFood,
-            pros: prosArray,
-            cons: consArray
-          };
+  const fetchFoods = async () => {
+    console.log("Fetching food data...");
+    try {
+      const response = await fetch('http://localhost:3000/api/food/', {
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('authToken')}`
         }
-        return food;
-      }));
-    } else {
-      const foodItem = {
-        id: Date.now(),
+      });
+      
+      if (!response.ok) throw new Error('Failed to fetch foods');
+      
+      const data = await response.json();
+      setFoodHistory(data);
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleAddOrUpdateFood = async () => {
+    try {
+      const prosArray = newFood.pros.split(',').map(pro => pro.trim());
+      const consArray = newFood.cons.split(',').map(con => con.trim());
+
+      const foodData = {
         ...newFood,
         pros: prosArray,
-        cons: consArray,
-        date: new Date().toISOString().split('T')[0]
+        cons: consArray
       };
-      setFoodHistory(prev => [foodItem, ...prev]);
-    }
 
-    setNewFood(emptyFood);
-    setIsEditing(false);
-    setEditingId(null);
-    setIsDialogOpen(false);
+      const url = isEditing ? `http://localhost:3000/api/food/${editingId}` : '/api/foods';
+      const method = isEditing ? 'PUT' : 'POST';
+
+      const response = await fetch(url, {
+        method,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('authToken')}`
+        },
+        body: JSON.stringify(foodData)
+      });
+
+      if (!response.ok) throw new Error('Failed to save food');
+
+      await fetchFoods();
+      setNewFood(emptyFood);
+      setIsEditing(false);
+      setEditingId(null);
+      setIsDialogOpen(false);
+    } catch (err) {
+      setError(err.message);
+    }
   };
 
   const handleEdit = (food) => {
     setIsEditing(true);
-    setEditingId(food.id);
+    setEditingId(food._id);
     setNewFood({
       name: food.name,
       calories: food.calories,
@@ -112,8 +107,21 @@ function addFood() {
     setIsDialogOpen(true);
   };
 
-  const handleDelete = (id) => {
-    setFoodHistory(prev => prev.filter(food => food.id !== id));
+  const handleDelete = async (id) => {
+    try {
+      const response = await fetch(`http://localhost:3000/api/food//${id}`, {
+        method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('authToken')}`
+        }
+      });
+
+      if (!response.ok) throw new Error('Failed to delete food');
+
+      await fetchFoods();
+    } catch (err) {
+      setError(err.message);
+    }
   };
 
   const handleDialogClose = () => {
@@ -123,198 +131,201 @@ function addFood() {
     setEditingId(null);
   };
 
-  return (
-   
- <div className="relative bg-black min-h-screen p-6 mt-14">
- <div className="absolute inset-0 pointer-events-none">
- <StarsBackground />
- <ShootingStars />
- </div>
- <motion.div
-initial={{ opacity: 0, scale: 0.9 }}
-animate={{ opacity: 1, scale: 1 }}
-transition={{ duration: 0.5, ease: "easeOut" }}
->
-      <div className="max-w-4xl mx-auto">
-        <div className="flex justify-between items-center mb-6">
-          <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-            <DialogTrigger asChild>
-              <Button className="gap-2" onClick={() => {
-                setNewFood(emptyFood);
-                setIsEditing(false);
-                setEditingId(null);
-              }}>
-                <Plus size={16} />
-                Add Food
-              </Button>
-            </DialogTrigger>
-            <DialogContent className="sm:max-w-[425px]">
-              <DialogHeader>
-                <DialogTitle>{isEditing ? 'Edit Food' : 'Add New Food'}</DialogTitle>
-              </DialogHeader>
-              <div className="grid gap-4 py-4">
-                <div className="grid gap-2">
-                  <Label htmlFor="name">Food Name</Label>
-                  <Input
-                    id="name"
-                    value={newFood.name}
-                    onChange={(e) => setNewFood(prev => ({ ...prev, name: e.target.value }))}
-                      className="text-white"
-                  />
-                </div>
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="grid gap-2">
-                    <Label htmlFor="calories">Calories</Label>
-                    <Input
-                      id="calories"
-                      type="number"
-                      value={newFood.calories}
-                      onChange={(e) => setNewFood(prev => ({ ...prev, calories: e.target.value }))}
-                       className="text-white"
-                    />
-                  </div>
-                  <div className="grid gap-2">
-                    <Label htmlFor="protein">Protein (g)</Label>
-                    <Input
-                      id="protein"
-                      type="number"
-                      value={newFood.protein}
-                      onChange={(e) => setNewFood(prev => ({ ...prev, protein: e.target.value }))}
-                       className="text-white"
-                    />
-                  </div>
-                </div>
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="grid gap-2">
-                    <Label htmlFor="carbs">Carbs (g)</Label>
-                    <Input
-                      id="carbs"
-                      type="number"
-                      value={newFood.carbs}
-                      onChange={(e) => setNewFood(prev => ({ ...prev, carbs: e.target.value }))}
-                       className="text-white"
-                    />
-                  </div>
-                  <div className="grid gap-2">
-                    <Label htmlFor="fats">Fats (g)</Label>
-                    <Input
-                      id="fats"
-                      type="number"
-                      value={newFood.fats}
-                      onChange={(e) => setNewFood(prev => ({ ...prev, fats: e.target.value }))}
-                       className="text-white"
-                    />
-                  </div>
-                </div>
-                <div className="grid gap-2">
-                  <Label htmlFor="pros">Pros (comma-separated)</Label>
-                  <Textarea
-                    id="pros"
-                    value={newFood.pros}
-                    onChange={(e) => setNewFood(prev => ({ ...prev, pros: e.target.value }))}
-                    placeholder="High protein, Low fat, etc."
-                     className="text-white"
-                  />
-                </div>
-                <div className="grid gap-2">
-                  <Label htmlFor="cons">Cons (comma-separated)</Label>
-                  <Textarea
-                    id="cons"
-                    value={newFood.cons}
-                    onChange={(e) => setNewFood(prev => ({ ...prev, cons: e.target.value }))}
-                    placeholder="High in sodium, Contains allergens, etc."
-                     className="text-white"
-                  />
-                </div>
-                <div className="flex gap-2 justify-end">
-                  <Button variant="outline" onClick={handleDialogClose}
-                    className="text-white border-white hover:bg-white hover:text-black transition"
-                  >Cancel</Button>
-                  <Button onClick={handleAddOrUpdateFood}>
-                    {isEditing ? 'Update Food' : 'Add Food'}
-                  </Button>
-                </div>
-              </div>
-            </DialogContent>
-          </Dialog>
-        </div>
+  if (isLoading) return <div>Loading...</div>;
+  if (error) return <div>Error: {error}</div>;
 
-        <ScrollArea className="h-[800px] rounded-lg border">
-          {foodHistory.map((food) => (
-            <Card key={food.id} className="mb-4 mx-4 mt-4 hover:shadow-lg transition-shadow">
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-xl font-semibold flex items-center gap-2">
-                  <Utensils className="w-5 h-5 text-primary" />
-                  {food.name}
-                </CardTitle>
-                <div className="flex items-center gap-4">
-                  <span className="text-sm text-muted-foreground">{food.date}</span>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className="text-blue-500 hover:text-blue-700 hover:bg-blue-100"
-                    onClick={() => handleEdit(food)}
-                  >
-                    <Edit2 className="w-4 h-4" />
-                  </Button>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className="text-red-500 hover:text-red-700 hover:bg-red-100"
-                    onClick={() => handleDelete(food.id)}
-                  >
-                    <Trash2 className="w-4 h-4" />
-                  </Button>
-                  
-                </div>
-              </CardHeader>
-              <CardContent>
-                <div className="grid grid-cols-4 gap-4 mb-4">
-                  <div className="bg-secondary/50 p-3 rounded-lg">
-                    <div className="text-sm font-medium">Calories</div>
-                    <div className="text-2xl font-bold">{food.calories}</div>
-                  </div>
-                  <div className="bg-secondary/50 p-3 rounded-lg">
-                    <div className="text-sm font-medium">Protein</div>
-                    <div className="text-2xl font-bold">{food.protein}g</div>
-                  </div>
-                  <div className="bg-secondary/50 p-3 rounded-lg">
-                    <div className="text-sm font-medium">Carbs</div>
-                    <div className="text-2xl font-bold">{food.carbs}g</div>
-                  </div>
-                  <div className="bg-secondary/50 p-3 rounded-lg">
-                    <div className="text-sm font-medium">Fats</div>
-                    <div className="text-2xl font-bold">{food.fats}g</div>
-                  </div>
-                </div>
-                
-                <div className="space-y-2">
-                  <div>
-                    <div className="text-sm font-medium mb-1">Pros</div>
-                    <div className="flex flex-wrap gap-2">
-                      {food.pros.map((pro, index) => (
-                        <Badge key={index} variant="secondary" className="bg-green-500/10 text-green-700 hover:bg-green-500/20">
-                          {pro}
-                        </Badge>
-                      ))}
-                    </div>
-                  </div>
-                  <div>
-                    <div className="text-sm font-medium mb-1">Cons</div>
-                    <div className="flex flex-wrap gap-2">
-                      {food.cons.map((con, index) => (
-                        <Badge key={index} variant="secondary" className="bg-red-500/10 text-red-700 hover:bg-red-500/20">
-                          {con}
-                        </Badge>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          ))}
-        </ScrollArea>
+  return (
+    <div className="relative bg-black min-h-screen p-6 mt-14">
+      <div className="absolute inset-0 pointer-events-none">
+        <StarsBackground />
+        <ShootingStars />
       </div>
+      <motion.div
+        initial={{ opacity: 0, scale: 0.9 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ duration: 0.5, ease: "easeOut" }}
+      >
+        <div className="max-w-4xl mx-auto">
+          <div className="flex justify-between items-center mb-6">
+            <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+              <DialogTrigger asChild>
+                <Button className="gap-2" onClick={() => {
+                  setNewFood(emptyFood);
+                  setIsEditing(false);
+                  setEditingId(null);
+                }}>
+                  <Plus size={16} />
+                  Add Food
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="sm:max-w-[425px]">
+                <DialogHeader>
+                  <DialogTitle>{isEditing ? 'Edit Food' : 'Add New Food'}</DialogTitle>
+                </DialogHeader>
+                <div className="grid gap-4 py-4">
+                  <div className="grid gap-2">
+                    <Label htmlFor="name">Food Name</Label>
+                    <Input
+                      id="name"
+                      value={newFood.name}
+                      onChange={(e) => setNewFood(prev => ({ ...prev, name: e.target.value }))}
+                      className="text-white"
+                    />
+                  </div>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="grid gap-2">
+                      <Label htmlFor="calories">Calories</Label>
+                      <Input
+                        id="calories"
+                        type="number"
+                        value={newFood.calories}
+                        onChange={(e) => setNewFood(prev => ({ ...prev, calories: e.target.value }))}
+                        className="text-white"
+                      />
+                    </div>
+                    <div className="grid gap-2">
+                      <Label htmlFor="protein">Protein (g)</Label>
+                      <Input
+                        id="protein"
+                        type="number"
+                        value={newFood.protein}
+                        onChange={(e) => setNewFood(prev => ({ ...prev, protein: e.target.value }))}
+                        className="text-white"
+                      />
+                    </div>
+                  </div>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="grid gap-2">
+                      <Label htmlFor="carbs">Carbs (g)</Label>
+                      <Input
+                        id="carbs"
+                        type="number"
+                        value={newFood.carbs}
+                        onChange={(e) => setNewFood(prev => ({ ...prev, carbs: e.target.value }))}
+                        className="text-white"
+                      />
+                    </div>
+                    <div className="grid gap-2">
+                      <Label htmlFor="fats">Fats (g)</Label>
+                      <Input
+                        id="fats"
+                        type="number"
+                        value={newFood.fats}
+                        onChange={(e) => setNewFood(prev => ({ ...prev, fats: e.target.value }))}
+                        className="text-white"
+                      />
+                    </div>
+                  </div>
+                  <div className="grid gap-2">
+                    <Label htmlFor="pros">Pros (comma-separated)</Label>
+                    <Textarea
+                      id="pros"
+                      value={newFood.pros}
+                      onChange={(e) => setNewFood(prev => ({ ...prev, pros: e.target.value }))}
+                      placeholder="High protein, Low fat, etc."
+                      className="text-white"
+                    />
+                  </div>
+                  <div className="grid gap-2">
+                    <Label htmlFor="cons">Cons (comma-separated)</Label>
+                    <Textarea
+                      id="cons"
+                      value={newFood.cons}
+                      onChange={(e) => setNewFood(prev => ({ ...prev, cons: e.target.value }))}
+                      placeholder="High in sodium, Contains allergens, etc."
+                      className="text-white"
+                    />
+                  </div>
+                  <div className="flex gap-2 justify-end">
+                    <Button variant="outline" onClick={handleDialogClose}
+                      className="text-white border-white hover:bg-white hover:text-black transition"
+                    >Cancel</Button>
+                    <Button onClick={handleAddOrUpdateFood}>
+                      {isEditing ? 'Update Food' : 'Add Food'}
+                    </Button>
+                  </div>
+                </div>
+              </DialogContent>
+            </Dialog>
+          </div>
+
+          <ScrollArea className="h-[800px] rounded-lg border">
+            {foodHistory.map((food) => (
+              <Card key={food._id} className="mb-4 mx-4 mt-4 hover:shadow-lg transition-shadow">
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardTitle className="text-xl font-semibold flex items-center gap-2">
+                    <Utensils className="w-5 h-5 text-primary" />
+                    {food.name}
+                  </CardTitle>
+                  <div className="flex items-center gap-4">
+                    <span className="text-sm text-muted-foreground">
+                      {new Date(food.date).toLocaleDateString()}
+                    </span>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="text-blue-500 hover:text-blue-700 hover:bg-blue-100"
+                      onClick={() => handleEdit(food)}
+                    >
+                      <Edit2 className="w-4 h-4" />
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="text-red-500 hover:text-red-700 hover:bg-red-100"
+                      onClick={() => handleDelete(food._id)}
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </Button>
+                  </div>
+                </CardHeader>
+                <CardContent>
+                  <div className="grid grid-cols-4 gap-4 mb-4">
+                    <div className="bg-secondary/50 p-3 rounded-lg">
+                      <div className="text-sm font-medium">Calories</div>
+                      <div className="text-2xl font-bold">{food.calories}</div>
+                    </div>
+                    <div className="bg-secondary/50 p-3 rounded-lg">
+                      <div className="text-sm font-medium">Protein</div>
+                      <div className="text-2xl font-bold">{food.protein}g</div>
+                    </div>
+                    <div className="bg-secondary/50 p-3 rounded-lg">
+                      <div className="text-sm font-medium">Carbs</div>
+                      <div className="text-2xl font-bold">{food.carbs}g</div>
+                    </div>
+                    <div className="bg-secondary/50 p-3 rounded-lg">
+                      <div className="text-sm font-medium">Fats</div>
+                      <div className="text-2xl font-bold">{food.fats}g</div>
+                    </div>
+                  </div>
+                  
+                  <div className="space-y-2">
+                    <div>
+                      <div className="text-sm font-medium mb-1">Pros</div>
+                      <div className="flex flex-wrap gap-2">
+                        {food.pros.map((pro, index) => (
+                          <Badge key={index} variant="secondary" className="bg-green-500/10 text-green-700 hover:bg-green-500/20">
+                            {pro}
+                          </Badge>
+                        ))}
+                      </div>
+                    </div>
+                    <div>
+                      <div className="text-sm font-medium mb-1">Cons</div>
+                      <div className="flex flex-wrap gap-2">
+                        {food.cons.map((con, index) => (
+                          <Badge key={index} variant="secondary" className="bg-red-500/10 text-red-700 hover:bg-red-500/20">
+                            {con}
+                          </Badge>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </ScrollArea>
+        </div>
       </motion.div>
     </div>
   );
