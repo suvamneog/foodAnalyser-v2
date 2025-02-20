@@ -8,16 +8,26 @@ const auth = require("../middleware/authMiddleware");
 router.post("/log", auth, async (req, res) => {
   let { mealName, foodItems } = req.body;
   let userID = req.user.id;
+  
   if (!mealName || !foodItems || foodItems.length === 0) {
     return res
       .status(400)
       .json({ message: "Meal name and food items are required" });
   }
+
+  // Get today's date boundaries
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  const tomorrow = new Date(today);
+  tomorrow.setDate(tomorrow.getDate() + 1);
+
+  let enrichedFoodItems = [];
   let totalCalories = 0,
     totalProtein = 0,
     totalCarbs = 0,
     totalFat = 0;
-  let enrichedFoodItems = [];
+
+  // Process new food items
   for (let food of foodItems) {
     const response = await axios.get(
       `https://api.calorieninjas.com/v1/nutrition?query=${food.name}`,
@@ -26,14 +36,14 @@ router.post("/log", auth, async (req, res) => {
       }
     );
 
-    let foodData = response.data.items[0]; // First item in API response
+    let foodData = response.data.items[0];
     let foodEntry = {
       name: food.name,
-      quantity: food.quantity,
-      calories: parseFloat(((foodData.calories / 100) * food.quantity).toFixed(2)), 
-      protein_g: parseFloat(((foodData.protein_g / 100) * food.quantity).toFixed(2)),
-      carbohydrates_g: parseFloat(((foodData.carbohydrates_total_g / 100) * food.quantity).toFixed(2)),
-      fat_g: parseFloat(((foodData.fat_total_g / 100) * food.quantity).toFixed(2)),
+      quantity: Number(food.quantity),
+      calories: Number(((foodData.calories / 100) * food.quantity).toFixed(2)),
+      protein_g: Number(((foodData.protein_g / 100) * food.quantity).toFixed(2)),
+      carbohydrates_g: Number(((foodData.carbohydrates_total_g / 100) * food.quantity).toFixed(2)),
+      fat_g: Number(((foodData.fat_total_g / 100) * food.quantity).toFixed(2)),
     };
 
     enrichedFoodItems.push(foodEntry);
@@ -43,15 +53,45 @@ router.post("/log", auth, async (req, res) => {
     totalFat += foodEntry.fat_g;
   }
 
-  const mealLog = await MealLog.create({
+  // Format totals to 2 decimal places
+  totalCalories = Number(totalCalories.toFixed(2));
+  totalProtein = Number(totalProtein.toFixed(2));
+  totalCarbs = Number(totalCarbs.toFixed(2));
+  totalFat = Number(totalFat.toFixed(2));
+
+  // Check if meal already exists for today
+  let existingMeal = await MealLog.findOne({
     userID,
     mealName,
-    foodItems: enrichedFoodItems,
-    totalCalories,
-    totalProtein,
-    totalCarbs,
-    totalFat,
+    loggedAt: {
+      $gte: today,
+      $lt: tomorrow
+    }
   });
+
+  let mealLog;
+  if (existingMeal) {
+    // Update existing meal
+    existingMeal.foodItems.push(...enrichedFoodItems);
+    existingMeal.totalCalories = Number((existingMeal.totalCalories + totalCalories).toFixed(2));
+    existingMeal.totalProtein = Number((existingMeal.totalProtein + totalProtein).toFixed(2));
+    existingMeal.totalCarbs = Number((existingMeal.totalCarbs + totalCarbs).toFixed(2));
+    existingMeal.totalFat = Number((existingMeal.totalFat + totalFat).toFixed(2));
+    
+    mealLog = await existingMeal.save();
+  } else {
+    // Create new meal
+    mealLog = await MealLog.create({
+      userID,
+      mealName,
+      foodItems: enrichedFoodItems,
+      totalCalories,
+      totalProtein,
+      totalCarbs,
+      totalFat,
+    });
+  }
+
   res.status(201).json(mealLog);
 });
 
@@ -73,7 +113,7 @@ router.get("/logs", auth, async (req, res) => {
     if (calories) {
       const targetCalories = Number(calories);
       filter.totalCalories = { 
-        $gte: targetCalories - 10, // Allow ±10 variation
+        $gte: targetCalories - 10,
         $lte: targetCalories + 10 
       };
     }
@@ -83,39 +123,5 @@ router.get("/logs", auth, async (req, res) => {
     res.status(500).json({ message: "Error fetching meal logs", error: error.message });
   }
 });
-
-//daily-intake
-router.get("/daily-intake", auth, async (req, res) => {
-    try {
-      const userID = req.user.id;
-      const today = new Date();
-      today.setHours(0, 0, 0, 0);
-  
-      const logs = await MealLog.find({ userID, loggedAt: { $gte: today } });
-  
-      let totalCalories = 0, totalProtein = 0, totalCarbs = 0, totalFat = 0;
-      logs.forEach(log => {
-        totalCalories += log.totalCalories;
-        totalProtein += log.totalProtein;
-        totalCarbs += log.totalCarbs;
-        totalFat += log.totalFat;
-      });
-  
-      res.json({ totalCalories, totalProtein, totalCarbs, totalFat });
-    } catch (error) {
-      res.status(500).json({ message: "Error fetching daily intake", error: error.message });
-    }
-  });
-
-  //edit log
-  router.put("/logs/:id", auth, async (req,res) => {
-    const mealLog = await MealLog.findById(req.params.id);
-    if (!mealLog) {
-        return res.status(404).json({ message: "Meal log not found" });
-      }
-    let newLog = await MealLog.findByIdAndUpdate( req.params.id, req.body, {new : true});
-    console.log(newLog);
-    res.json(newLog);
-  });
 
 module.exports = router;
