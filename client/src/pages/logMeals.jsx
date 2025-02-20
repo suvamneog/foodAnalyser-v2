@@ -34,7 +34,7 @@ function logMeals() {
     const newFoodItems = [...foodItems];
     newFoodItems[index] = {
       ...newFoodItems[index],
-      [field]: field === 'quantity' ? Number(value) : value
+      [field]: field === 'quantity' ? (value === "" ? "" : Number(value)) : value
     };
     setFoodItems(newFoodItems);
   };
@@ -148,14 +148,22 @@ function logMeals() {
               <p className="text-gray-400 mb-4">Track your daily nutrition intake</p>
               
               <form onSubmit={handleSubmit} className="space-y-4">
-                <input
-                  type="text"
-                  placeholder="Meal Name"
-                  value={mealName}
-                  onChange={(e) => setMealName(e.target.value)}
-                  className="w-full bg-zinc-800 rounded-lg p-3 border border-zinc-700"
-                  required
-                />
+  <input
+    type="text"
+    list="meal-options"
+    placeholder="Meal Name"
+    value={mealName}
+    onChange={(e) => setMealName(e.target.value)}
+    className="w-full bg-zinc-800 rounded-lg p-3 border border-zinc-700"
+    required
+  />
+  <datalist id="meal-options">
+    <option value="Breakfast" />
+    <option value="Lunch" />
+    <option value="Dinner" />
+    <option value="Snack" />
+  </datalist>
+
                 
                 {foodItems.map((item, index) => (
                   <div key={`food-item-${index}`} className="space-y-4 p-4 bg-zinc-800 rounded-lg">
