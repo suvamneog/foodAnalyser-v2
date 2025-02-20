@@ -1,16 +1,15 @@
-/* eslint-disable react-hooks/exhaustive-deps */
-/* eslint-disable react-hooks/rules-of-hooks */
 import { useState, useEffect } from 'react';
 import { ShootingStars } from "../components/ui/shooting-stars";
 import { StarsBackground } from "../components/ui/stars-background";
 import { motion } from "framer-motion";
 import axios from 'axios';
 
-function logMeals() {
+function LogMeals() {
   const [meals, setMeals] = useState([]);
   const [foodItems, setFoodItems] = useState([{
     name: '',
-    quantity: ''
+    quantity: '',
+    unit: 'g'
   }]);
   const [mealName, setMealName] = useState('');
   const token = localStorage.getItem("authToken");
@@ -28,6 +27,7 @@ function logMeals() {
 
   useEffect(() => {
     if (token) fetchMeals();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [token]);
 
   const handleFoodItemChange = (index, field, value) => {
@@ -42,7 +42,8 @@ function logMeals() {
   const addFoodItem = () => {
     setFoodItems([...foodItems, {
       name: '',
-      quantity: ''
+      quantity: '',
+      unit: 'g'
     }]);
   };
 
@@ -59,7 +60,8 @@ function logMeals() {
       mealName,
       foodItems: foodItems.map(item => ({
         name: item.name,
-        quantity: Number(item.quantity)
+        quantity: Number(item.quantity),
+        unit: item.unit
       }))
     };
 
@@ -72,7 +74,8 @@ function logMeals() {
       setMealName('');
       setFoodItems([{
         name: '',
-        quantity: ''
+        quantity: '',
+        unit: 'g'
       }]);
 
       // Fetch updated meals
@@ -96,7 +99,6 @@ function logMeals() {
       fat_g: acc.fat_g + (meal.totalFat || 0)
     }), { calories: 0, protein_g: 0, carbohydrates_g: 0, fat_g: 0 });
 
-    // Format all values to 2 decimal places
     return {
       calories: Number(totals.calories.toFixed(2)),
       protein_g: Number(totals.protein_g.toFixed(2)),
@@ -148,23 +150,22 @@ function logMeals() {
               <p className="text-gray-400 mb-4">Track your daily nutrition intake</p>
               
               <form onSubmit={handleSubmit} className="space-y-4">
-  <input
-    type="text"
-    list="meal-options"
-    placeholder="Meal Name"
-    value={mealName}
-    onChange={(e) => setMealName(e.target.value)}
-    className="w-full bg-zinc-800 rounded-lg p-3 border border-zinc-700"
-    required
-  />
-  <datalist id="meal-options">
-    <option value="Breakfast" />
-    <option value="Lunch" />
-    <option value="Dinner" />
-    <option value="Snack" />
-  </datalist>
+                <input
+                  type="text"
+                  list="meal-options"
+                  placeholder="Meal Name"
+                  value={mealName}
+                  onChange={(e) => setMealName(e.target.value)}
+                  className="w-full bg-zinc-800 rounded-lg p-3 border border-zinc-700"
+                  required
+                />
+                <datalist id="meal-options">
+                  <option value="Breakfast" />
+                  <option value="Lunch" />
+                  <option value="Dinner" />
+                  <option value="Snack" />
+                </datalist>
 
-                
                 {foodItems.map((item, index) => (
                   <div key={`food-item-${index}`} className="space-y-4 p-4 bg-zinc-800 rounded-lg">
                     <div className="flex justify-between items-center">
@@ -179,7 +180,7 @@ function logMeals() {
                         </button>
                       )}
                     </div>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                       <input
                         type="text"
                         placeholder="Food Name"
@@ -190,12 +191,20 @@ function logMeals() {
                       />
                       <input
                         type="number"
-                        placeholder="Quantity (g)"
+                        placeholder={`Quantity (${item.unit})`}
                         value={item.quantity}
                         onChange={(e) => handleFoodItemChange(index, 'quantity', e.target.value)}
                         className="bg-zinc-700 rounded-lg p-3 border border-zinc-600"
                         required
                       />
+                      <select
+                        value={item.unit}
+                        onChange={(e) => handleFoodItemChange(index, 'unit', e.target.value)}
+                        className="bg-zinc-700 rounded-lg p-3 border border-zinc-600"
+                      >
+                        <option value="g">grams (g)</option>
+                        <option value="pcs">pieces (pcs)</option>
+                      </select>
                     </div>
                   </div>
                 ))}
@@ -219,13 +228,13 @@ function logMeals() {
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               <div className="bg-zinc-900 rounded-lg p-6">
-                <h2 className="text-2xl font-bold mb-2">Today&apos;s Intake</h2>
+                <h2 className="text-2xl font-bold mb-2">Todays Intake</h2>
                 <p className="text-gray-400 mb-4">Your nutrition summary for today</p>
                 
                 <div className="grid grid-cols-2 gap-4">
                   <div className="bg-zinc-800 p-4 rounded-lg">
                     <p className="text-gray-400">Calories</p>
-                    <p className="text-2xl font-bold">{totals.calories}</p>
+                    <p className="text-2xl font-bold">{totals.calories}kcal</p>
                   </div>
                   <div className="bg-zinc-800 p-4 rounded-lg">
                     <p className="text-gray-400">Protein</p>
@@ -263,9 +272,11 @@ function logMeals() {
                             <h4 className="font-bold">{meal.mealName}</h4>
                             {meal.foodItems.map((food, foodIndex) => (
                               <div key={`${meal._id}-food-${foodIndex}`} className="mt-2">
-                                <p className="text-gray-400">{food.name} - {food.quantity}g</p>
+                                <p className="text-gray-400">
+                                  {food.name} - {food.quantity}{food.unit}
+                                </p>
                                 <div className="grid grid-cols-4 gap-2 mt-1 text-sm">
-                                  <p> {formatNumber(food.calories)}</p>
+                                  <p>🔥 {formatNumber(food.calories)}kcal</p>
                                   <p>🥩 {formatNumber(food.protein_g)}g</p>
                                   <p>🍚 {formatNumber(food.carbohydrates_g)}g</p>
                                   <p>🥑 {formatNumber(food.fat_g)}g</p>
@@ -275,7 +286,7 @@ function logMeals() {
                             <div className="mt-3 pt-2 border-t border-zinc-700">
                               <p className="font-semibold">Total:</p>
                               <div className="grid grid-cols-4 gap-2 text-sm">
-                                <p>🔥 {formatNumber(meal.totalCalories)}</p>
+                                <p>🔥 {formatNumber(meal.totalCalories)}kcal</p>
                                 <p>🥩 {formatNumber(meal.totalProtein)}g</p>
                                 <p>🍚 {formatNumber(meal.totalCarbs)}g</p>
                                 <p>🥑 {formatNumber(meal.totalFat)}g</p>
@@ -296,4 +307,4 @@ function logMeals() {
   );
 }
 
-export default logMeals;
+export default LogMeals;

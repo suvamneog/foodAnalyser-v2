@@ -6,7 +6,8 @@ const mealLogSchema = new Schema({
     foodItems: [
       {
         name: String,          // "Chicken Breast"
-        quantity: Number,      // 200 (grams)
+         quantity: { type: Number, required: true }, // 2 (if count-based) OR 100 (if gram-based)
+      unit: { type: String, enum: ["g", "pcs"], required: true }, // "g" for weight, "pcs" for quantity
         calories: Number,      // 165
         protein_g: Number,     // 31
         carbohydrates_g: Number, 

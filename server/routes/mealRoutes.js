@@ -4,15 +4,13 @@ const axios = require("axios");
 const MealLog = require("../models/mealLog");
 const auth = require("../middleware/authMiddleware");
 
-//log food 
+// Log food
 router.post("/log", auth, async (req, res) => {
   let { mealName, foodItems } = req.body;
   let userID = req.user.id;
-  
+
   if (!mealName || !foodItems || foodItems.length === 0) {
-    return res
-      .status(400)
-      .json({ message: "Meal name and food items are required" });
+    return res.status(400).json({ message: "Meal name and food items are required" });
   }
 
   // Get today's date boundaries
@@ -22,28 +20,33 @@ router.post("/log", auth, async (req, res) => {
   tomorrow.setDate(tomorrow.getDate() + 1);
 
   let enrichedFoodItems = [];
-  let totalCalories = 0,
-    totalProtein = 0,
-    totalCarbs = 0,
-    totalFat = 0;
+  let totalCalories = 0, totalProtein = 0, totalCarbs = 0, totalFat = 0;
 
-  // Process new food items
   for (let food of foodItems) {
+    if (!food.unit || !["g", "pcs"].includes(food.unit)) {
+      return res.status(400).json({ message: "Invalid unit. Use 'g' for grams or 'pcs' for quantity." });
+    }
+
     const response = await axios.get(
-      `https://api.calorieninjas.com/v1/nutrition?query=${food.name}`,
+      `https://api.calorieninjas.com/v1/nutrition?query=${food.quantity} ${food.unit} ${food.name}`,
       {
         headers: { "X-Api-Key": process.env.CALORIE_NINJA_API_KEY },
       }
     );
 
+    if (!response.data.items.length) {
+      return res.status(400).json({ message: `No data found for ${food.name}` });
+    }
+
     let foodData = response.data.items[0];
     let foodEntry = {
       name: food.name,
       quantity: Number(food.quantity),
-      calories: Number(((foodData.calories / 100) * food.quantity).toFixed(2)),
-      protein_g: Number(((foodData.protein_g / 100) * food.quantity).toFixed(2)),
-      carbohydrates_g: Number(((foodData.carbohydrates_total_g / 100) * food.quantity).toFixed(2)),
-      fat_g: Number(((foodData.fat_total_g / 100) * food.quantity).toFixed(2)),
+      unit: food.unit,
+      calories: Number(foodData.calories.toFixed(2)),
+      protein_g: Number(foodData.protein_g.toFixed(2)),
+      carbohydrates_g: Number(foodData.carbohydrates_total_g.toFixed(2)),
+      fat_g: Number(foodData.fat_total_g.toFixed(2)),
     };
 
     enrichedFoodItems.push(foodEntry);
@@ -53,34 +56,27 @@ router.post("/log", auth, async (req, res) => {
     totalFat += foodEntry.fat_g;
   }
 
-  // Format totals to 2 decimal places
   totalCalories = Number(totalCalories.toFixed(2));
   totalProtein = Number(totalProtein.toFixed(2));
   totalCarbs = Number(totalCarbs.toFixed(2));
   totalFat = Number(totalFat.toFixed(2));
 
-  // Check if meal already exists for today
   let existingMeal = await MealLog.findOne({
     userID,
     mealName,
-    loggedAt: {
-      $gte: today,
-      $lt: tomorrow
-    }
+    loggedAt: { $gte: today, $lt: tomorrow },
   });
 
   let mealLog;
   if (existingMeal) {
-    // Update existing meal
     existingMeal.foodItems.push(...enrichedFoodItems);
     existingMeal.totalCalories = Number((existingMeal.totalCalories + totalCalories).toFixed(2));
     existingMeal.totalProtein = Number((existingMeal.totalProtein + totalProtein).toFixed(2));
     existingMeal.totalCarbs = Number((existingMeal.totalCarbs + totalCarbs).toFixed(2));
     existingMeal.totalFat = Number((existingMeal.totalFat + totalFat).toFixed(2));
-    
+
     mealLog = await existingMeal.save();
   } else {
-    // Create new meal
     mealLog = await MealLog.create({
       userID,
       mealName,
@@ -95,7 +91,7 @@ router.post("/log", auth, async (req, res) => {
   res.status(201).json(mealLog);
 });
 
-//show logged food
+// Fetch logged meals
 router.get("/logs", auth, async (req, res) => {
   try {
     const userID = req.user.id;
@@ -117,6 +113,7 @@ router.get("/logs", auth, async (req, res) => {
         $lte: targetCalories + 10 
       };
     }
+    
     const logs = await MealLog.find(filter).sort({ loggedAt: -1 });
     res.json(logs);
   } catch (error) {
