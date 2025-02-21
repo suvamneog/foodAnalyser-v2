@@ -121,4 +121,26 @@ router.get("/logs", auth, async (req, res) => {
   }
 });
 
+// Delete a logged meal
+router.delete("/log/:id", auth, async (req, res) => {
+  try {
+    const { id } = req.params; // Meal log ID
+    const userID = req.user.id; // Authenticated user's ID
+
+    // Find the meal log by ID and userID
+    const mealLog = await MealLog.findOne({ _id: id, userID });
+
+    if (!mealLog) {
+      return res.status(404).json({ message: "Meal log not found or you do not have permission to delete it." });
+    }
+
+    // Delete the meal log
+    await MealLog.deleteOne({ _id: id });
+
+    res.status(200).json({ message: "Meal log deleted successfully" });
+  } catch (error) {
+    res.status(500).json({ message: "Error deleting meal log", error: error.message });
+  }
+});
+
 module.exports = router;

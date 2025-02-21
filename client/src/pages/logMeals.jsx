@@ -29,7 +29,6 @@ function LogMeals() {
       setLoading(false);
     }
   };
-  
 
   useEffect(() => {
     if (token) fetchMeals();
@@ -87,6 +86,23 @@ function LogMeals() {
       await fetchMeals();
     } catch (error) {
       console.error("Error logging meal:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const deleteMeal = async (mealId) => {
+    if (loading) return; // Prevent multiple requests
+    setLoading(true);
+    try {
+      await axios.delete(`http://localhost:3000/api/meal/log/${mealId}`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+
+      // Remove the deleted meal from the state
+      setMeals(meals.filter(meal => meal._id !== mealId));
+    } catch (error) {
+      console.error("Error deleting meal:", error);
     } finally {
       setLoading(false);
     }
@@ -276,7 +292,15 @@ function LogMeals() {
                       <div className="space-y-2">
                         {dateMeals.map((meal) => (
                           <div key={meal._id} className="bg-zinc-800 p-4 rounded-lg">
-                            <h4 className="font-bold">{meal.mealName}</h4>
+                            <div className="flex justify-between items-center">
+                              <h4 className="font-bold">{meal.mealName}</h4>
+                              <button
+                                onClick={() => deleteMeal(meal._id)}
+                                className="text-red-400 hover:text-red-300"
+                              >
+                                Delete
+                              </button>
+                            </div>
                             {meal.foodItems.map((food, foodIndex) => (
                               <div key={`${meal._id}-food-${foodIndex}`} className="mt-2">
                                 <p className="text-gray-400">
