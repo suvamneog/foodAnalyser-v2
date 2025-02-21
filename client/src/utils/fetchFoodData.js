@@ -1,41 +1,68 @@
+import axios from 'axios';
+
 export const fetchFoodData = async (foodName) => {
-  const API_KEY = "ziQ3fnCsGky3pOU6uLEYBQ==aVoKSZaT7UM0KTFz"; 
-  const authToken = localStorage.getItem("authToken");
-  const url = `http://localhost:3000/api/food/search?q=${foodName}`;
+  const API_KEY = "ziQ3fnCsGky3pOU6uLEYBQ==aVoKSZaT7UM0KTFz";
+  const url = `http://localhost:3000/api/food/search?q=${encodeURIComponent(foodName.trim())}`;
 
   try {
-    const response = await fetch(url, {
-      method: "GET",
-      headers: {
-        "X-Api-Key": API_KEY,
-        ...(authToken && { "Authorization": `Bearer ${authToken}` }), // Only include auth token if it exists
-        "Content-Type": "application/json"
-      }
+    const headers = {
+      "X-Api-Key": API_KEY,
+      "Content-Type": "application/json",
+    };
+
+    // Only add auth header if user is logged in
+    const authToken = localStorage.getItem("authToken");
+    if (authToken) {
+      headers.Authorization = `Bearer ${authToken}`;
+    }
+
+    const response = await axios.get(url, { headers });
+    
+    if (!response.data || !response.data.items || !Array.isArray(response.data.items)) {
+      throw new Error("Invalid response format from server");
+    }
+
+    if (response.data.items.length === 0) {
+      throw new Error(`No results found for "${foodName}"`);
+    }
+
+    const foodItem = response.data.items[0];
+
+    // Validate required fields
+    const requiredFields = ["name", "calories", "protein_g", "carbohydrates_total_g", "fat_total_g"];
+    const missingFields = requiredFields.filter(field => {
+      const value = foodItem[field];
+      return value === undefined || value === null || (typeof value === "number" && isNaN(value));
     });
 
-    if (!response.ok) {
-      console.error("Server response not ok:", response.status);
-      throw new Error("Failed to fetch data");
+    if (missingFields.length > 0) {
+      throw new Error(`Incomplete data: missing ${missingFields.join(", ")}`);
     }
 
-    const data = await response.json();
-    console.log("API Response:", data);
-    
-    if (data.items && data.items.length > 0) {
-      const foodItem = data.items[0];
-      return {
-        name: foodItem.name,
-        calories: foodItem.calories,
-        protein_g: foodItem.protein_g,
-        carbohydrates_total_g: foodItem.carbohydrates_total_g,
-        fat_total_g: foodItem.fat_total_g,
-      };
-    } else {
-      console.log("No items found");
-      return null;
-    }
+    return {
+      name: foodItem.name,
+      calories: Number(foodItem.calories),
+      protein_g: Number(foodItem.protein_g || 0),
+      carbohydrates_total_g: Number(foodItem.carbohydrates_total_g || 0),
+      fat_total_g: Number(foodItem.fat_total_g || 0),
+    };
   } catch (error) {
-    console.error("Error fetching food data:", error);
-    return null;
+    if (axios.isAxiosError(error)) {
+      switch (error.response?.status) {
+        case 401:
+          throw new Error("Session expired. Please log in again.");
+        case 403:
+          throw new Error("Access denied. Please check your permissions.");
+        case 404:
+          throw new Error(`No data found for "${foodName}". Please try another food item.`);
+        case 429:
+          throw new Error("Too many requests. Please try again later.");
+        case 500:
+          throw new Error("Server error. Please try again later.");
+        default:
+          throw new Error(error.response?.data?.message || "Failed to fetch food data");
+      }
+    }
+    throw error;
   }
 };

@@ -1,40 +1,53 @@
 /* eslint-disable react-refresh/only-export-components */
 /* eslint-disable react/prop-types */
-"use client"
+import { createContext, useContext, useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 
-import { createContext, useContext, useState, useEffect } from "react"
-
-const AuthContext = createContext()
+const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(() => {
-    // Check localStorage on initial render
-    return localStorage.getItem("isAuthenticated") === "true"
-  })
+    return localStorage.getItem("authToken") !== null;
+  });
+  const [isLoading, setIsLoading] = useState(true);
+  const navigate = useNavigate();
 
   useEffect(() => {
-    // Persist auth state in localStorage
-    localStorage.setItem("isAuthenticated", isAuthenticated)
-  }, [isAuthenticated])
+    // Check token validity on mount
+    const token = localStorage.getItem("authToken");
+    if (token) {
+      // You could add token validation logic here
+      setIsAuthenticated(true);
+    }
+    setIsLoading(false);
+  }, []);
 
   const login = (token) => {
-    setIsAuthenticated(true)
-    localStorage.setItem("isAuthenticated", "true");
-    localStorage.setItem("authToken", token); 
+    localStorage.setItem("authToken", token);
+    setIsAuthenticated(true);
+  };
+
+  const logout = () => {
+    localStorage.removeItem("authToken");
+    setIsAuthenticated(false);
+    navigate("/login");
+  };
+
+  if (isLoading) {
+    return <div>Loading...</div>; // Or your loading component
   }
 
-    const logout = () => {
-      localStorage.removeItem("authToken");
-      setIsAuthenticated(false);
-    };
-
-  return <AuthContext.Provider value={{ isAuthenticated, login, logout }}>{children}</AuthContext.Provider>
-}
+  return (
+    <AuthContext.Provider value={{ isAuthenticated, login, logout }}>
+      {children}
+    </AuthContext.Provider>
+  );
+};
 
 export const useAuth = () => {
-  const context = useContext(AuthContext)
+  const context = useContext(AuthContext);
   if (context === undefined) {
-    throw new Error("useAuth must be used within an AuthProvider")
+    throw new Error("useAuth must be used within an AuthProvider");
   }
-  return context
-}
+  return context;
+};

@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/rules-of-hooks */
 import { useState, useEffect } from 'react';
 import { ScrollArea } from '../components/ui/scroll-area';
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
@@ -13,7 +12,7 @@ import { ShootingStars } from "../components/ui/shooting-stars";
 import { StarsBackground } from "../components/ui/stars-background";
 import { motion } from "framer-motion";
 
-function addFood() {
+function AddFood() {
   const [foodHistory, setFoodHistory] = useState([]);
   const [isEditing, setIsEditing] = useState(false);
   const [editingId, setEditingId] = useState(null);
@@ -38,37 +37,51 @@ function addFood() {
   }, []);
 
   const fetchFoods = async () => {
-    console.log("Fetching food data...");
     try {
-      const response = await fetch('http://localhost:3000/api/food/', {
+      const response = await fetch('http://localhost:3000/api/food', {
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('authToken')}`
         }
       });
       
-      if (!response.ok) throw new Error('Failed to fetch foods');
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Failed to fetch foods');
+      }
       
       const data = await response.json();
       setFoodHistory(data);
     } catch (err) {
       setError(err.message);
-    } finally {
+      console.error('Error fetching foods:', err);
+    } finally {  
       setIsLoading(false);
     }
   };
 
   const handleAddOrUpdateFood = async () => {
     try {
-      const prosArray = newFood.pros.split(',').map(pro => pro.trim());
-      const consArray = newFood.cons.split(',').map(con => con.trim());
+      if (!newFood.name || !newFood.calories) {
+        throw new Error('Name and calories are required');
+      }
+
+      const prosArray = newFood.pros.split(',').map(pro => pro.trim()).filter(Boolean);
+      const consArray = newFood.cons.split(',').map(con => con.trim()).filter(Boolean);
 
       const foodData = {
         ...newFood,
+        calories: Number(newFood.calories),
+        protein: Number(newFood.protein) || 0,
+        carbs: Number(newFood.carbs) || 0,
+        fats: Number(newFood.fats) || 0,
         pros: prosArray,
         cons: consArray
       };
 
-      const url = isEditing ? `http://localhost:3000/api/food/${editingId}` : '/api/foods';
+      const url = isEditing 
+        ? `http://localhost:3000/api/food/${editingId}` 
+        : 'http://localhost:3000/api/food';
+      
       const method = isEditing ? 'PUT' : 'POST';
 
       const response = await fetch(url, {
@@ -80,15 +93,20 @@ function addFood() {
         body: JSON.stringify(foodData)
       });
 
-      if (!response.ok) throw new Error('Failed to save food');
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Failed to save food');
+      }
 
       await fetchFoods();
       setNewFood(emptyFood);
       setIsEditing(false);
       setEditingId(null);
       setIsDialogOpen(false);
+      setError(null);
     } catch (err) {
       setError(err.message);
+      console.error('Error saving food:', err);
     }
   };
 
@@ -109,18 +127,23 @@ function addFood() {
 
   const handleDelete = async (id) => {
     try {
-      const response = await fetch(`http://localhost:3000/api/food//${id}`, {
+      const response = await fetch(`http://localhost:3000/api/food/${id}`, {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('authToken')}`
         }
       });
 
-      if (!response.ok) throw new Error('Failed to delete food');
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Failed to delete food');
+      }
 
       await fetchFoods();
+      setError(null);
     } catch (err) {
       setError(err.message);
+      console.error('Error deleting food:', err);
     }
   };
 
@@ -129,10 +152,10 @@ function addFood() {
     setNewFood(emptyFood);
     setIsEditing(false);
     setEditingId(null);
+    setError(null);
   };
 
   if (isLoading) return <div>Loading...</div>;
-  if (error) return <div>Error: {error}</div>;
 
   return (
     <div className="relative bg-black min-h-screen p-6 mt-14">
@@ -140,6 +163,11 @@ function addFood() {
         <StarsBackground />
         <ShootingStars />
       </div>
+      {error && (
+        <div className="max-w-4xl mx-auto mb-4 p-4 bg-red-100 border border-red-400 text-red-700 rounded">
+          {error}
+        </div>
+      )}
       <motion.div
         initial={{ opacity: 0, scale: 0.9 }}
         animate={{ opacity: 1, scale: 1 }}
@@ -250,80 +278,86 @@ function addFood() {
           </div>
 
           <ScrollArea className="h-[800px] rounded-lg border">
-            {foodHistory.map((food) => (
-              <Card key={food._id} className="mb-4 mx-4 mt-4 hover:shadow-lg transition-shadow">
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-xl font-semibold flex items-center gap-2">
-                    <Utensils className="w-5 h-5 text-primary" />
-                    {food.name}
-                  </CardTitle>
-                  <div className="flex items-center gap-4">
-                    <span className="text-sm text-muted-foreground">
-                      {new Date(food.date).toLocaleDateString()}
-                    </span>
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      className="text-blue-500 hover:text-blue-700 hover:bg-blue-100"
-                      onClick={() => handleEdit(food)}
-                    >
-                      <Edit2 className="w-4 h-4" />
-                    </Button>
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      className="text-red-500 hover:text-red-700 hover:bg-red-100"
-                      onClick={() => handleDelete(food._id)}
-                    >
-                      <Trash2 className="w-4 h-4" />
-                    </Button>
-                  </div>
-                </CardHeader>
-                <CardContent>
-                  <div className="grid grid-cols-4 gap-4 mb-4">
-                    <div className="bg-secondary/50 p-3 rounded-lg">
-                      <div className="text-sm font-medium">Calories</div>
-                      <div className="text-2xl font-bold">{food.calories}</div>
+            {foodHistory.length === 0 ? (
+              <div className="p-8 text-center text-gray-500">
+                No foods added yet. Click the Add Food button to get started!
+              </div>
+            ) : (
+              foodHistory.map((food) => (
+                <Card key={food._id} className="mb-4 mx-4 mt-4 hover:shadow-lg transition-shadow">
+                  <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                    <CardTitle className="text-xl font-semibold flex items-center gap-2">
+                      <Utensils className="w-5 h-5 text-primary" />
+                      {food.name}
+                    </CardTitle>
+                    <div className="flex items-center gap-4">
+                      <span className="text-sm text-muted-foreground">
+                        {new Date(food.date).toLocaleDateString()}
+                      </span>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="text-blue-500 hover:text-blue-700 hover:bg-blue-100"
+                        onClick={() => handleEdit(food)}
+                      >
+                        <Edit2 className="w-4 h-4" />
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="text-red-500 hover:text-red-700 hover:bg-red-100"
+                        onClick={() => handleDelete(food._id)}
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </Button>
                     </div>
-                    <div className="bg-secondary/50 p-3 rounded-lg">
-                      <div className="text-sm font-medium">Protein</div>
-                      <div className="text-2xl font-bold">{food.protein}g</div>
-                    </div>
-                    <div className="bg-secondary/50 p-3 rounded-lg">
-                      <div className="text-sm font-medium">Carbs</div>
-                      <div className="text-2xl font-bold">{food.carbs}g</div>
-                    </div>
-                    <div className="bg-secondary/50 p-3 rounded-lg">
-                      <div className="text-sm font-medium">Fats</div>
-                      <div className="text-2xl font-bold">{food.fats}g</div>
-                    </div>
-                  </div>
-                  
-                  <div className="space-y-2">
-                    <div>
-                      <div className="text-sm font-medium mb-1">Pros</div>
-                      <div className="flex flex-wrap gap-2">
-                        {food.pros.map((pro, index) => (
-                          <Badge key={index} variant="secondary" className="bg-green-500/10 text-green-700 hover:bg-green-500/20">
-                            {pro}
-                          </Badge>
-                        ))}
+                  </CardHeader>
+                  <CardContent>
+                    <div className="grid grid-cols-4 gap-4 mb-4">
+                      <div className="bg-secondary/50 p-3 rounded-lg">
+                        <div className="text-sm font-medium">Calories</div>
+                        <div className="text-2xl font-bold">{food.calories}</div>
+                      </div>
+                      <div className="bg-secondary/50 p-3 rounded-lg">
+                        <div className="text-sm font-medium">Protein</div>
+                        <div className="text-2xl font-bold">{food.protein}g</div>
+                      </div>
+                      <div className="bg-secondary/50 p-3 rounded-lg">
+                        <div className="text-sm font-medium">Carbs</div>
+                        <div className="text-2xl font-bold">{food.carbs}g</div>
+                      </div>
+                      <div className="bg-secondary/50 p-3 rounded-lg">
+                        <div className="text-sm font-medium">Fats</div>
+                        <div className="text-2xl font-bold">{food.fats}g</div>
                       </div>
                     </div>
-                    <div>
-                      <div className="text-sm font-medium mb-1">Cons</div>
-                      <div className="flex flex-wrap gap-2">
-                        {food.cons.map((con, index) => (
-                          <Badge key={index} variant="secondary" className="bg-red-500/10 text-red-700 hover:bg-red-500/20">
-                            {con}
-                          </Badge>
-                        ))}
+                    
+                    <div className="space-y-2">
+                      <div>
+                        <div className="text-sm font-medium mb-1">Pros</div>
+                        <div className="flex flex-wrap gap-2">
+                          {food.pros.map((pro, index) => (
+                            <Badge key={index} variant="secondary" className="bg-green-500/10 text-green-700 hover:bg-green-500/20">
+                              {pro}
+                            </Badge>
+                          ))}
+                        </div>
+                      </div>
+                      <div>
+                        <div className="text-sm font-medium mb-1">Cons</div>
+                        <div className="flex flex-wrap gap-2">
+                          {food.cons.map((con, index) => (
+                            <Badge key={index} variant="secondary" className="bg-red-500/10 text-red-700 hover:bg-red-500/20">
+                              {con}
+                            </Badge>
+                          ))}
+                        </div>
                       </div>
                     </div>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
+                  </CardContent>
+                </Card>
+              ))
+            )}
           </ScrollArea>
         </div>
       </motion.div>
@@ -331,4 +365,4 @@ function addFood() {
   );
 }
 
-export default addFood;
+export default AddFood;

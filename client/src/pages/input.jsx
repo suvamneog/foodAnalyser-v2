@@ -1,29 +1,49 @@
 /* eslint-disable react/prop-types */
-"use client"
-
-import { PlaceholdersAndVanishInput } from "../components/ui/placeholders-and-vanish-input"
-import { fetchFoodData } from "../utils/fetchFoodData"
+import { useState } from "react";
+import { PlaceholdersAndVanishInput } from "../components/ui/placeholders-and-vanish-input";
+import { fetchFoodData } from "../utils/fetchFoodData";
 
 function PlaceholdersAndVanishInputDemo({ foodName, setFoodName, setOutput }) {
+  const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(false); // Added loading state
+
   const placeholders = [
-    "You know the business and I know the chemistry",
     "One whey to a healthy life!",
     "Enter the food name!",
     "Searching for some protein?",
-  ]
+  ];
 
-  const updateVal = async (e) => {
-    console.log(e.target.value)
-    setFoodName(e.target.value)
-  }
+  const updateVal = (e) => {
+    setFoodName(e.target.value);
+    setError(null); // Clear error when user starts typing
+  };
 
   const onSubmit = async () => {
-    const data = await fetchFoodData(foodName)
-    // setOutput((prevData) =>
-    //   [...prevData, data]);
-    setOutput([data])
-    console.log("submitted", data)
-  }
+    if (loading) return; // Prevent multiple requests
+  
+    const trimmedFoodName = foodName.trim();
+    if (!trimmedFoodName) {
+      setError("Please enter a valid food name before searching.");
+      setTimeout(() => document.getElementById("food-input")?.focus(), 100);
+      return;
+    }
+  
+    setLoading(true); // Set loading before making request
+    try {
+      const data = await fetchFoodData(trimmedFoodName);
+      if (!data || Object.keys(data).length === 0) {
+        throw new Error("No data found for the entered food item.");
+      }
+      
+      setOutput([data]);
+      console.log("submitted", data);
+    } catch (err) {
+      setError(err.message || "Something went wrong. Please try again.");
+      console.error("Error fetching food data:", err);
+    } finally {
+      setLoading(false); // Reset loading state after request
+    }
+  };
   return (
     <div className="h-[20rem] sm:h-[30rem] md:h-[40rem] flex flex-col items-center px-4">
       <PlaceholdersAndVanishInput
@@ -32,8 +52,9 @@ function PlaceholdersAndVanishInputDemo({ foodName, setFoodName, setOutput }) {
         onSubmit={onSubmit}
         value={foodName}
       />
+      {error && <p className="mt-2 text-red-500">{error}</p>}
     </div>
-  )
+  );
 }
-export default PlaceholdersAndVanishInputDemo
 
+export default PlaceholdersAndVanishInputDemo;

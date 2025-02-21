@@ -149,26 +149,37 @@ export function PlaceholdersAndVanishInput({
 
   const handleKeyDown = (e) => {
     if (e.key === "Enter" && !animating) {
-      vanishAndSubmit();
+      handleSubmit(e);;
     }
   };
+const vanishAndSubmit = () => {
+  if (!inputRef.current || animating) return; // Prevent redundant calls
+  setAnimating(true);
+  draw();
 
-  const vanishAndSubmit = () => {
-    setAnimating(true);
-    draw();
+  const inputValue = inputRef.current.value;
+  if (inputValue) {
+    const maxX = newDataRef.current.reduce(
+      (prev, current) => (current.x > prev ? current.x : prev),
+      0
+    );
+    animate(maxX);
+  } else {
+    setAnimating(false); // Reset animating if input is empty
+    inputRef.current.focus(); // Ensure focus is back on input
+  }
+};
 
-    const value = inputRef.current?.value || "";
-    if (value && inputRef.current) {
-      const maxX = newDataRef.current.reduce((prev, current) => (current.x > prev ? current.x : prev), 0);
-      animate(maxX);
-    }
-  };
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    vanishAndSubmit();
-    onSubmit && onSubmit(e);
-  };
+const handleSubmit = (e) => {
+  e.preventDefault();
+  if (animating) return; // Prevent multiple searches
+  
+  if (onSubmit) {
+    onSubmit(e); // Call API request before starting animation
+  }
+  
+  vanishAndSubmit(); // Start animation after API call
+};
   return (
     (<form
       className={cn(

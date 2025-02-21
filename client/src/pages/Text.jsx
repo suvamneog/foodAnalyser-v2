@@ -66,7 +66,7 @@ function FoodAnalyzer({ output }) {
   const { isAuthenticated } = useAuth()
 
   if (!output || output.length === 0) {
-    return <p>No data available</p>
+    return null
   }
 
   return (
