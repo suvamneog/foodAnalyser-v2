@@ -31,6 +31,9 @@ function AddFood() {
   
   const [newFood, setNewFood] = useState(emptyFood);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [isRequesting, setIsRequesting] = useState(false); // Track request state
+
+  
 
   useEffect(() => {
     fetchFoods();
@@ -60,14 +63,17 @@ function AddFood() {
   };
 
   const handleAddOrUpdateFood = async () => {
+    if (isRequesting) return; // Prevent multiple requests
+    setIsRequesting(true);
+  
     try {
       if (!newFood.name || !newFood.calories) {
         throw new Error('Name and calories are required');
       }
-
+  
       const prosArray = newFood.pros.split(',').map(pro => pro.trim()).filter(Boolean);
       const consArray = newFood.cons.split(',').map(con => con.trim()).filter(Boolean);
-
+  
       const foodData = {
         ...newFood,
         calories: Number(newFood.calories),
@@ -77,13 +83,13 @@ function AddFood() {
         pros: prosArray,
         cons: consArray
       };
-
+  
       const url = isEditing 
         ? `http://localhost:3000/api/food/${editingId}` 
         : 'http://localhost:3000/api/food';
-      
+  
       const method = isEditing ? 'PUT' : 'POST';
-
+  
       const response = await fetch(url, {
         method,
         headers: {
@@ -92,12 +98,12 @@ function AddFood() {
         },
         body: JSON.stringify(foodData)
       });
-
+  
       if (!response.ok) {
         const errorData = await response.json();
         throw new Error(errorData.message || 'Failed to save food');
       }
-
+  
       await fetchFoods();
       setNewFood(emptyFood);
       setIsEditing(false);
@@ -107,9 +113,11 @@ function AddFood() {
     } catch (err) {
       setError(err.message);
       console.error('Error saving food:', err);
+    } finally {
+      setIsRequesting(false); // Allow new requests
     }
   };
-
+  
   const handleEdit = (food) => {
     setIsEditing(true);
     setEditingId(food._id);
@@ -126,6 +134,9 @@ function AddFood() {
   };
 
   const handleDelete = async (id) => {
+    if (isRequesting) return; // Prevent multiple requests
+    setIsRequesting(true);
+  
     try {
       const response = await fetch(`http://localhost:3000/api/food/${id}`, {
         method: 'DELETE',
@@ -133,20 +144,21 @@ function AddFood() {
           'Authorization': `Bearer ${localStorage.getItem('authToken')}`
         }
       });
-
+  
       if (!response.ok) {
         const errorData = await response.json();
         throw new Error(errorData.message || 'Failed to delete food');
       }
-
+  
       await fetchFoods();
       setError(null);
     } catch (err) {
       setError(err.message);
       console.error('Error deleting food:', err);
+    } finally {
+      setIsRequesting(false); // Allow new requests
     }
   };
-
   const handleDialogClose = () => {
     setIsDialogOpen(false);
     setNewFood(emptyFood);

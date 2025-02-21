@@ -12,9 +12,12 @@ function LogMeals() {
     unit: 'g'
   }]);
   const [mealName, setMealName] = useState('');
+  const [loading, setLoading] = useState(false);
   const token = localStorage.getItem("authToken");
 
   const fetchMeals = async () => {
+    if (loading) return; // Prevent multiple requests
+    setLoading(true);
     try {
       const response = await axios.get("http://localhost:3000/api/meal/logs", {
         headers: { Authorization: `Bearer ${token}` }
@@ -22,8 +25,11 @@ function LogMeals() {
       setMeals(response.data);
     } catch (error) {
       console.error("Error fetching meals:", error);
+    } finally {
+      setLoading(false);
     }
   };
+  
 
   useEffect(() => {
     if (token) fetchMeals();
@@ -55,7 +61,10 @@ function LogMeals() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+    if (loading) return; // Prevent duplicate submissions
+  
+    setLoading(true);
+  
     const newMeal = {
       mealName,
       foodItems: foodItems.map(item => ({
@@ -64,24 +73,22 @@ function LogMeals() {
         unit: item.unit
       }))
     };
-
+  
     try {
       await axios.post("http://localhost:3000/api/meal/log", newMeal, {
         headers: { Authorization: `Bearer ${token}` }
       });
-
+  
       // Reset form
       setMealName('');
-      setFoodItems([{
-        name: '',
-        quantity: '',
-        unit: 'g'
-      }]);
-
+      setFoodItems([{ name: '', quantity: '', unit: 'g' }]);
+  
       // Fetch updated meals
       await fetchMeals();
     } catch (error) {
       console.error("Error logging meal:", error);
+    } finally {
+      setLoading(false);
     }
   };
 
