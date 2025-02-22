@@ -1,57 +1,78 @@
 const express = require("express");
 const app = express();
 const connectDB = require("./db");
-const User = require("./models/user");
-const Food = require("./models/food");
 const cors = require("cors");
-const userRoutes= require('./routes/userRoutes');
-const foodRoutes= require('./routes/foodRoutes');
-const calRoutes= require('./routes/calculator');
-const apiRoutes= require('./routes/api');
-const mealRoutes= require('./routes/mealRoutes');
 const dotenv = require("dotenv");
-const PORT = process.env.PORT || 3000;
+const morgan = require("morgan");
 
-app.use(express.json());
-const corsOptions = {
-  origin: 'http://localhost:5173',// Allow only your frontend to access
-  credentials: true  
-};
-app.use(cors(corsOptions));
+// Routes
+const userRoutes = require("./routes/userRoutes");
+const authRoutes = require("./routes/auth");
+const foodRoutes = require("./routes/foodRoutes");
+const calRoutes = require("./routes/calculator");
+const apiRoutes = require("./routes/api");
+const mealRoutes = require("./routes/mealRoutes");
 
-app.use(express.urlencoded({ extended: true }));
-app.use("/api/auth", userRoutes);
-app.use("/api/food", apiRoutes, foodRoutes);
-app.use("/api/meal", mealRoutes);
-app.use("/api/calories", calRoutes);
-
-// app.get("/", (req, res) => {
-//   res.send("hello");
-// });
-
+// Load environment variables
 dotenv.config();
+
+// Database connection
 connectDB();
 
-app.get("/test", async (req,res) => {
-  let newUser = new User ({
-    name : "suv"
-  });
-  await newUser.save();
-  console.log(newUser);
-  res.send("User saved!");
+// Middleware
+app.use(cors({
+  origin: 'http://localhost:5173', // Allow only your frontend to access
+  credentials: true,
+}));
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+app.use(morgan("dev")); // Logging middleware
+
+// Routes
+app.use("/api/auth", authRoutes); // Authentication routes
+app.use("/api/auth", userRoutes); // User management routes
+app.use("/api/food", apiRoutes, foodRoutes); // Food-related routes
+app.use("/api/meal", mealRoutes); // Meal planning routes
+app.use("/api/calories", calRoutes); // Calorie calculation routes
+
+
+app.get("/test", async (req, res) => {
+  try {
+    let newUser = new User({
+      name: "suv",
+    });
+    await newUser.save();
+    console.log(newUser);
+    res.send("User saved!");
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Error saving user");
+  }
 });
 
-app.get("/food", async (req,res) => {
-  let newFood = new Food ({
-    name: "Chicken Breast",
-    protein: 30
-  });
-  await newFood.save();
-  console.log(newFood);
-  res.send("User saved!");
+app.get("/food", async (req, res) => {
+  try {
+    let newFood = new Food({
+      name: "Chicken Breast",
+      protein: 30,
+    });
+    await newFood.save();
+    console.log(newFood);
+    res.send("Food saved!");
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Error saving food");
+  }
 });
 
+// Global error handler
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+  res.status(500).json({ message: "Something went wrong!" });
+});
+
+// Start server
+const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
-    console.log(`Server running on http://localhost:${PORT}`);
-  });
-  
+  console.log(`Server running on http://localhost:${PORT}`);
+});

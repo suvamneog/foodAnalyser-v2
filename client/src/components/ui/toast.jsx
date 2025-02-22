@@ -1,14 +1,15 @@
+/* eslint-disable react-hooks/exhaustive-deps */
+/* eslint-disable react-hooks/rules-of-hooks */
 /* eslint-disable react-refresh/only-export-components */
 /* eslint-disable react/prop-types */
-// components/ui/toast.jsx
-import * as React from "react"
-import { Toaster as Sonner } from "sonner"
+import * as React from "react";
+import { Toaster as Sonner } from "sonner";
 
-const ToastContext = React.createContext({ toast: () => {} })
+// Create a context for toast functionality
+const ToastContext = React.createContext({ toast: () => {} });
 
-export const Toaster = ({
-  ...props
-}) => {
+// Toaster component to render the toast notifications
+const Toaster = ({ ...props }) => {
   return (
     <Sonner
       className="toaster group"
@@ -29,47 +30,64 @@ export const Toaster = ({
       }}
       {...props}
     />
-  )
-}
+  );
+};
 
+// ToastProvider component to manage toast state and provide context
 export function ToastProvider({ children }) {
-  const [toasts, setToasts] = React.useState([])
+  const [toasts, setToasts] = React.useState([]);
 
+  // Function to add a new toast
   const toast = React.useCallback(
     ({ variant = "default", ...props }) => {
-      const id = Math.random().toString(36).substring(2, 9)
-      
+      const id = Math.random().toString(36).substring(2, 9); // Generate a unique ID for the toast
+
       setToasts((prevToasts) => [
         ...prevToasts,
         { id, variant, ...props },
-      ])
-      
-      return id
-    },
-    [setToasts]
-  )
+      ]);
 
+      // Automatically dismiss the toast after 5 seconds
+      setTimeout(() => {
+        dismissToast(id);
+      }, 5000);
+
+      return id; // Return the toast ID for manual dismissal
+    },
+    []
+  );
+
+  // Function to dismiss a toast by ID
   const dismissToast = React.useCallback(
     (id) => {
-      setToasts((prevToasts) => prevToasts.filter((toast) => toast.id !== id))
+      setToasts((prevToasts) => prevToasts.filter((toast) => toast.id !== id));
     },
-    [setToasts]
-  )
+    []
+  );
 
   return (
     <ToastContext.Provider value={{ toast, dismissToast, toasts }}>
       {children}
       <Toaster />
     </ToastContext.Provider>
-  )
+  );
 }
 
+// Custom hook to use toast functionality
 export const useToast = () => {
-  const context = React.useContext(ToastContext)
-  
+  const context = React.useContext(ToastContext);
+
   if (context === undefined) {
-    throw new Error("useToast must be used within a ToastProvider")
+    throw new Error("useToast must be used within a ToastProvider");
   }
-  
-  return context
-}
+
+  return context;
+};
+
+// Export the toast function directly for convenience
+export const toast = ({ variant = "default", ...props }) => {
+  const { toast: showToast } = React.useContext(ToastContext);
+  return showToast({ variant, ...props });
+};
+
+export default Toaster;

@@ -8,6 +8,7 @@ import { ShootingStars } from "../components/ui/shooting-stars";
 import { StarsBackground } from "../components/ui/stars-background";
 import { cn } from "../utils/cn";
 import axios from "axios";
+import { useAuth } from "../utils/AuthContext";
 import { useToast } from "../components/ui/toast";
 import {
   IconBrandGithub,
@@ -23,6 +24,7 @@ function SignupFormDemo() {
   const [errors, setErrors] = useState({});
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { handleSocialLogin } = useAuth();
   const [user, setUser] = useState({ name: "", email: "", password: "" });
 
   const validateForm = () => {
@@ -78,6 +80,27 @@ function SignupFormDemo() {
           variant: "destructive",
         });
       }
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleSocialSignup = async (provider) => {
+    try {
+      setIsLoading(true);
+      await handleSocialLogin(provider);
+      toast({
+        title: "Success!",
+        description: `Signed up with ${provider}`,
+        variant: "success",
+      });
+    } catch (error) {
+      toast({
+        title: "Authentication failed",
+        description: `Could not sign up with ${provider}. Please try again.`,
+        variant: "destructive",
+      });
+      console.log(error);
     } finally {
       setIsLoading(false);
     }
@@ -227,11 +250,12 @@ function SignupFormDemo() {
               whileTap={{ scale: 0.95 }}
               className="flex space-x-2 items-center justify-start px-4 w-full text-black rounded-md h-10 font-medium shadow-md bg-gray-50 dark:bg-zinc-900"
               type="button"
+              onClick={() => handleSocialSignup('github')}
               disabled={isLoading}
             >
               <IconBrandGithub className="h-4 w-4 text-neutral-800 dark:text-neutral-300" />
               <span className="text-neutral-700 dark:text-neutral-300 text-sm">
-                GitHub
+                Continue with GitHub
               </span>
             </motion.button>
 
@@ -240,11 +264,12 @@ function SignupFormDemo() {
               whileTap={{ scale: 0.95 }}
               className="flex space-x-2 items-center justify-start px-4 w-full text-black rounded-md h-10 font-medium shadow-md bg-gray-50 dark:bg-zinc-900"
               type="button"
+              onClick={() => handleSocialSignup('google')}
               disabled={isLoading}
             >
               <IconBrandGoogle className="h-4 w-4 text-neutral-800 dark:text-neutral-300" />
               <span className="text-neutral-700 dark:text-neutral-300 text-sm">
-                Google
+                Continue with Google
               </span>
             </motion.button>
           </motion.div>

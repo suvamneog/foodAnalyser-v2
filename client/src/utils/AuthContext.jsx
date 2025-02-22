@@ -13,10 +13,8 @@ export const AuthProvider = ({ children }) => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Check token validity on mount
     const token = localStorage.getItem("authToken");
     if (token) {
-      // You could add token validation logic here
       setIsAuthenticated(true);
     }
     setIsLoading(false);
@@ -33,12 +31,47 @@ export const AuthProvider = ({ children }) => {
     navigate("/login");
   };
 
+  const handleSocialLogin = async (provider) => {
+    try {
+      // Open the OAuth provider's login page in a popup
+      const width = 500;
+      const height = 600;
+      const left = window.screenX + (window.outerWidth - width) / 2;
+      const top = window.screenY + (window.outerHeight - height) / 2;
+      
+      const popup = window.open(
+        `http://localhost:3000/api/auth/${provider}`,
+        `${provider}Login`,
+        `width=${width},height=${height},left=${left},top=${top}`
+      );
+
+      // Listen for messages from the popup
+      const messageHandler = async (event) => {
+        if (event.origin !== "http://localhost:3000") return;
+        
+        if (event.data.type === "social_auth_success") {
+          const { token } = event.data;
+          login(token);
+          navigate("/");
+          popup.close();
+        }
+        
+        window.removeEventListener("message", messageHandler);
+      };
+
+      window.addEventListener("message", messageHandler);
+    } catch (error) {
+      console.error(`${provider} login failed:`, error);
+      throw error;
+    }
+  };
+
   if (isLoading) {
-    return <div>Loading...</div>; // Or your loading component
+    return <div>Loading...</div>;
   }
 
   return (
-    <AuthContext.Provider value={{ isAuthenticated, login, logout }}>
+    <AuthContext.Provider value={{ isAuthenticated, login, logout, handleSocialLogin }}>
       {children}
     </AuthContext.Provider>
   );
