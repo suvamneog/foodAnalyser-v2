@@ -117,16 +117,16 @@ function SignupFormDemo() {
         initial={{ opacity: 0, scale: 0.9 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ duration: 0.5, ease: "easeOut" }}
-        className="max-w-md w-full mx-auto rounded-2xl p-8 shadow-lg bg-white dark:bg-black mt-20 relative z-10"
+        className="w-[90%] sm:w-[80%] md:w-[60%] lg:w-[40%] max-w-md mx-auto rounded-2xl p-4 sm:p-6 md:p-8 shadow-lg bg-white dark:bg-black relative z-10"
       >
-        <h2 className="font-bold text-xl text-neutral-800 dark:text-neutral-200">
+        <h2 className="font-bold text-lg sm:text-xl text-neutral-800 dark:text-neutral-200">
           Welcome to Food Analyser x fit
         </h2>
-        <p className="text-neutral-600 text-sm max-w-sm mt-2 dark:text-neutral-300">
+        <p className="text-neutral-600 text-xs sm:text-sm max-w-sm mt-2 dark:text-neutral-300">
           Sign up here
         </p>
 
-        <form className="my-8" onSubmit={handleSubmit}>
+        <form className="my-6 sm:my-8" onSubmit={handleSubmit}>
           <motion.div
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
@@ -134,10 +134,10 @@ function SignupFormDemo() {
             className="flex flex-col md:flex-row space-y-2 md:space-y-0 md:space-x-2 mb-4"
           >
             <LabelInputContainer>
-              <Label htmlFor="name">Your name</Label>
+              <Label htmlFor="name" className="text-sm">Your name</Label>
               <Input 
                 id="name" 
-                className={`text-white ${errors.name ? "border-red-500 focus:ring-red-500" : ""}`} 
+                className={`text-white text-sm ${errors.name ? "border-red-500 focus:ring-red-500" : ""}`} 
                 placeholder="Tyler" 
                 type="text" 
                 value={user.name} 
@@ -161,10 +161,10 @@ function SignupFormDemo() {
             className="mb-4"
           >
             <LabelInputContainer>
-              <Label htmlFor="email">Email Address</Label>
+              <Label htmlFor="email" className="text-sm">Email Address</Label>
               <Input 
                 id="email" 
-                className={`text-white ${errors.email ? "border-red-500 focus:ring-red-500" : ""}`} 
+                className={`text-white text-sm ${errors.email ? "border-red-500 focus:ring-red-500" : ""}`} 
                 placeholder="youremail@gmail.com" 
                 type="email" 
                 value={user.email} 
@@ -188,11 +188,11 @@ function SignupFormDemo() {
             className="mb-4"
           >
             <LabelInputContainer>
-              <Label htmlFor="password">Password</Label>
+              <Label htmlFor="password" className="text-sm">Password</Label>
               <div className="relative">
                 <Input
                   id="password"
-                  className={`text-white pr-10 ${errors.password ? "border-red-500 focus:ring-red-500" : ""}`}
+                  className={`text-white text-sm pr-10 ${errors.password ? "border-red-500 focus:ring-red-500" : ""}`}
                   placeholder="••••••••"
                   type={showPassword ? "text" : "password"}
                   value={user.password}
@@ -206,7 +206,7 @@ function SignupFormDemo() {
                   onClick={() => setShowPassword((prev) => !prev)}
                   tabIndex="-1"
                 >
-                  {showPassword ? <IconEyeOff className="h-5 w-5" /> : <IconEye className="h-5 w-5" />}
+                  {showPassword ? <IconEyeOff className="h-4 w-4" /> : <IconEye className="h-4 w-4" />}
                 </button>
               </div>
               {errors.password && (
@@ -221,7 +221,7 @@ function SignupFormDemo() {
           <motion.button
             whileHover={{ scale: isLoading ? 1 : 1.05 }}
             whileTap={{ scale: isLoading ? 1 : 0.95 }}
-            className={`bg-gradient-to-br from-black to-neutral-600 dark:from-zinc-900 dark:to-zinc-900 block w-full text-white rounded-md h-10 font-medium shadow-md ${isLoading ? 'opacity-70 cursor-not-allowed' : ''}`}
+            className={`bg-gradient-to-br from-black to-neutral-600 dark:from-zinc-900 dark:to-zinc-900 block w-full text-white rounded-md h-9 sm:h-10 font-medium shadow-md text-sm ${isLoading ? 'opacity-70 cursor-not-allowed' : ''}`}
             type="submit"
             disabled={isLoading}
           >
@@ -237,24 +237,24 @@ function SignupFormDemo() {
             }
           </motion.button>
 
-          <div className="bg-gradient-to-r from-transparent via-neutral-300 dark:via-neutral-700 to-transparent my-8 h-[1px] w-full" />
+          <div className="bg-gradient-to-r from-transparent via-neutral-300 dark:via-neutral-700 to-transparent my-6 sm:my-8 h-[1px] w-full" />
 
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.9, duration: 0.5 }}
-            className="flex flex-col space-y-4"
+            className="flex flex-col space-y-3"
           >
             <motion.button
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
-              className="flex space-x-2 items-center justify-start px-4 w-full text-black rounded-md h-10 font-medium shadow-md bg-gray-50 dark:bg-zinc-900"
+              className="flex space-x-2 items-center justify-start px-4 w-full text-black rounded-md h-9 sm:h-10 font-medium shadow-md bg-gray-50 dark:bg-zinc-900"
               type="button"
               onClick={() => handleSocialSignup('github')}
               disabled={isLoading}
             >
               <IconBrandGithub className="h-4 w-4 text-neutral-800 dark:text-neutral-300" />
-              <span className="text-neutral-700 dark:text-neutral-300 text-sm">
+              <span className="text-neutral-700 dark:text-neutral-300 text-xs sm:text-sm">
                 Continue with GitHub
               </span>
             </motion.button>
@@ -262,13 +262,13 @@ function SignupFormDemo() {
             <motion.button
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
-              className="flex space-x-2 items-center justify-start px-4 w-full text-black rounded-md h-10 font-medium shadow-md bg-gray-50 dark:bg-zinc-900"
+              className="flex space-x-2 items-center justify-start px-4 w-full text-black rounded-md h-9 sm:h-10 font-medium shadow-md bg-gray-50 dark:bg-zinc-900"
               type="button"
               onClick={() => handleSocialSignup('google')}
               disabled={isLoading}
             >
               <IconBrandGoogle className="h-4 w-4 text-neutral-800 dark:text-neutral-300" />
-              <span className="text-neutral-700 dark:text-neutral-300 text-sm">
+              <span className="text-neutral-700 dark:text-neutral-300 text-xs sm:text-sm">
                 Continue with Google
               </span>
             </motion.button>

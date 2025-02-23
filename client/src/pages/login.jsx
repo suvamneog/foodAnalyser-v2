@@ -93,24 +93,24 @@ function Login() {
         initial={{ opacity: 0, scale: 0.9 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ duration: 0.5, ease: "easeOut" }}
-        className="max-w-md w-full mx-auto rounded-2xl p-8 shadow-lg bg-white dark:bg-black mt-20 relative z-10"
+        className="w-[90%] sm:w-[80%] md:w-[60%] lg:w-[40%] max-w-md mx-auto rounded-2xl p-4 sm:p-6 md:p-8 shadow-lg bg-black relative z-10"
       >
-        <Card className="w-full max-w-md bg-black border-none">
-          <div className="p-6 sm:p-8 bg-black">
-            <div className="mb-8 text-center">
-              <h1 className="text-3xl font-bold text-white mb-2">Welcome Back</h1>
-              <p className="text-neutral-400">Sign in to your Food Analyser account</p>
+        <Card className="w-full bg-black border-none">
+          <div className="p-4 sm:p-6 bg-black">
+            <div className="mb-6 sm:mb-8 text-center">
+              <h1 className="text-2xl sm:text-3xl font-bold text-white mb-2">Welcome Back</h1>
+              <p className="text-sm sm:text-base text-neutral-400">Sign in to your Food Analyser account</p>
             </div>
 
-            <form onSubmit={handleSubmit} className="space-y-6">
+            <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-6">
               <div className="space-y-2">
                 <div className="relative">
-                  <Mail className="absolute left-3 top-3 h-5 w-5 text-neutral-500" />
+                  <Mail className="absolute left-3 top-2.5 h-4 w-4 sm:h-5 sm:w-5 text-neutral-500" />
                   <Input
                     type="email"
                     name="email"
                     placeholder="Email address"
-                    className={`pl-10 bg-neutral-800 border-neutral-700 text-white placeholder:text-neutral-500 focus-visible:ring-neutral-600 ${
+                    className={`pl-10 bg-neutral-800 border-neutral-700 text-white text-sm placeholder:text-neutral-500 focus-visible:ring-neutral-600 h-9 sm:h-10 ${
                       errors.email ? "border-red-500" : ""
                     }`}
                     value={formData.email}
@@ -118,8 +118,8 @@ function Login() {
                     disabled={isLoading}
                   />
                   {errors.email && (
-                    <div className="flex items-center mt-1 text-red-500 text-sm">
-                      <AlertCircle className="h-4 w-4 mr-1" />
+                    <div className="flex items-center mt-1 text-red-500 text-xs sm:text-sm">
+                      <AlertCircle className="h-3 w-3 sm:h-4 sm:w-4 mr-1" />
                       <span>{errors.email}</span>
                     </div>
                   )}
@@ -128,12 +128,12 @@ function Login() {
 
               <div className="space-y-2">
                 <div className="relative">
-                  <Lock className="absolute left-3 top-3 h-5 w-5 text-neutral-500" />
+                  <Lock className="absolute left-3 top-2.5 h-4 w-4 sm:h-5 sm:w-5 text-neutral-500" />
                   <Input
                     type={showPassword ? "text" : "password"}
                     name="password"
                     placeholder="Password"
-                    className={`pl-10 pr-10 bg-neutral-800 border-neutral-700 text-white placeholder:text-neutral-500 focus-visible:ring-neutral-600 ${
+                    className={`pl-10 pr-10 bg-neutral-800 border-neutral-700 text-white text-sm placeholder:text-neutral-500 focus-visible:ring-neutral-600 h-9 sm:h-10 ${
                       errors.password ? "border-red-500" : ""
                     }`}
                     value={formData.password}
@@ -143,17 +143,17 @@ function Login() {
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 top-3 text-neutral-500 hover:text-neutral-400"
+                    className="absolute right-3 top-2.5 text-neutral-500 hover:text-neutral-400"
                   >
                     {showPassword ? (
-                      <EyeOff className="h-5 w-5" />
+                      <EyeOff className="h-4 w-4 sm:h-5 sm:w-5" />
                     ) : (
-                      <Eye className="h-5 w-5" />
+                      <Eye className="h-4 w-4 sm:h-5 sm:w-5" />
                     )}
                   </button>
                   {errors.password && (
-                    <div className="flex items-center mt-1 text-red-500 text-sm">
-                      <AlertCircle className="h-4 w-4 mr-1" />
+                    <div className="flex items-center mt-1 text-red-500 text-xs sm:text-sm">
+                      <AlertCircle className="h-3 w-3 sm:h-4 sm:w-4 mr-1" />
                       <span>{errors.password}</span>
                     </div>
                   )}
@@ -162,37 +162,37 @@ function Login() {
 
               <Button
                 type="submit"
-                className="w-full bg-neutral-100 text-neutral-900 hover:bg-neutral-200 font-semibold"
+                className="w-full bg-neutral-100 text-neutral-900 hover:bg-neutral-200 font-semibold h-9 sm:h-10 text-sm"
                 disabled={isLoading}
               >
                 {isLoading ? (
                   <div className="flex items-center justify-center">
-                    <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-neutral-900 mr-2" />
-                    Signing in...
+                    <div className="animate-spin rounded-full h-4 w-4 sm:h-5 sm:w-5 border-b-2 border-neutral-900 mr-2" />
+                    <span className="text-sm">Signing in...</span>
                   </div>
                 ) : (
                   "Sign in"
                 )}
               </Button>
 
-              <div className="relative my-6">
+              <div className="relative my-4 sm:my-6">
                 <div className="absolute inset-0 flex items-center">
                   <div className="w-full border-t border-neutral-800"></div>
                 </div>
-                <div className="relative flex justify-center text-sm">
-                  <span className="px-2 bg-neutral-900 text-neutral-500">
-                    Dont have an account?
+                <div className="relative flex justify-center text-xs sm:text-sm">
+                  <span className="px-2 bg-black text-neutral-500">
+                    Don&apos;t have an account?
                   </span>
                 </div>
               </div>
 
               <Button
                 variant="outline"
-                className="w-full border-neutral-800 text-neutral-300 hover:bg-neutral-800 hover:text-neutral-200"
+                className="w-full border-neutral-800 text-neutral-300 hover:bg-neutral-800 hover:text-neutral-200 h-9 sm:h-10 text-sm"
                 type="button"
                 disabled={isLoading}
               >
-                <Link to="/signup">Create an account</Link>
+                <Link to="/signup" className="w-full">Create an account</Link>
               </Button>
             </form>
           </div>

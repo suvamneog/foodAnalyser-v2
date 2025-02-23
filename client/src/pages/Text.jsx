@@ -70,12 +70,12 @@ function FoodAnalyzer({ output }) {
   }
 
   return (
-    <div className="grid gap-6 max-w-4xl mx-auto p-4 sm:p-8 md:p-12 lg:p-20 relative z-10 mt-40">
+    <div className="grid gap-6 max-w-4xl mx-auto p-4 sm:p-8 md:p-12 lg:p-20 relative z-10 ">
       {output.map((food, index) => {
         const { pros, cons } = analyzeFood(food)
         return (
           <CardContainer key={index}>
-            <CardBody className="bg-[#0C0C0C]/90 rounded-xl p-4 sm:p-6 backdrop-blur-sm">
+            <CardBody className="bg-[#0C0C0C]/90 rounded-xl p-4 sm:p-6">
               <div className="relative">
                 <CardItem translateZ="50">
                   <CardHeader>
