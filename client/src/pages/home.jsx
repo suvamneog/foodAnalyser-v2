@@ -11,8 +11,8 @@ function Home({ foodName, setFoodName, output, setOutput}) {
   transition={{ duration: 0.5, ease: "easeOut" }}
   className="min-h-screen w-full"
 >
-  <div className="flex flex-col items-center justify-center gap-y-6 pt-10 mt-10">
-    <div className="w-full z-20 flex flex-col items-center bg-neutral-900/80 pb-4 min-h-[250px]">
+  <div className="sm:h-[30rem] md:h-[40rem]flex flex-col justify-center items-center px-4 ">
+    <div className="w-full z-20 flex flex-col items-center bg-neutral-900/80 pb-4 min-h-[50px] ">
       <h2 className="relative z-10 text-3xl md:text-5xl md:leading-tight max-w-5xl mx-auto text-center tracking-tight font-medium bg-clip-text text-transparent bg-gradient-to-b from-neutral-800 via-white to-white flex items-center gap-2 md:gap-8 mt-20">
         <span>Food Analyser</span>
         <span className="text-white text-lg font-thin">x</span>
@@ -28,15 +28,16 @@ function Home({ foodName, setFoodName, output, setOutput}) {
         setOutput={setOutput} 
       />
     </div>
-    <div className="w-full ">
+    
+    <div className="w-full">
       <FoodAnalyzer 
         foodName={foodName} 
         setFoodName={setFoodName} 
         output={output} 
         setOutput={setOutput}
       /> 
-    </div>
   </div>
+    </div>
 </motion.div>
   )
 }

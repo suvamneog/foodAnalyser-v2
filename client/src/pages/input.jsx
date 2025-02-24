@@ -45,7 +45,7 @@ function PlaceholdersAndVanishInputDemo({ foodName, setFoodName, setOutput }) {
     }
   };
   return (
-    <div className="h-[20rem] sm:h-[30rem] md:h-[40rem] flex flex-col items-center px-4">
+    <div className="">
       <PlaceholdersAndVanishInput
         placeholders={placeholders}
         onChange={updateVal}

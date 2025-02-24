@@ -6,6 +6,7 @@ import { Sparkles, Info, LogIn } from "lucide-react"
 import { CardBody, CardContainer, CardItem } from "../components/ui/3D-card"
 import { useAuth } from "../utils/AuthContext"
 import { Link } from "react-router-dom"
+
 function analyzeFood(food) {
   const pros = []
   const cons = []
@@ -70,23 +71,22 @@ function FoodAnalyzer({ output }) {
   }
 
   return (
-    <div className="grid gap-6 max-w-4xl mx-auto p-4 sm:p-8 md:p-12 lg:p-20 relative z-10 ">
+    <div className="flex flex-col justify-center items-center w-full">
       {output.map((food, index) => {
         const { pros, cons } = analyzeFood(food)
         return (
-          <CardContainer key={index}>
-            <CardBody className="bg-[#0C0C0C]/90 rounded-xl p-4 sm:p-6">
+          <CardContainer key={index} className="w-full max-w-[650px] transform scale-100 sm:scale-95 md:scale-90 lg:scale-85">
+            <CardBody className="bg-[#0C0C0C]/90 rounded-xl p-3 sm:p-4 md:p-5 lg:p-6">
               <div className="relative">
                 <CardItem translateZ="50">
                   <CardHeader>
-                    <CardTitle className="text-2xl text-white">{food.name}</CardTitle>
-                    <CardDescription>Nutritional Analysis</CardDescription>
+                    <CardTitle className="text-xl sm:text-2xl md:text-2xl lg:text-2xl text-white">{food.name}</CardTitle>
+                    <CardDescription className="text-sm sm:text-base">Nutritional Analysis</CardDescription>
                     {!isAuthenticated && (
-                      <CardDescription className="mt-2 text-blue-400 flex items-center gap-2">
-                        <LogIn className="w-4 h-4" />
-                       <Link
-                    to="/login" className="underline text-red-400 hover:text-blue-300">
-                        Log in and search to save your search history!
+                      <CardDescription className="mt-2 text-blue-400 flex items-center gap-2 text-xs sm:text-sm">
+                        <LogIn className="w-3 h-3 sm:w-4 sm:h-4" />
+                        <Link to="/login" className="underline text-red-400 hover:text-blue-300">
+                          Log in and search to save your search history!
                         </Link>
                       </CardDescription>
                     )}
@@ -95,38 +95,38 @@ function FoodAnalyzer({ output }) {
 
                 <CardItem translateZ="60">
                   <CardContent>
-                    <div className="grid gap-6">
+                    <div className="grid gap-4 sm:gap-5 md:gap-6">
                       <div className="flex items-center justify-between">
-                        <span className="text-xl text-white">Total Calories</span>
-                        <span className="text-2xl font-bold text-white">{food.calories} kcal</span>
+                        <span className="text-lg sm:text-xl text-white">Total Calories</span>
+                        <span className="text-xl sm:text-2xl font-bold text-white">{food.calories} kcal</span>
                       </div>
 
-                      <div className="grid gap-4">
+                      <div className="grid gap-3 sm:gap-4">
                         <CardItem translateZ="70">
-                          <h3 className="font-semibold text-white">Macronutrients</h3>
+                          <h3 className="font-semibold text-white text-base sm:text-lg">Macronutrients</h3>
                         </CardItem>
-                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
                           <CardItem translateZ="80">
                             <Card className="bg-[#0C0C0C] border-white/[0.05]">
-                              <CardHeader className="p-4">
-                                <CardTitle className="text-lg">Protein</CardTitle>
-                                <p className="text-2xl font-bold">{food.protein_g} g</p>
+                              <CardHeader className="p-3 sm:p-4">
+                                <CardTitle className="text-base sm:text-lg">Protein</CardTitle>
+                                <p className="text-xl sm:text-2xl font-bold">{food.protein_g} g</p>
                               </CardHeader>
                             </Card>
                           </CardItem>
                           <CardItem translateZ="90">
                             <Card className="bg-[#0C0C0C] border-white/[0.05]">
-                              <CardHeader className="p-4">
-                                <CardTitle className="text-lg">Carbs</CardTitle>
-                                <p className="text-2xl font-bold">{food.carbohydrates_total_g} g</p>
+                              <CardHeader className="p-3 sm:p-4">
+                                <CardTitle className="text-base sm:text-lg">Carbs</CardTitle>
+                                <p className="text-xl sm:text-2xl font-bold">{food.carbohydrates_total_g} g</p>
                               </CardHeader>
                             </Card>
                           </CardItem>
                           <CardItem translateZ="80">
                             <Card className="bg-[#0C0C0C] border-white/[0.05]">
-                              <CardHeader className="p-4">
-                                <CardTitle className="text-lg">Fats</CardTitle>
-                                <p className="text-2xl font-bold">{food.fat_total_g} g</p>
+                              <CardHeader className="p-3 sm:p-4">
+                                <CardTitle className="text-base sm:text-lg">Fats</CardTitle>
+                                <p className="text-xl sm:text-2xl font-bold">{food.fat_total_g} g</p>
                               </CardHeader>
                             </Card>
                           </CardItem>
@@ -134,15 +134,15 @@ function FoodAnalyzer({ output }) {
                       </div>
 
                       <CardItem translateZ="100">
-                        <div className="grid gap-4">
-                          <h3 className="font-semibold text-white">Benefits & Considerations</h3>
-                          <div className="grid gap-2">
+                        <div className="grid gap-3 sm:gap-4">
+                          <h3 className="font-semibold text-white text-base sm:text-lg">Benefits & Considerations</h3>
+                          <div className="grid gap-2 sm:gap-3">
                             <div>
-                              <h4 className="text-sm font-medium text-gray-400 mb-1 flex items-center gap-1">
+                              <h4 className="text-xs sm:text-sm font-medium text-gray-400 mb-1 flex items-center gap-1">
                                 Pros
-                                <Sparkles className="h-5 w-5 text-green-500" />
+                                <Sparkles className="h-4 w-4 sm:h-5 sm:w-5 text-green-500" />
                               </h4>
-                              <ul className="list-disc pl-5 text-green-400">
+                              <ul className="list-disc pl-4 sm:pl-5 text-green-400 text-sm sm:text-base">
                                 {pros.length > 0 ? (
                                   pros.map((pro, i) => <li key={i}>{pro}</li>)
                                 ) : (
@@ -151,11 +151,11 @@ function FoodAnalyzer({ output }) {
                               </ul>
                             </div>
                             <div>
-                              <h4 className="text-sm font-medium text-gray-400 mb-1 flex items-center gap-1">
+                              <h4 className="text-xs sm:text-sm font-medium text-gray-400 mb-1 flex items-center gap-1">
                                 Cons
-                                <Info className="h-5 w-5 text-red-400" />
+                                <Info className="h-4 w-4 sm:h-5 sm:w-5 text-red-400" />
                               </h4>
-                              <ul className="list-disc pl-5 text-red-400">
+                              <ul className="list-disc pl-4 sm:pl-5 text-red-400 text-sm sm:text-base">
                                 {cons.length > 0 ? (
                                   cons.map((con, i) => <li key={i}>{con}</li>)
                                 ) : (
