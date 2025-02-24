@@ -3,7 +3,7 @@ import { Routes, Route } from "react-router-dom"
 import { AuthProvider } from "./utils/AuthContext"
 import ShootingStarsAndStarsBackgroundDemo from "./pages/background"
 import AddFood from "./pages/addFood"
-import Navbar from "./pages/Navbar" // Ensure correct casing
+import Navbar from "./pages/navbar" // Ensure correct casing
 import LogMeals from "./pages/logMeals"
 import SignupFormDemo from "./pages/signup"
 import Login from "./pages/login"
