@@ -38,24 +38,34 @@ export const AuthProvider = ({ children }) => {
       const height = 600;
       const left = window.screenX + (window.outerWidth - width) / 2;
       const top = window.screenY + (window.outerHeight - height) / 2;
-      
+
       const popup = window.open(
         `http://localhost:3000/api/auth/${provider}`,
         `${provider}Login`,
         `width=${width},height=${height},left=${left},top=${top}`
       );
 
+      if (!popup) {
+        throw new Error("Popup blocked. Please allow popups for this site.");
+      }
+
       // Listen for messages from the popup
-      const messageHandler = async (event) => {
+      const messageHandler = (event) => {
         if (event.origin !== "http://localhost:3000") return;
-        
+
         if (event.data.type === "social_auth_success") {
           const { token } = event.data;
           login(token);
           navigate("/");
-          popup.close();
+       
         }
-        
+
+        if (event.data.type === "social_auth_failure") {
+          console.error(`${provider} login failed:`, event.data.error);
+          popup.close(); // Close the popup on failure
+        }
+
+        // Clean up the event listener
         window.removeEventListener("message", messageHandler);
       };
 
