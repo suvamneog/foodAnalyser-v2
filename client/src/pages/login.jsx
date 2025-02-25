@@ -44,7 +44,7 @@ function Login() {
 
     setIsLoading(true);
     try {
-      const response = await axios.post("http://localhost:3000/api/auth/login", formData);
+      const response = await axios.post("https://foodanalyser.onrender.com/api/auth/login", formData);
       if (response.data.token) {
         login(response.data.token);
         toast({

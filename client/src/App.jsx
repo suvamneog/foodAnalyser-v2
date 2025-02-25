@@ -3,7 +3,6 @@ import { Routes, Route } from "react-router-dom"
 import { AuthProvider } from "./utils/AuthContext"
 import ShootingStarsAndStarsBackgroundDemo from "./pages/background"
 import AddFood from "./pages/addFood"
-import Navbar from "./pages/navbar" 
 import LogMeals from "./pages/logMeals"
 import SignupFormDemo from "./pages/signup"
 import Login from "./pages/login"
@@ -11,6 +10,7 @@ import CalorieCalculator from "./pages/Calculator"
 import Home from "./pages/home"
 import History from "./pages/history"
 import  Text from "./pages/Text"
+import Navbar from "./pages/navBar"
 
 function App() {
   const [foodName, setFoodName] = useState("")

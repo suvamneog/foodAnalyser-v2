@@ -41,7 +41,7 @@ function AddFood() {
 
   const fetchFoods = async () => {
     try {
-      const response = await fetch('http://localhost:3000/api/food', {
+      const response = await fetch('https://foodanalyser.onrender.com/api/food', {
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('authToken')}`
         }
@@ -85,8 +85,8 @@ function AddFood() {
       };
   
       const url = isEditing 
-        ? `http://localhost:3000/api/food/${editingId}` 
-        : 'http://localhost:3000/api/food';
+        ? `https://foodanalyser.onrender.com/api/food/${editingId}` 
+        : 'https://foodanalyser.onrender.com/api/food';
   
       const method = isEditing ? 'PUT' : 'POST';
   
@@ -138,7 +138,7 @@ function AddFood() {
     setIsRequesting(true);
   
     try {
-      const response = await fetch(`http://localhost:3000/api/food/${id}`, {
+      const response = await fetch(`https://foodanalyser.onrender.com/api/food/${id}`, {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('authToken')}`

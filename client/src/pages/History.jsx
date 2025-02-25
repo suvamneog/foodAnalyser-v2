@@ -53,7 +53,7 @@ const History = () => {
       }
 
       try {
-        const response = await fetch("http://localhost:3000/api/food/history", {
+        const response = await fetch("https://foodanalyser.onrender.com/api/food/history", {
           method: "GET",
           headers: {
             Authorization: `Bearer ${authToken}`,

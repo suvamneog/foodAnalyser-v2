@@ -60,7 +60,7 @@ function SignupFormDemo() {
     
     setIsLoading(true);
     try {
-      await axios.post("http://localhost:3000/api/auth/signup", user);
+      await axios.post("https://foodanalyser.onrender.com/api/auth/signup", user);
       toast({
         title: "Account created!",
         description: "Please log in with your credentials",

@@ -13,7 +13,7 @@ passport.use(
     {
       clientID: process.env.GITHUB_CLIENT_ID,
       clientSecret: process.env.GITHUB_CLIENT_SECRET,
-      callbackURL: "http://localhost:3000/api/auth/github/callback",
+      callbackURL: "https://foodanalyser.onrender.com/api/auth/github/callback",
     },
     async (accessToken, refreshToken, profile, done) => {
       try {
@@ -45,7 +45,7 @@ passport.use(
     {
       clientID: process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-      callbackURL: "http://localhost:3000/api/auth/google/callback",
+      callbackURL: "https://foodanalyser.onrender.com/api/auth/google/callback",
     },
     async (accessToken, refreshToken, profile, done) => {
       try {
@@ -104,7 +104,7 @@ router.get(
     const token = generateToken(req.user);
     res.send(`
       <script>
-        window.opener.postMessage({ type: 'social_auth_success', token: '${token}' }, 'http://localhost:5173');
+        window.opener.postMessage({ type: 'social_auth_success', token: '${token}' }, 'https://foodanalyserr.vercel.app');
         window.close();
       </script>
     `);
@@ -121,7 +121,7 @@ router.get(
     const token = generateToken(req.user);
     res.send(`
       <script>
-        window.opener.postMessage({ type: 'social_auth_success', token: '${token}' }, 'http://localhost:5173');
+        window.opener.postMessage({ type: 'social_auth_success', token: '${token}' }, 'https://foodanalyserr.vercel.app');
         window.close();
       </script>
     `);
