@@ -10,7 +10,7 @@ export const fetchFoodData = async (foodName) => {
       "Content-Type": "application/json",
     };
 
-    // Only add auth header if user is logged in
+    // Only add auth header if user is logged
     const authToken = localStorage.getItem("authToken");
     if (authToken) {
       headers.Authorization = `Bearer ${authToken}`;

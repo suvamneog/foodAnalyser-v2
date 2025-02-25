@@ -21,7 +21,7 @@ connectDB();
 
 // Middleware
 app.use(cors({
-  origin: 'https://foodanalyserr.vercel.app/', // Allow only your frontend to access
+  origin: "*",
   credentials: true,
 }));
 app.use(express.json());
