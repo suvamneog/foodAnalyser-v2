@@ -11,8 +11,10 @@ import Home from "./pages/home"
 import History from "./pages/history"
 import  Text from "./pages/Text"
 import BarcodeScanner from "./pages/barcodeScanner"
-import Navbar from "./pages/navbar" 
 import FoodScanner from "./pages/FoodImageRecognition"
+import Navbar from "./pages/Navbar" 
+
+
 function App() {
   const [foodName, setFoodName] = useState("")
   const [output, setOutput] = useState("")
