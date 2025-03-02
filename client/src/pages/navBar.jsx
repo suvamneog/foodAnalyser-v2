@@ -10,7 +10,7 @@ const Navbar = () => {
   const { isAuthenticated, logout } = useAuth()
   const navigate = useNavigate()
   useEffect(() => {
-    if (isAuthenticated === false && !["/", "/calculator", "/signup"].includes(window.location.pathname)) {
+    if (isAuthenticated === false && !["/", "/calculator", "/signup", "/scan", "/image"].includes(window.location.pathname)) {
       navigate("/login")
     }
   }, [isAuthenticated, navigate])
@@ -61,6 +61,18 @@ const Navbar = () => {
             >
               Calories Calculator
             </Link>
+            <Link
+              to="/scan"
+              className="text-gray-600 hover:text-gray-900 px-3 py-2 text-sm font-medium transition-colors"
+            >
+             Scan
+            </Link>
+            <Link
+              to="/image"
+              className="text-gray-600 hover:text-gray-900 px-3 py-2 text-sm font-medium transition-colors"
+            >
+             image
+            </Link>
             {isAuthenticated && <AuthenticatedLinks />}
             <div className="flex items-center space-x-4">
               {!isAuthenticated ? (
@@ -110,6 +122,18 @@ const Navbar = () => {
               className="block px-3 py-2 rounded-md text-base font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-50 transition-colors"
             >
               Calories Calculator
+            </Link>
+            <Link
+              to="/scan"
+              className="text-gray-600 hover:text-gray-900 px-3 py-2 text-sm font-medium transition-colors"
+            >
+             Scan
+            </Link>
+            <Link
+              to="/image"
+              className="text-gray-600 hover:text-gray-900 px-3 py-2 text-sm font-medium transition-colors"
+            >
+             image
             </Link>
             {isAuthenticated && (
               <>

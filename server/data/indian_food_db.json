@@ -1,0 +1,404 @@
+[
+    {
+      "name": "Chapati",
+      "calories": 120,
+      "protein": 3.1,
+      "carbs": 23.6,
+      "fats": 1.2,
+      "gi": 45
+    },
+    {
+      "name": "Poha",
+      "calories": 130,
+      "protein": 2.5,
+      "carbs": 26.7,
+      "fats": 1.8,
+      "gi": 48
+    },
+    {
+      "name": "Ragi Dosa",
+      "calories": 143,
+      "protein": 3.2,
+      "carbs": 21.9,
+      "fats": 5.3,
+      "gi": 35
+    },
+    {
+      "name": "Idli",
+      "calories": 78,
+      "protein": 2.6,
+      "carbs": 13.8,
+      "fats": 0.1,
+      "gi": 50
+    },
+    {
+      "name": "Sambar",
+      "calories": 65,
+      "protein": 3.5,
+      "carbs": 10.2,
+      "fats": 0.8,
+      "gi": 25
+    },
+    {
+      "name": "Dosa",
+      "calories": 168,
+      "protein": 4.2,
+      "carbs": 24.7,
+      "fats": 6.3,
+      "gi": 66
+    },
+    {
+      "name": "Millet Porridge",
+      "calories": 115,
+      "protein": 3.5,
+      "carbs": 23.1,
+      "fats": 1.0,
+      "gi": 42
+    },
+    {
+      "name": "Dal Tadka",
+      "calories": 130,
+      "protein": 7.8,
+      "carbs": 16.3,
+      "fats": 3.9,
+      "gi": 28
+    },
+    {
+      "name": "Palak Paneer",
+      "calories": 190,
+      "protein": 11.0,
+      "carbs": 6.5,
+      "fats": 14.2,
+      "gi": 20
+    },
+    {
+      "name": "Butter Chicken",
+      "calories": 310,
+      "protein": 24.3,
+      "carbs": 5.8,
+      "fats": 22.5,
+      "gi": 15
+    },
+    {
+      "name": "Aloo Paratha",
+      "calories": 260,
+      "protein": 5.2,
+      "carbs": 36.8,
+      "fats": 10.5,
+      "gi": 62
+    },
+    {
+      "name": "Paneer Tikka",
+      "calories": 225,
+      "protein": 18.6,
+      "carbs": 3.2,
+      "fats": 16.1,
+      "gi": 10
+    },
+    {
+      "name": "Chole",
+      "calories": 170,
+      "protein": 9.4,
+      "carbs": 22.5,
+      "fats": 5.2,
+      "gi": 28
+    },
+    {
+      "name": "Rajma",
+      "calories": 155,
+      "protein": 8.7,
+      "carbs": 20.3,
+      "fats": 4.1,
+      "gi": 26
+    },
+    {
+      "name": "Biryani",
+      "calories": 280,
+      "protein": 12.3,
+      "carbs": 35.2,
+      "fats": 10.8,
+      "gi": 58
+    },
+    {
+      "name": "Gulab Jamun",
+      "calories": 175,
+      "protein": 2.1,
+      "carbs": 32.6,
+      "fats": 4.9,
+      "gi": 75
+    },
+    {
+      "name": "Jalebi",
+      "calories": 230,
+      "protein": 1.8,
+      "carbs": 42.5,
+      "fats": 6.3,
+      "gi": 80
+    },
+    {
+      "name": "Rasgulla",
+      "calories": 186,
+      "protein": 4.3,
+      "carbs": 36.2,
+      "fats": 2.8,
+      "gi": 70
+    },
+    {
+      "name": "Upma",
+      "calories": 140,
+      "protein": 3.8,
+      "carbs": 24.7,
+      "fats": 3.2,
+      "gi": 55
+    },
+    {
+      "name": "Dhokla",
+      "calories": 110,
+      "protein": 5.5,
+      "carbs": 13.8,
+      "fats": 3.9,
+      "gi": 38
+    },
+    {
+      "name": "Ragi Mudde",
+      "calories": 145,
+      "protein": 4.2,
+      "carbs": 30.1,
+      "fats": 0.8,
+      "gi": 40
+    },
+    {
+      "name": "Bhindi Masala",
+      "calories": 120,
+      "protein": 3.2,
+      "carbs": 11.5,
+      "fats": 7.8,
+      "gi": 18
+    },
+    {
+      "name": "Pani Puri",
+      "calories": 150,
+      "protein": 2.8,
+      "carbs": 24.3,
+      "fats": 5.2,
+      "gi": 65
+    },
+    {
+      "name": "Khichdi",
+      "calories": 135,
+      "protein": 5.8,
+      "carbs": 23.2,
+      "fats": 2.1,
+      "gi": 50
+    },
+    {
+      "name": "Jowar Roti",
+      "calories": 105,
+      "protein": 3.0,
+      "carbs": 22.1,
+      "fats": 0.5,
+      "gi": 32
+    },
+    
+
+    {
+      "name": "Samosa",
+      "calories": 308,
+      "protein": 4.8,
+      "carbs": 32.5,
+      "fats": 18.2,
+      "gi": 68
+    },
+    {
+      "name": "Vada Pav",
+      "calories": 325,
+      "protein": 7.2,
+      "carbs": 40.3,
+      "fats": 14.9,
+      "gi": 72
+    },
+    {
+      "name": "Pakora",
+      "calories": 280,
+      "protein": 5.3,
+      "carbs": 18.7,
+      "fats": 21.2,
+      "gi": 65
+    },
+    {
+      "name": "Maggi Noodles",
+      "calories": 430,
+      "protein": 8.5,
+      "carbs": 61.8,
+      "fats": 17.2,
+      "gi": 78
+    },
+    {
+      "name": "Parle-G Biscuits",
+      "calories": 455,
+      "protein": 6.9,
+      "carbs": 78.2,
+      "fats": 12.5,
+      "gi": 75
+    },
+    {
+      "name": "Haldiram Aloo Bhujia",
+      "calories": 520,
+      "protein": 8.2,
+      "carbs": 52.4,
+      "fats": 32.1,
+      "gi": 70
+    },
+    {
+      "name": "Kurkure",
+      "calories": 540,
+      "protein": 7.5,
+      "carbs": 56.7,
+      "fats": 30.8,
+      "gi": 73
+    },
+    {
+      "name": "Lay's Potato Chips",
+      "calories": 536,
+      "protein": 6.8,
+      "carbs": 53.2,
+      "fats": 34.6,
+      "gi": 75
+    },
+    {
+      "name": "MTR Ready To Eat Pav Bhaji",
+      "calories": 185,
+      "protein": 4.2,
+      "carbs": 24.6,
+      "fats": 8.3,
+      "gi": 65
+    },
+    {
+      "name": "Amul Cheese",
+      "calories": 348,
+      "protein": 22.5,
+      "carbs": 3.8,
+      "fats": 28.6,
+      "gi": 10
+    },
+    {
+      "name": "Vadilal Ice Cream",
+      "calories": 245,
+      "protein": 3.2,
+      "carbs": 32.5,
+      "fats": 12.1,
+      "gi": 68
+    },
+    {
+      "name": "Frooti",
+      "calories": 120,
+      "protein": 0.2,
+      "carbs": 29.8,
+      "fats": 0.1,
+      "gi": 85
+    },
+    {
+      "name": "Thums Up",
+      "calories": 138,
+      "protein": 0,
+      "carbs": 35.2,
+      "fats": 0,
+      "gi": 90
+    },
+    {
+      "name": "Amul Kool",
+      "calories": 145,
+      "protein": 2.5,
+      "carbs": 28.6,
+      "fats": 2.1,
+      "gi": 75
+    },
+    {
+      "name": "Balaji Wafers",
+      "calories": 530,
+      "protein": 6.2,
+      "carbs": 51.8,
+      "fats": 33.7,
+      "gi": 74
+    },
+    {
+      "name": "Britannia Good Day",
+      "calories": 485,
+      "protein": 5.8,
+      "carbs": 67.2,
+      "fats": 21.5,
+      "gi": 72
+    },
+    {
+      "name": "Haldiram Soan Papdi",
+      "calories": 510,
+      "protein": 3.5,
+      "carbs": 65.3,
+      "fats": 25.8,
+      "gi": 82
+    },
+    {
+      "name": "Uncle Chipps",
+      "calories": 532,
+      "protein": 6.5,
+      "carbs": 52.9,
+      "fats": 33.8,
+      "gi": 75
+    },
+    {
+      "name": "Chivda",
+      "calories": 468,
+      "protein": 9.2,
+      "carbs": 48.5,
+      "fats": 28.3,
+      "gi": 65
+    },
+    {
+      "name": "MDH Ready To Eat Dal Makhani",
+      "calories": 165,
+      "protein": 8.5,
+      "carbs": 17.2,
+      "fats": 7.8,
+      "gi": 42
+    },
+    {
+      "name": "Amul Butter",
+      "calories": 722,
+      "protein": 0.5,
+      "carbs": 0.4,
+      "fats": 81.1,
+      "gi": 0
+    },
+    {
+      "name": "Cadbury Dairy Milk",
+      "calories": 520,
+      "protein": 7.5,
+      "carbs": 56.5,
+      "fats": 30.0,
+      "gi": 70
+    },
+    {
+      "name": "Act II Popcorn",
+      "calories": 375,
+      "protein": 8.7,
+      "carbs": 63.2,
+      "fats": 12.1,
+      "gi": 58
+    },
+    {
+      "name": "Top Ramen",
+      "calories": 440,
+      "protein": 8.8,
+      "carbs": 62.5,
+      "fats": 18.1,
+      "gi": 80
+    },
+    {
+      "name": "Bournvita",
+      "calories": 380,
+      "protein": 11.5,
+      "carbs": 78.5,
+      "fats": 3.5,
+      "gi": 55
+    }
+  ]

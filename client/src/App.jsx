@@ -10,8 +10,9 @@ import CalorieCalculator from "./pages/Calculator"
 import Home from "./pages/home"
 import History from "./pages/history"
 import  Text from "./pages/Text"
-import Navbar from "./pages/navBar"
-
+import BarcodeScanner from "./pages/barcodeScanner"
+import Navbar from "./pages/navbar" 
+import FoodScanner from "./pages/FoodImageRecognition"
 function App() {
   const [foodName, setFoodName] = useState("")
   const [output, setOutput] = useState("")
@@ -38,6 +39,8 @@ function App() {
         <Route path="/signup" element={<SignupFormDemo />} />
         <Route path="/login" element={<Login />} />
         <Route path="/login" element={<Text/>} />
+        <Route path="/scan" element={<BarcodeScanner/>} />
+        <Route path="/image" element={<FoodScanner/>} />
         <Route path="/calculator" element={<CalorieCalculator />} />
         <Route path="/logmeals" element={<LogMeals />} />
         <Route path="/history" element={<History />} />
