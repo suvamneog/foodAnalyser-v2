@@ -144,7 +144,7 @@ const FoodScanner = () => {
     formData.append('foodImage', image);
   
     try {
-      const response = await fetch('http://localhost:3000/api/image/analyzefood', {
+      const response = await fetch('https://foodanalyser.onrender.com/api/image/analyzefood', {
         method: 'POST',
         body: formData,
       });
