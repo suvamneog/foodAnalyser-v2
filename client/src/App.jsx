@@ -2,7 +2,6 @@ import { useState } from "react"
 import { Routes, Route } from "react-router-dom"
 import { AuthProvider } from "./utils/AuthContext"
 import ShootingStarsAndStarsBackgroundDemo from "./pages/background"
-import Navbar from "./pages/Navbar";
 import AddFood from "./pages/addFood"
 import LogMeals from "./pages/logMeals"
 import SignupFormDemo from "./pages/signup"
@@ -13,8 +12,7 @@ import History from "./pages/history"
 import  Text from "./pages/Text"
 import BarcodeScanner from "./pages/barcodeScanner"
 import FoodScanner from "./pages/FoodImageRecognition"
-
-
+import Navbar from "./pages/navbar";
 
 function App() {
   const [foodName, setFoodName] = useState("")
