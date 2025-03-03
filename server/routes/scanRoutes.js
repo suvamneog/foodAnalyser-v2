@@ -29,3 +29,4 @@ router.get('/product/:barcode', async (req, res) => {
     res.status(500).json({ error: 'Error fetching product information', details: error.message });
   }
 });
+module.exports = router; 
