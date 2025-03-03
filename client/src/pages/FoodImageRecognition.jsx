@@ -383,3 +383,6 @@ const FoodScanner = () => {
 };
 
 export default FoodScanner;
+
+
+

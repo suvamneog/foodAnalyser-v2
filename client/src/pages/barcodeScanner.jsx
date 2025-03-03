@@ -42,7 +42,7 @@ const BarcodeScanner = () => {
     setError(null);
     try {
       const response = await axios.get(`https://foodanalyser.onrender.com/api/scan/product/${barcode}`);
-      console.log("Backend API Response:", response.data); // Log the response
+      console.log("Backend API Response:", response.data);
       if (response.data.status === 1) {
         setProduct(response.data.product);
         findHealthyAlternative(response.data.product);
@@ -52,22 +52,21 @@ const BarcodeScanner = () => {
     } catch (err) {
       try {
         const directResponse = await axios.get(`https://world.openfoodfacts.org/api/v0/product/${barcode}.json`);
-        console.log("OpenFoodFacts API Response:", directResponse.data); // Log the response
+        console.log("OpenFoodFacts API Response:", directResponse.data);
         if (directResponse.data.status === 1) {
           setProduct(directResponse.data.product);
           findHealthyAlternative(directResponse.data.product);
         } else {
-          setError('Oops! We couldnot find this product in our database. Try scanning the image again or searching on the home page.');
+          setError('Oops! We could not find this product in our database. Try scanning the image again or searching on the home page.');
         }
       } catch (directErr) {
-        setError('Error fetching product information',err);
+        setError(`Error fetching product information: ${directErr.message}`);
         console.error(directErr);
       }
     } finally {
       setLoading(false);
     }
   };
-
   const findHealthyAlternative = (currentProduct) => {
     if (!currentProduct) return;
     

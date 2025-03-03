@@ -9,6 +9,7 @@ const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false)
   const { isAuthenticated, logout } = useAuth()
   const navigate = useNavigate()
+
   useEffect(() => {
     if (isAuthenticated === false && !["/", "/calculator", "/signup", "/scan", "/image"].includes(window.location.pathname)) {
       navigate("/login")
@@ -18,6 +19,16 @@ const Navbar = () => {
   const handleLogout = () => {
     logout()
     navigate("/")
+  }
+
+  const handleLogoClick = () => {
+    if (window.location.pathname === "/") {
+      // If already on the home page, refresh the page
+      window.location.reload()
+    } else {
+      // Otherwise, navigate to the home page without refreshing
+      navigate("/")
+    }
   }
 
   const AuthenticatedLinks = () => (
@@ -46,12 +57,10 @@ const Navbar = () => {
         <div className="flex justify-between h-16">
           {/* Logo Section */}
           <div className="flex-shrink-0 flex items-center">
-            <Link to="/">
-              <span className="text-xl font-semibold text-gray-900">
-                Food Analyser <span className="text-gray-400">×</span>
-                <span className="text-gray-900"> fit</span>
-              </span>
-            </Link>
+            <button onClick={handleLogoClick} className="text-xl font-semibold text-gray-900">
+              Food Analyser <span className="text-gray-400">×</span>
+              <span className="text-gray-900"> fit</span>
+            </button>
           </div>
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center space-x-8">
@@ -71,7 +80,7 @@ const Navbar = () => {
               to="/image"
               className="text-gray-600 hover:text-gray-900 px-3 py-2 text-sm font-medium transition-colors"
             >
-             image
+             Image
             </Link>
             {isAuthenticated && <AuthenticatedLinks />}
             <div className="flex items-center space-x-4">
@@ -133,7 +142,7 @@ const Navbar = () => {
               to="/image"
               className="text-gray-600 hover:text-gray-900 px-3 py-2 text-sm font-medium transition-colors"
             >
-             image
+             Image
             </Link>
             {isAuthenticated && (
               <>
@@ -190,4 +199,3 @@ const Navbar = () => {
 }
 
 export default Navbar
-
