@@ -30,3 +30,6 @@ router.get('/product/:barcode', async (req, res) => {
   }
 });
 module.exports = router; 
+
+
+
