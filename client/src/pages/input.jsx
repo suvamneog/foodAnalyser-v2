@@ -3,9 +3,8 @@ import { useState } from "react";
 import { PlaceholdersAndVanishInput } from "../components/ui/placeholders-and-vanish-input";
 import { fetchFoodData } from "../utils/fetchFoodData";
 
-function PlaceholdersAndVanishInputDemo({ foodName, setFoodName, setOutput }) {
+function PlaceholdersAndVanishInputDemo({ foodName, setFoodName, setOutput, loading, setLoading }) {
   const [error, setError] = useState(null);
-  const [loading, setLoading] = useState(false); // Added loading state
 
   const placeholders = [
     "One whey to a healthy life!",
@@ -39,11 +38,11 @@ function PlaceholdersAndVanishInputDemo({ foodName, setFoodName, setOutput }) {
       console.log("submitted", data);
     } catch (err) {
       setError(err.message || "Something went wrong. Please try again.");
-      console.error("Error fetching food data:", err);
     } finally {
       setLoading(false); // Reset loading state after request
     }
   };
+
   return (
     <div className="">
       <PlaceholdersAndVanishInput
@@ -52,7 +51,7 @@ function PlaceholdersAndVanishInputDemo({ foodName, setFoodName, setOutput }) {
         onSubmit={onSubmit}
         value={foodName}
       />
-      {error && <p className="mt-2 text-red-500">{error}</p>}
+      {error && <p className="pl-10 mt-2 text-red-500">{error}</p>}
     </div>
   );
 }

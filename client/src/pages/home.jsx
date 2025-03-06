@@ -4,7 +4,7 @@ import PlaceholdersAndVanishInputDemo from "./input";
 import FoodAnalyzer from "./Text";
 import { motion } from "framer-motion";
 
-function Home({ foodName, setFoodName, output, setOutput }) {
+function Home({ foodName, setFoodName, output, setOutput, loading, setLoading }) {
   const [isGuideOpen, setIsGuideOpen] = useState(false);
 
   return (
@@ -30,6 +30,8 @@ function Home({ foodName, setFoodName, output, setOutput }) {
             setFoodName={setFoodName}
             output={output}
             setOutput={setOutput}
+            loading={loading} // Pass loading state
+            setLoading={setLoading} // Pass setLoading function
           />
 
           {/* "How to Use" Button */}
@@ -44,10 +46,8 @@ function Home({ foodName, setFoodName, output, setOutput }) {
         {/* Food Analyzer Section */}
         <div className="w-full px-2 sm:px-0">
           <FoodAnalyzer
-            foodName={foodName}
-            setFoodName={setFoodName}
             output={output}
-            setOutput={setOutput}
+            loading={loading} // Pass loading state
           />
         </div>
 

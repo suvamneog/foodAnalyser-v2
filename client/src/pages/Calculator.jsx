@@ -190,25 +190,37 @@ export default function CalorieCalculator() {
   const calculateGoals = (e) => {
     e.preventDefault();
     setCalculationError(null);
-
+  
     // Validate form before calculation
     if (!validateForm()) {
       return;
     }
-
+  
     setIsCalculating(true);
-
+  
     try {
       // Convert to metric for calculations if needed
       const { weight: metricWeight, height: metricHeight } = convertToMetric(
         inputData.weight,
         inputData.height
       );
-
-      const goalWeight =
-        (metricWeight * (100 - inputData.goalBodyfat)) /
-        (100 - inputData.currentBodyfat);
-      
+  
+      let goalWeight;
+  
+      // Cutting (Calorie Deficit > 0)
+      if (inputData.calorieDeficit > 0) {
+        goalWeight =
+          (metricWeight * (100 - inputData.goalBodyfat)) /
+          (100 - inputData.currentBodyfat);
+      }
+      // Bulking (Calorie Deficit <= 0)
+      else {
+        // Assume the user wants to gain 1 kg of muscle and 1 kg of fat (adjust as needed)
+        const muscleGain = 1; // kg
+        const fatGain = 1; // kg
+        goalWeight = metricWeight + muscleGain + fatGain;
+      }
+  
       const bmr =
         10 * metricWeight +
         6.25 * metricHeight -
@@ -218,11 +230,11 @@ export default function CalorieCalculator() {
       const tdee = bmr * Number(inputData.activityMultiplier); // Convert to number
       const dailyCalories = tdee * (1 - inputData.calorieDeficit / 100);
       const proteinGoal = metricWeight * inputData.proteinMultiplier;
-
+  
       const weeklyProgress = [];
       const totalWeeks = 20;
-      const weightLossPerWeek = (metricWeight - goalWeight) / totalWeeks;
-
+      const weightChangePerWeek = (metricWeight - goalWeight) / totalWeeks;
+  
       // Calculate weekly calorie plan
       const weeklyCaloriePlan = [];
       const isDeficit = inputData.calorieDeficit > 0;
@@ -230,7 +242,7 @@ export default function CalorieCalculator() {
       
       for (let i = 1; i <= totalWeeks; i++) {
         // Adjust calories based on new weight each week
-        const weeklyWeight = metricWeight - weightLossPerWeek * i;
+        const weeklyWeight = metricWeight - weightChangePerWeek * i;
         
         // Validate calculated weight (ensure no negative weights)
         if (weeklyWeight <= 0) {
@@ -257,12 +269,12 @@ export default function CalorieCalculator() {
           carbs: Math.round((weeklyCalories * 0.4) / 4), // 40% of calories from carbs
           fats: Math.round((weeklyCalories * 0.3) / 9), // 30% of calories from fats
         });
-
+  
         // Convert weight back to display units if needed
         const displayWeight = inputData.useMetric 
           ? weeklyWeight 
           : weeklyWeight / 0.453592;
-
+  
         weeklyProgress.push({
           week: i,
           weight: displayWeight.toFixed(1),
@@ -272,12 +284,12 @@ export default function CalorieCalculator() {
           ).toFixed(1),
         });
       }
-
+  
       // Convert goal weight to display units if needed
       const displayGoalWeight = inputData.useMetric 
         ? goalWeight 
         : goalWeight / 0.453592;
-
+  
       setResult({
         goalWeight: Number(displayGoalWeight.toFixed(2)),
         dailyCalories: Math.round(dailyCalories),

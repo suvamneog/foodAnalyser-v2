@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable react-hooks/exhaustive-deps */
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Html5QrcodeScanner } from 'html5-qrcode';
 import axios from 'axios';
 import { AlertCircle, Check, AlertTriangle } from 'lucide-react';
@@ -14,28 +14,87 @@ const BarcodeScanner = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [healthyAlternative, setHealthyAlternative] = useState(null);
+  const [scanner, setScanner] = useState(null); // Track scanner instance
 
-  useEffect(() => {
-    const scanner = new Html5QrcodeScanner('reader', {
-      qrbox: {
-        width: 250,
-        height: 250,
-      },
-      fps: 5,
-    });
+  const initializeScanner = useCallback(() => {
+    console.log("Initializing scanner...");
+    const newScanner = new Html5QrcodeScanner('reader', {
+      qrbox: { width: 250, height: 250 },
+      fps: 10,
+      verbose: true,
+      cameraIdOrConfig: { facingMode: "environment" },
+      disableFlip: false,
+      aspectRatio: 1.0,
+    }, true);
+
+    let lastResult = null;
+    let resultCount = 0;
+    const requiredConsistency = 2;
 
     function success(result) {
-      scanner.clear();
-      setScanResult(result);
-      fetchProductInfo(result);
+      console.log("Scan detected:", result);
+      if (lastResult === result) {
+        resultCount++;
+        if (resultCount >= requiredConsistency) {
+          newScanner.clear();
+          setScanResult(result);
+          fetchProductInfo(result);
+        }
+      } else {
+        lastResult = result;
+        resultCount = 1;
+      }
     }
 
-    scanner.render(success, error);
+    function onError(err) {
+      console.warn("Scanner error:", err);
+      setError("Scanning failed. Please ensure camera access and good lighting.");
+    }
 
-    return () => {
-      scanner.clear();
-    };
+    try {
+      newScanner.render(success, onError);
+      setScanner(newScanner); // Store the scanner instance
+      console.log("Scanner rendered successfully");
+    } catch (err) {
+      setError("Failed to initialize scanner: " + err.message);
+      console.error("Render error:", err);
+    }
+
+    return newScanner;
   }, []);
+
+  const resetScanner = useCallback(() => {
+    console.log("Resetting scanner...");
+    if (scanner) {
+      scanner.clear(); // Clear existing scanner
+      console.log("Existing scanner cleared");
+    }
+
+    // Reset all state
+    setScanResult(null);
+    setProduct(null);
+    setError(null);
+    setHealthyAlternative(null);
+    setLoading(false);
+    setScanner(null); // Clear scanner reference
+
+    // Reinitialize after a slight delay to ensure DOM is ready
+    setTimeout(() => {
+      initializeScanner();
+    }, 100); // 100ms delay to allow DOM cleanup
+  }, [scanner, initializeScanner]);
+
+  useEffect(() => {
+    const newScanner = initializeScanner();
+    return () => {
+      console.log("Cleaning up scanner...");
+      if (newScanner) {
+        newScanner.clear();
+      }
+    };
+  }, [initializeScanner]);
+
+  
 
   const fetchProductInfo = async (barcode) => {
     setLoading(true);
@@ -563,7 +622,7 @@ const BarcodeScanner = () => {
       {scanResult && (
         <div className="mt-6 text-center">
           <button 
-            onClick={() => window.location.reload()} 
+           onClick={resetScanner}
             className="bg-green-600 hover:bg-green-700 text-white font-medium py-2 px-6 rounded-lg transition duration-200"
             >
             Scan Another Product
