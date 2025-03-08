@@ -3,7 +3,7 @@ import { CardBody, CardContainer, CardItem } from "./3D-card";
 
 function LoadingCard() {
   return (
-    <CardContainer className="w-full max-w-xs mx-auto"> {/* Match the max-width of the output card */}
+    <CardContainer className="w-full max-w-xs mx-auto">
       <CardBody className="bg-[#0C0C0C]/90 rounded-xl p-1 sm:p-2 md:p-3">
         <CardItem>
           <CardHeader className="p-2 sm:p-3">
