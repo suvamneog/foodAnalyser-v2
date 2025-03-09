@@ -25,7 +25,7 @@ function LoadingCard() {
                 <div className="h-6 bg-gray-700 rounded w-1/4 sm:w-1/5"></div>
               </div>
 
-              {/* Nutrition Grid Skeleton */}
+         
               <div className="grid grid-cols-3 gap-1 sm:gap-2 md:gap-3">
                 {[1, 2, 3].map((i) => (
                   <CardItem key={i}>
