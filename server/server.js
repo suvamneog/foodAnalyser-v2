@@ -22,7 +22,7 @@ app.use(cors({
 app.use(bodyParser.json({ limit: '10mb' })); // Increase JSON payload limit to 10MB
 app.use(bodyParser.urlencoded({ limit: '10mb', extended: true })); // Increase URL-encoded payload limit to 10MB
 
-app.use(morgan("dev")); // Logging middleware
+app.use(morgan("dev")); // Logging middlewares
 
 // Routes
 const userRoutes = require("./routes/userRoutes");
