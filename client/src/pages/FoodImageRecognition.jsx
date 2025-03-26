@@ -289,7 +289,9 @@ const FoodScanner = () => {
                   )}
                   {isAnalyzing && (
                     <div className="mt-4 text-center text-gray-400">
-                      <div className="animate-pulse">Analyzing your food...</div>
+                      <div className="animate-pulse">Analyzing your food...<br/>
+                        <b>May take some time!</b>
+                      </div>
                     </div>
                   )}
                 </div>

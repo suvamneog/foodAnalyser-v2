@@ -470,6 +470,7 @@ const BarcodeScanner = () => {
           <div className="text-center py-4">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-700 mx-auto"></div>
             <p className="mt-2 text-gray-600">Loading product information...</p>
+            <b>May take some time!</b>
           </div>
         )}
         
