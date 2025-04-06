@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { useState, useEffect } from 'react';
 import { ShootingStars } from "../components/ui/shooting-stars";
 import { StarsBackground } from "../components/ui/stars-background";
@@ -13,11 +14,28 @@ function LogMeals() {
   }]);
   const [mealName, setMealName] = useState('');
   const [loading, setLoading] = useState(false);
+  // New state for error handling
+  const [error, setError] = useState(null);
+  const [success, setSuccess] = useState(null);
   const token = localStorage.getItem("authToken");
 
+  // Indian food suggestions
+  const indianFoodSuggestions = [
+    "Roti", "Naan", "ou tenga curry",
+    "Dal", "Palak Paneer", "Butter Chicken", 
+    "Gulab Jamun", "Samosa", "Pakora", "Paneer Tikka"
+  ];
+
+  // Indian meal types
+  const indianMealTypes = [
+    "Breakfast", "Lunch", "Dinner", "Snack"
+  ];
+
   const fetchMeals = async () => {
-    if (loading) return; // Prevent multiple requests
+    if (loading) return;
     setLoading(true);
+    setError(null);
+    
     try {
       const response = await axios.get("https://foodanalyser.onrender.com/api/meal/logs", {
         headers: { Authorization: `Bearer ${token}` }
@@ -25,6 +43,16 @@ function LogMeals() {
       setMeals(response.data);
     } catch (error) {
       console.error("Error fetching meals:", error);
+      if (error.response) {
+        // The request was made and the server responded with an error status
+        setError(`Error fetching meals: ${error.response.data.message || error.response.statusText}`);
+      } else if (error.request) {
+        // The request was made but no response was received
+        setError("Network error. Please check your connection and try again.");
+      } else {
+        // Something else happened while setting up the request
+        setError(`Error: ${error.message}`);
+      }
     } finally {
       setLoading(false);
     }
@@ -32,15 +60,39 @@ function LogMeals() {
 
   useEffect(() => {
     if (token) fetchMeals();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [token]);
+
+  // Clear messages after 5 seconds
+  useEffect(() => {
+    if (error || success) {
+      const timer = setTimeout(() => {
+        setError(null);
+        setSuccess(null);
+      }, 5000);
+      return () => clearTimeout(timer);
+    }
+  }, [error, success]);
 
   const handleFoodItemChange = (index, field, value) => {
     const newFoodItems = [...foodItems];
-    newFoodItems[index] = {
-      ...newFoodItems[index],
-      [field]: field === 'quantity' ? (value === "" ? "" : Number(value)) : value
-    };
+    
+    // Validation for quantity field
+    if (field === 'quantity') {
+      // Allow empty string for user typing
+      if (value === "") {
+        newFoodItems[index] = { ...newFoodItems[index], quantity: "" };
+      } else {
+        const numValue = Number(value);
+        // Prevent negative values
+        if (numValue >= 0) {
+          newFoodItems[index] = { ...newFoodItems[index], quantity: numValue };
+        }
+      }
+    } else {
+      // For other fields
+      newFoodItems[index] = { ...newFoodItems[index], [field]: value };
+    }
+    
     setFoodItems(newFoodItems);
   };
 
@@ -58,9 +110,50 @@ function LogMeals() {
     }
   };
 
+  const validateForm = () => {
+    // Basic validation
+    if (!mealName.trim()) {
+      setError("Please enter a meal name");
+      return false;
+    }
+
+    for (let i = 0; i < foodItems.length; i++) {
+      const item = foodItems[i];
+      if (!item.name.trim()) {
+        setError(`Please enter a name for food item #${i + 1}`);
+        return false;
+      }
+
+      if (item.quantity === "" || item.quantity <= 0) {
+        setError(`Please enter a valid quantity for ${item.name}`);
+        return false;
+      }
+
+      // Check for reasonable limits
+      if (item.unit === 'g' && item.quantity > 5000) {
+        setError(`Quantity for ${item.name} (${item.quantity}g) seems too high. Please verify.`);
+        return false;
+      }
+      
+      if (item.unit === 'pcs' && item.quantity > 100) {
+        setError(`Quantity for ${item.name} (${item.quantity} pieces) seems too high. Please verify.`);
+        return false;
+      }
+    }
+    
+    return true;
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (loading) return; // Prevent duplicate submissions
+    if (loading) return;
+    
+    // Clear previous messages
+    setError(null);
+    setSuccess(null);
+    
+    // Validate form
+    if (!validateForm()) return;
   
     setLoading(true);
   
@@ -74,9 +167,16 @@ function LogMeals() {
     };
   
     try {
-      await axios.post("https://foodanalyser.onrender.com/api/meal/log", newMeal, {
+      const response = await axios.post("https://foodanalyser.onrender.com/api/meal/log", newMeal, {
         headers: { Authorization: `Bearer ${token}` }
       });
+  
+      // Check for warnings in response
+      if (response.data && response.data.warnings) {
+        setSuccess(`Meal logged with some items skipped: ${response.data.warnings.failedItems.join(', ')}`);
+      } else {
+        setSuccess("Meal logged successfully!");
+      }
   
       // Reset form
       setMealName('');
@@ -84,29 +184,53 @@ function LogMeals() {
   
       // Fetch updated meals
       await fetchMeals();
+      
     } catch (error) {
       console.error("Error logging meal:", error);
+      
+      if (error.response) {
+        // Server returned an error
+        setError(`Error: ${error.response.data.message || error.response.statusText}`);
+      } else if (error.request) {
+        // Network error
+        setError("Network error. Please check your connection and try again.");
+      } else {
+        // Other error
+        setError(`Error: ${error.message}`);
+      }
     } finally {
       setLoading(false);
     }
   };
 
   const deleteMeal = async (mealId) => {
-    if (loading) return; // Prevent multiple requests
+    if (loading) return;
+    
     setLoading(true);
+    setError(null);
+    
     try {
       await axios.delete(`https://foodanalyser.onrender.com/api/meal/log/${mealId}`, {
         headers: { Authorization: `Bearer ${token}` }
       });
-
-      // Remove the deleted meal from the state
       setMeals(meals.filter(meal => meal._id !== mealId));
+      setSuccess("Meal deleted successfully");
     } catch (error) {
       console.error("Error deleting meal:", error);
+      
+      if (error.response) {
+        setError(`Error: ${error.response.data.message || error.response.statusText}`);
+      } else if (error.request) {
+        setError("Network error. Please check your connection and try again.");
+      } else {
+        setError(`Error: ${error.message}`);
+      }
     } finally {
       setLoading(false);
     }
   };
+
+  // Rest of the functions remain the same
 
   const calculateDailyTotals = () => {
     const today = new Date().toISOString().split('T')[0];
@@ -168,26 +292,44 @@ function LogMeals() {
       >
         <div className="min-h-screen p-8 mt-20">
           <div className="max-w-4xl mx-auto">
+            {/* Error/Success Alert */}
+            {error && (
+              <div className="bg-red-600 text-white p-4 rounded-lg mb-6 shadow-lg">
+                <p>{error}</p>
+              </div>
+            )}
+            
+            {success && (
+              <div className="bg-green-600 text-white p-4 rounded-lg mb-6 shadow-lg">
+                <p>{success}</p>
+              </div>
+            )}
+            
             <div className="bg-zinc-900 rounded-lg p-6 mb-8">
               <h2 className="text-2xl font-bold mb-2">Log Your Meal</h2>
               <p className="text-gray-400 mb-4">Track your daily nutrition intake</p>
               
               <form onSubmit={handleSubmit} className="space-y-4">
-                <input
-                  type="text"
-                  list="meal-options"
-                  placeholder="Meal Name"
-                  value={mealName}
-                  onChange={(e) => setMealName(e.target.value)}
-                  className="w-full bg-zinc-800 rounded-lg p-3 border border-zinc-700"
-                  required
-                />
-                <datalist id="meal-options">
-                  <option value="Breakfast" />
-                  <option value="Lunch" />
-                  <option value="Dinner" />
-                  <option value="Snack" />
-                </datalist>
+                <div>
+                  <label htmlFor="meal-name" className="block text-sm font-medium text-gray-300 mb-1">
+                    Meal Name
+                  </label>
+                  <input
+                    id="meal-name"
+                    type="text"
+                    list="meal-options"
+                    placeholder="e.g., Breakfast, Lunch, Dinner"
+                    value={mealName}
+                    onChange={(e) => setMealName(e.target.value)}
+                    className="w-full bg-zinc-800 rounded-lg p-3 border border-zinc-700"
+                    required
+                  />
+                  <datalist id="meal-options">
+                    {indianMealTypes.map((mealType, index) => (
+                      <option key={`meal-opt-${index}`} value={mealType} />
+                    ))}
+                  </datalist>
+                </div>
 
                 {foodItems.map((item, index) => (
                   <div key={`food-item-${index}`} className="space-y-4 p-4 bg-zinc-800 rounded-lg">
@@ -204,30 +346,56 @@ function LogMeals() {
                       )}
                     </div>
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                      <input
-                        type="text"
-                        placeholder="Food Name"
-                        value={item.name}
-                        onChange={(e) => handleFoodItemChange(index, 'name', e.target.value)}
-                        className="bg-zinc-700 rounded-lg p-3 border border-zinc-600"
-                        required
-                      />
-                      <input
-                        type="number"
-                        placeholder={`Quantity (${item.unit})`}
-                        value={item.quantity}
-                        onChange={(e) => handleFoodItemChange(index, 'quantity', e.target.value)}
-                        className="bg-zinc-700 rounded-lg p-3 border border-zinc-600"
-                        required
-                      />
-                      <select
-                        value={item.unit}
-                        onChange={(e) => handleFoodItemChange(index, 'unit', e.target.value)}
-                        className="bg-zinc-700 rounded-lg p-3 border border-zinc-600"
-                      >
-                        <option value="g">grams (g)</option>
-                        <option value="pcs">pieces (pcs)</option>
-                      </select>
+                      <div>
+                        <label htmlFor={`food-name-${index}`} className="block text-sm font-medium text-gray-300 mb-1">
+                          Food Name
+                        </label>
+                        <input
+                          id={`food-name-${index}`}
+                          type="text"
+                          list="indian-foods"
+                          placeholder="e.g., Roti, Rice, Dal"
+                          value={item.name}
+                          onChange={(e) => handleFoodItemChange(index, 'name', e.target.value)}
+                          className="w-full bg-zinc-700 rounded-lg p-3 border border-zinc-600"
+                          required
+                        />
+                        <datalist id="indian-foods">
+                          {indianFoodSuggestions.map((food, i) => (
+                            <option key={`food-opt-${i}`} value={food} />
+                          ))}
+                        </datalist>
+                      </div>
+                      <div>
+                        <label htmlFor={`food-quantity-${index}`} className="block text-sm font-medium text-gray-300 mb-1">
+                          Quantity
+                        </label>
+                        <input
+                          id={`food-quantity-${index}`}
+                          type="number"
+                          placeholder={`Amount in ${item.unit}`}
+                          value={item.quantity}
+                          onChange={(e) => handleFoodItemChange(index, 'quantity', e.target.value)}
+                          className="bg-zinc-700 rounded-lg p-3 border border-zinc-600 w-full"
+                          min="0"
+                          step="any"
+                          required
+                        />
+                      </div>
+                      <div>
+                        <label htmlFor={`food-unit-${index}`} className="block text-sm font-medium text-gray-300 mb-1">
+                          Unit
+                        </label>
+                        <select
+                          id={`food-unit-${index}`}
+                          value={item.unit}
+                          onChange={(e) => handleFoodItemChange(index, 'unit', e.target.value)}
+                          className="bg-zinc-700 rounded-lg p-3 border border-zinc-600 w-full"
+                        >
+                          <option value="g">grams (g)</option>
+                          <option value="pcs">pieces (pcs)</option>
+                        </select>
+                      </div>
                     </div>
                   </div>
                 ))}
@@ -242,16 +410,17 @@ function LogMeals() {
 
                 <button
                   type="submit"
-                  className="w-full bg-white text-black px-6 py-3 rounded-lg font-semibold hover:bg-gray-200 transition-colors"
+                  disabled={loading}
+                  className="w-full bg-white text-black px-6 py-3 rounded-lg font-semibold hover:bg-gray-200 transition-colors disabled:bg-gray-400"
                 >
-                  Log Meal
+                  {loading ? 'Logging...' : 'Log Meal'}
                 </button>
               </form>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               <div className="bg-zinc-900 rounded-lg p-6">
-                <h2 className="text-2xl font-bold mb-2">Todays Intake</h2>
+                <h2 className="text-2xl font-bold mb-2">Today&apos;s Intake</h2>
                 <p className="text-gray-400 mb-4">Your nutrition summary for today</p>
                 
                 <div className="grid grid-cols-2 gap-4">
@@ -297,6 +466,7 @@ function LogMeals() {
                               <button
                                 onClick={() => deleteMeal(meal._id)}
                                 className="text-red-400 hover:text-red-300"
+                                disabled={loading}
                               >
                                 Delete
                               </button>
