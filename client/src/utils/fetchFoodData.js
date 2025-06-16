@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 export const fetchFoodData = async (foodName) => {
-  const API_KEY = "API_KEY";
+  const API_KEY = "ziQ3fnCsGky3pOU6uLEYBQ==aVoKSZaT7UM0KTFz";
   const url = `https://foodanalyser.onrender.com/api/food/search?q=${encodeURIComponent(foodName.trim())}`;
 
   try {

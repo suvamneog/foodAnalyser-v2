@@ -9,7 +9,7 @@ require("dotenv").config();
 // Public search endpoint - no auth required
 router.get('/search', async (req, res) => {
     let query = req.query.q;
-    const response = await axios.get(`https://api.api-ninjas.com/v1/nutrition?query=${query}`, {
+    const response = await axios.get(`https://api.calorieninjas.com/v1/nutrition?query=${query}`, {
         headers: { "X-Api-Key": process.env.CALORIE_NINJA_API_KEY }
     });
 

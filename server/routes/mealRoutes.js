@@ -179,9 +179,9 @@ router.post("/log", auth, async (req, res) => {
       let sourceData = "api"; // Track data source for debugging
       
       try {
-        // First try the APINinjas API with timeout protection
+        // First try the CalorieNinjas API with timeout protection
         const response = await axios.get(
-          `https://api.api-ninjas.com/v1/nutrition?query=${food.quantity} ${food.unit} ${food.name}`,
+          `https://api.calorieninjas.com/v1/nutrition?query=${food.quantity} ${food.unit} ${food.name}`,
           {
             headers: { "X-Api-Key": process.env.CALORIE_NINJA_API_KEY },
             timeout: 5000 // 5 second timeout
