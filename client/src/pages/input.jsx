@@ -1,57 +1,116 @@
+
 /* eslint-disable react/prop-types */
 import { useState } from "react";
 import { PlaceholdersAndVanishInput } from "../components/ui/placeholders-and-vanish-input";
 import { fetchFoodData } from "../utils/fetchFoodData";
 
-function PlaceholdersAndVanishInputDemo({ foodName, setFoodName, setOutput, loading, setLoading }) {
+function PlaceholdersAndVanishInputDemo({
+  foodName,
+  setFoodName,
+  setOutput,
+  loading,
+  setLoading,
+}) {
   const [error, setError] = useState(null);
 
   const placeholders = [
-    "One whey to a healthy life!",
-    "Enter the food name!",
-    "Searching for some protein?",
+    "Search Indian foods like 'roti', 'dal', 'paneer'",
+    "Looking for 'chicken curry' or 'biryani'?",
+    "Try 'samosa', 'idli', or 'butter chicken'",
+    "Search IFCT 2017 + INDB Indian food databases",
   ];
 
   const updateVal = (e) => {
     setFoodName(e.target.value);
-    setError(null); // Clear error when user starts typing
+    setError(null);
   };
 
   const onSubmit = async () => {
-    if (loading) return; // Prevent multiple requests
-  
+    if (loading) return;
+
     const trimmedFoodName = foodName.trim();
     if (!trimmedFoodName) {
-      setError("Please enter a valid food name before searching.");
+      setError("Please enter a food name to search.");
       setTimeout(() => document.getElementById("food-input")?.focus(), 100);
       return;
     }
-  
-    setLoading(true); // Set loading before making request
+
+    if (trimmedFoodName.length < 2) {
+      setError("Please enter at least 2 characters to search.");
+      return;
+    }
+
+    setLoading(true);
+    setError(null);
     try {
       const data = await fetchFoodData(trimmedFoodName);
-      if (!data || Object.keys(data).length === 0) {
-        throw new Error("No data found for the entered food item.");
+
+      if (!data || (Array.isArray(data) && data.length === 0)) {
+        throw new Error(`No results found for "${trimmedFoodName}" in our databases.`);
       }
+
+      // ✅ FIX: data is already an array from fetchFoodData
+      setOutput(Array.isArray(data) ? data : [data]);
+      setFoodName("");
+      console.log("✅ Food data retrieved:", data);
+      console.log(`✅ Displaying ${Array.isArray(data) ? data.length : 1} results`);
       
-      setOutput([data]);
-      console.log("submitted", data);
     } catch (err) {
-      setError(err.message || "Something went wrong. Please try again.");
+      console.error("❌ Search error:", err);
+      
+      if (err.message.includes("No results found")) {
+        setError(
+          `"${trimmedFoodName}" not found in Indian food databases. Try another food item.`
+        );
+      } else if (err.message.includes("database") || err.message.includes("unavailable")) {
+        setError(err.message);
+      } else {
+        setError("Failed to search food databases. Please try again later.");
+      }
     } finally {
-      setLoading(false); // Reset loading state after request
+      setLoading(false);
+    }
+  };
+
+  const handleKeyPress = (e) => {
+    if (e.key === "Enter") {
+      onSubmit();
     }
   };
 
   return (
-    <div className="">
-      <PlaceholdersAndVanishInput
-        placeholders={placeholders}
-        onChange={updateVal}
-        onSubmit={onSubmit}
-        value={foodName}
-      />
-      {error && <p className="pl-10 mt-2 text-red-500">{error}</p>}
+    <div className="w-full max-w-md mx-auto">
+      <div className="relative">
+        <PlaceholdersAndVanishInput
+          placeholders={placeholders}
+          onChange={updateVal}
+          onSubmit={onSubmit}
+          onKeyPress={handleKeyPress}
+          value={foodName}
+          id="food-input"
+        />
+      </div>
+
+      {error && (
+        <div className="mt-3 p-3 bg-red-900/20 border border-red-800 rounded-lg">
+          <p className="text-red-400 text-sm text-center">{error}</p>
+          <p className="text-red-300/70 text-xs text-center mt-1">
+            💡 Try common Indian foods like roti, dal, rice, biryani, etc.
+          </p>
+        </div>
+      )}
+
+      <div className="mt-4 text-center">
+        <p className="text-gray-400 text-xs">
+          🔍 Powered by{" "}
+          <span className="text-blue-400 font-medium">IFCT 2017</span> +{" "}
+          <span className="text-green-400 font-medium">INDB</span> +{" "}
+          <span className="text-yellow-400 font-medium">Global dataset</span>
+        </p>
+        <p className="text-gray-500 text-xs mt-1">
+          All nutrition values are per 100g serving for accurate comparison
+        </p>
+      </div>
     </div>
   );
 }

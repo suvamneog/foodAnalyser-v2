@@ -100,7 +100,7 @@ const BarcodeScanner = () => {
     setLoading(true);
     setError(null);
     try {
-      const response = await axios.get(`https://foodanalyser.onrender.com/api/scan/product/${barcode}`);
+      const response = await axios.get(`https://localhost/api/scan/product/${barcode}`);
       console.log("Backend API Response:", response.data);
       if (response.data.status === 1) {
         setProduct(response.data.product);

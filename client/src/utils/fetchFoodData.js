@@ -1,68 +1,111 @@
-import axios from 'axios';
+
+import axios from "axios";
 
 export const fetchFoodData = async (foodName) => {
-  const API_KEY = "ziQ3fnCsGky3pOU6uLEYBQ==aVoKSZaT7UM0KTFz";
-  const url = `https://foodanalyser.onrender.com/api/food/search?q=${encodeURIComponent(foodName.trim())}`;
+  // ✅ Local development
+  const url = `http://localhost:3000/api/food/search?q=${encodeURIComponent(
+    foodName.trim()
+  )}`;
 
   try {
     const headers = {
-      "X-Api-Key": API_KEY,
       "Content-Type": "application/json",
     };
 
-    // Only add auth header if user is logged
     const authToken = localStorage.getItem("authToken");
     if (authToken) {
       headers.Authorization = `Bearer ${authToken}`;
     }
 
     const response = await axios.get(url, { headers });
+
+    console.log("🔍 Unified API Response:", response.data);
     
-    if (!response.data || !response.data.items || !Array.isArray(response.data.items)) {
-      throw new Error("Invalid response format from server");
+    // ✅ DEBUG: Check what's in the items array
+    if (response.data.items && Array.isArray(response.data.items) && response.data.items.length > 0) {
+      console.log(`🔍 Found ${response.data.items.length} items in response`);
+      response.data.items.forEach((item, idx) => {
+        console.log(`  Item ${idx + 1}:`, {
+          name: item.name,
+          source: item.source,
+          hasServingSize: item.serving_size_g,
+        });
+      });
     }
 
-    if (response.data.items.length === 0) {
-      throw new Error(`No results found for "${foodName}"`);
+    // ✅ Handle ANY response format
+    let foodItems = [];
+    
+    if (response.data.items && Array.isArray(response.data.items) && response.data.items.length > 0) {
+      foodItems = response.data.items;
+    }
+    else if (response.data && typeof response.data === 'object' && response.data.name) {
+      foodItems = [response.data];
+    }
+    else if (response.data.direct) {
+      foodItems = [response.data.direct];
+    }
+    else if (response.data.withSource) {
+      foodItems = [response.data.withSource];
+    }
+    else {
+      throw new Error(`No results found for "${foodName}" in our databases.`);
     }
 
-    const foodItem = response.data.items[0];
+    if (!foodItems || foodItems.length === 0) {
+      throw new Error(`No results found for "${foodName}" in our databases.`);
+    }
 
-    // Validate required fields
-    const requiredFields = ["name", "calories", "protein_g", "carbohydrates_total_g", "fat_total_g"];
-    const missingFields = requiredFields.filter(field => {
-      const value = foodItem[field];
-      return value === undefined || value === null || (typeof value === "number" && isNaN(value));
+    // ✅ Map all items (no source detection needed - backend handles it)
+    const mappedItems = foodItems.map(foodItem => {
+      return {
+        name: foodItem.name || "Unknown Food",
+        calories: parseNutritionValue(foodItem.calories),
+        protein_g: parseNutritionValue(foodItem.protein_g),
+        carbohydrates_total_g: parseNutritionValue(foodItem.carbs_g || foodItem.carbohydrates_total_g),
+        fat_total_g: parseNutritionValue(foodItem.fat_g || foodItem.fat_total_g),
+        fiber_g: parseNutritionValue(foodItem.fiber_g),
+        sugar_g: parseNutritionValue(foodItem.sugar_g),
+        fat_saturated_g: parseNutritionValue(foodItem.fat_saturated_g),
+        sodium_mg: parseNutritionValue(foodItem.sodium_mg),
+        cholesterol_mg: parseNutritionValue(foodItem.cholesterol_mg),
+        serving_size_g: foodItem.serving_size_g || 100,
+        serving_description: foodItem.serving_description || "per 100g",
+        source: foodItem.source || "Unknown Source", // Trust backend source
+      };
     });
 
-    if (missingFields.length > 0) {
-      throw new Error(`Incomplete data: missing ${missingFields.join(", ")}`);
-    }
-
-    return {
-      name: foodItem.name,
-      calories: Number(foodItem.calories),
-      protein_g: Number(foodItem.protein_g || 0),
-      carbohydrates_total_g: Number(foodItem.carbohydrates_total_g || 0),
-      fat_total_g: Number(foodItem.fat_total_g || 0),
-    };
+    console.log("✅ Final food data:", mappedItems);
+    console.log(`✅ Returning ${mappedItems.length} items`);
+    
+    return mappedItems;
+    
   } catch (error) {
     if (axios.isAxiosError(error)) {
-      switch (error.response?.status) {
-        case 401:
-          throw new Error("Session expired. Please log in again.");
-        case 403:
-          throw new Error("Access denied. Please check your permissions.");
+      const status = error.response?.status;
+      const message = error.response?.data?.error;
+
+      switch (status) {
+        case 400:
+          throw new Error("Please enter a food name to search.");
         case 404:
-          throw new Error(`No data found for "${foodName}". Please try another food item.`);
-        case 429:
-          throw new Error("Too many requests. Please try again later.");
+          throw new Error(message || `No results found for "${foodName}" in Indian food databases.`);
         case 500:
-          throw new Error("Server error. Please try again later.");
+          throw new Error("Food database is temporarily unavailable. Please try again later.");
         default:
-          throw new Error(error.response?.data?.message || "Failed to fetch food data");
+          throw new Error(message || "Failed to fetch food data. Please try again.");
       }
     }
     throw error;
   }
 };
+
+// Helper function to handle "N/A" values and convert to numbers
+function parseNutritionValue(value) {
+  if (value === "N/A" || value === undefined || value === null) return 0;
+  if (typeof value === 'string') {
+    const cleaned = value.replace(/[^\d.-]/g, '');
+    return Number(cleaned) || 0;
+  }
+  return Number(value) || 0;
+}

@@ -1,0 +1,3332 @@
+[
+  {
+    "name": "Amaranth seed",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "A. Moricha guti; H. Ramdana; Kan. Danthu beeja; Kash. Mawal; Mal. Cheera vithu; M. Chengkruk Maru; Mar. Cavali biya; O. Kosala sag manji Dhala; P. Chaulali beej; Tam. Keerai vidai; Tel. Thotakoora ginjalu.",
+    "tags": "1"
+  },
+  {
+    "name": "Bajra",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "Kash. Baajra; B. Bajra; E. Pearl millet; G. Bajri; H. Bajra; Kan. Sajje; Kh. Krai; Mal. Kambam; Mar. Bajra; N. Bajara; O. Bajra; P. Bajra; Tam. Kambu; Tel. Sajjalu; U. Bajra.",
+    "tags": "6"
+  },
+  {
+    "name": "Barley",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "Cereals and Millets",
+    "tags": "Vegetarian"
+  },
+  {
+    "name": "Jowar",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "Cereals and Millets",
+    "tags": "Vegetarian"
+  },
+  {
+    "name": "Maize",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "A. Makoi; B. Bhutta; E. Corn; G. Makai; H. Makka; Kan. Mekke jola; Kash. Makai; Kh. Symbai riewhadem stem; Mal. Maize; M. Chujaak; Mar. Maka; N. Sukha makai; O. Maka; P. Chhali; S. Yaavanaala; Tam. Makka Cholam; Tel. Mokkajonna; U. makai.",
+    "tags": "6"
+  },
+  {
+    "name": "Quinoa",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "Cereals and Millets",
+    "tags": "Vegetarian"
+  },
+  {
+    "name": "Ragi",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "Cereals and Millets",
+    "tags": "Vegetarian"
+  },
+  {
+    "name": "Rice",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "A. Chira",
+    "tags": "Chira; E. Flattened rice"
+  },
+  {
+    "name": "Samai",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "Cereals and Millets",
+    "tags": "Vegetarian"
+  },
+  {
+    "name": "Varagu",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "Cereals and Millets",
+    "tags": "Vegetarian"
+  },
+  {
+    "name": "Wheat flour",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "A. Moida; B. Maida; G. Maido; H. Maida; Kan. Maida; Kash. Oat; Kh. Moida; Mal. Maida mavu; M. Moida; Mar. Maida; N. Maida; O. Maida; P. Maida; Tam. Maida mavu; Tel. Maida pindi; U. Maida.",
+    "tags": "6"
+  },
+  {
+    "name": "Wheat",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "A. Ghehu; B. Gom; G. Ghaun; H. Gehun; Kan. Godhi; Kash. Kinek; Kh. Ukew; Mal. Godhumbu; M. Ghehu; Mar. Gehu; N. Gau; O. Gahama; P. Kanaka; S. Godhum; Tam. Godumai; Tel. Godhumalu; U. Gehun.",
+    "tags": "6"
+  },
+  {
+    "name": "Bengal gram",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "A. Boot dail; B. Cholar dal; E. Split Bengal gram",
+    "tags": "Grain Legumes"
+  },
+  {
+    "name": "Black gram",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "A. Matir dail phola; B. Biulir dal; E. Urad bean",
+    "tags": "Black matpe bean; G. Aadad ni daad; H. Urad dal; Kan. Uddhina bele; Kash. Kaha; Mal. Uzhunnu parippu; M. Sagol Hawai Tangkhai; Mar. Uddachi dal; N. Maas ko dal; O. Birri dali"
+  },
+  {
+    "name": "Cowpea",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "A. Lesera mahor guti; B. Barbati; E. Black eyed peas",
+    "tags": "Grain Legumes"
+  },
+  {
+    "name": "Field bean",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "A. Urohi guti; B. Shim; E. Common bean",
+    "tags": "Broad bean"
+  },
+  {
+    "name": "Green gram",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "A. Dhua mogu dail; B. Mung dal; E. Mung bean",
+    "tags": "Moong; G. Mug ni daad; H. Mug dal; Kan. Hesara bele; Kash. Muang dal; Kh. U dai stem; Mal. Cheru payar parippu; M. Mung Hawai; Mar. Mug dal; N. Moong ko khoste; O. Muga Dali; P. Mungi-di-dal; Tam. Payatham paruppu; Tel. Pesara pappu; U. Moong dal."
+  },
+  {
+    "name": "Horse gram",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "B. Kulotto- kalai; E. Kulthi bean",
+    "tags": "Madras gram; G. Kuleeth; H. Kulthi; Kan. Hurule; Kash. Kurath; Mal. Muthira; Mar. Kuleeth; N. Bakulla; O. Kolatha; S. Kulattha; Tam. Kollu; Tel. Ulavalu; U. Kulthi."
+  },
+  {
+    "name": "Lentil",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "A. Masur dail; B. Mosur dal; G. Masoor ni daad; H. Masoor dal; Kan. Laki Bele; Kash. Masoor; Kh. U dai saw; Mal. Vattu parippu; M. Hawai Masuri; Mar. lank dal; O. Masura dali; P. Dhooli masari dal; S. Triputta; Tam. Khesari paruppu; Tel. Lanka pappu.",
+    "tags": "6"
+  },
+  {
+    "name": "Moth bean",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "Turkish gram",
+    "tags": "Grain Legumes"
+  },
+  {
+    "name": "Peas",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "A. Gota motor; B. Matar; G. Sukha vatana; H. Sukhi Matar; Kan. Batani; Kash. Kaza; Kh. Shana mator; Mal. Pattani; Tam. Pattani; O. Matara; P. Sukhe hare matar dal; Kan.",
+    "tags": "Grain Legumes"
+  },
+  {
+    "name": "Rajmah",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "A. Rajmah; B. Barbati beej; E. Rajma",
+    "tags": "Grain Legumes"
+  },
+  {
+    "name": "Red gram",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "A. Rohor dail; B.",
+    "tags": "H. Arhar dal; E. Pigeon pea; G. Tuver ni daad; Kan. Thugare bele; Kash. Masur; Kh. Dai shana; Mal. Tuvaru parippu; M. Mairongbi; Mar. Turdal; N. Rahar ko dal; O. Harada dal; P. Arhar dal; S. Aaddhakii; Tel. Kandi pappu; Tam. Tuvaramparuppu; U. Tuvar ki dal."
+  },
+  {
+    "name": "Ricebean",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "Grain Legumes",
+    "tags": "Vegetarian"
+  },
+  {
+    "name": "Soya bean",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "A. Soya bean; B. Garikalai; E. Soybean; G. Soya bean; H. Bhatmas; Kan. Soya bean; Kash. Muth; Kh. Toh rymbai; Mal. Soya bean; M. Nunghawai; Mar. Soya bean; N. Bhatmas; O. Soya bean; P. Soya bean dal; Tam. Soya bean; Tel. Soya bean; U. Soya.",
+    "tags": "6"
+  },
+  {
+    "name": "Agathi leaves",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "Humming bird tree leaves",
+    "tags": "Green Leafy Vegetables"
+  },
+  {
+    "name": "Amaranth leaves",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "A. Moricha sak; B. Notya Shaakh; G. Taldalja ni bhaaji; H. Chaulai; Kan. Danthu; Kash. Mawal; Mal. Cheera; M. Chengkruk; Mar. Math; N. Latte to saag; O. Neutia sag; P. Chaulai sag; S. Maarissa; Tam. Thandu keerai; Tel. Thotakoora; U. Cholai.",
+    "tags": "6"
+  },
+  {
+    "name": "Amaranth",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "green",
+    "tags": "A. Moricha sak; B. Kanta-notya; G. Kanta vado tandaljo; H. Kantewali-notya; Kan. Mulla danthu; Kash. Mawal; Mal. Mullancheru- cheera; M. Chengkruk; Mar. Kantemanth; O. Kanta notay shak; P. Kantewali chaulai; Tam. Mulaikeerai; Tel. Mulla thotakura."
+  },
+  {
+    "name": "Basella leaves",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "Vegetables",
+    "tags": "Vegetarian"
+  },
+  {
+    "name": "Bathua leaves",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "Vegetables",
+    "tags": "Vegetarian"
+  },
+  {
+    "name": "Beetroot leaves",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "Vegetables",
+    "tags": "Vegetarian"
+  },
+  {
+    "name": "Betel leaves",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "A. paan; B. Pan; G. Nagarvelna pan; H. Pan ka patha; Kan. Kadale soppu; Kh. Tympew Dkhar; Mal. Vettiiai; M. Kwa Mana; Mar. Pan-ka-patta; O. Pana; P.  Pan-da-patta; Tam. Vetrilai; Tel. Thamala paku; U. Paan ka patta.",
+    "tags": "6"
+  },
+  {
+    "name": "Brussels sprouts",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "Vegetables",
+    "tags": "Vegetarian"
+  },
+  {
+    "name": "Cabbage",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "A. China lai; G. Chinese kobi; Kash. Bandh; Kh. Salat chaina.",
+    "tags": "1"
+  },
+  {
+    "name": "Cauliflower leaves",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "Vegetables",
+    "tags": "Vegetarian"
+  },
+  {
+    "name": "Colocasia leaves",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "A. Kasu sak; B. Kochu pata; G. Advi na pan; H. Arvi ka sag; Kan. Shamangadda yele; Kh. Sla wang; Mal. Chembu ilagal; M. Paan mana; Mar. Alu pan; N. Karkalo; O. Saru saga; P. Arbi-di-patte; Tam. Seppam ilaigal; Tel. Chama akulu; U. Arvi ka patta.",
+    "tags": "6"
+  },
+  {
+    "name": "Drumstick leaves",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "Benzoil leaves; G. Saragwa na pan; H. Saijan patta; Kan. Nuggeyele; Mal. Muringa ela; M. Sajana mana; Mar. Shevaga pan; O. Sajna sag; P. Soanjhna da patta; Tam. Murungai keerai; Tel. Mulaga akulu; U. Sujineki palli.",
+    "tags": "3"
+  },
+  {
+    "name": "Fenugreek leaves",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "Vegetables",
+    "tags": "Vegetarian"
+  },
+  {
+    "name": "Garden cress",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "Vegetables",
+    "tags": "Vegetarian"
+  },
+  {
+    "name": "Gogu leaves",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "A. Tengamora; B. Mestapat; E. Roselle Leaves; G. Ambadi; H. Pitwa; Kan. Pundi; Kh. Sla jajew jyrngam; Mal. Pulichai cheera; M. Sougri mana; Mar. Ambadi; O. Nalite saga; P. Pitwa sag; Tam. Pulichchai keerai; Tel. Gongura; U. Ambada ki bhaji.",
+    "tags": "4"
+  },
+  {
+    "name": "Knol-Khol",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "A. Ool kobi; B. Olkopi sag; E. Knol Knol",
+    "tags": "Wild cabbage greens; G. Gath kobi na pan; H. Ganth gobi ka sag; Kan. Gedde kosu; Kash. Hakh Monji; Kh. Phan Kubi; Mal. Knol-khol cheera; M. Kobi Maru Kabi; Mar. Nol khol ka patta; N. Salgam ko saag; O. Ulgobi saga; P. Ganth gobi sag; Tam. Knol-Khol keerai; Tel. Knol-khol akulu."
+  },
+  {
+    "name": "Lettuce",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "Vegetables",
+    "tags": "Vegetarian"
+  },
+  {
+    "name": "Mustard leaves",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "Vegetables",
+    "tags": "Vegetarian"
+  },
+  {
+    "name": "Pak Choi leaves",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "Horse`s ear",
+    "tags": "White mustard cabbage; G. Pak choi na pan."
+  },
+  {
+    "name": "Parsley",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "Vegetables",
+    "tags": "Vegetarian"
+  },
+  {
+    "name": "Ponnaganni",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "Vegetables",
+    "tags": "Vegetarian"
+  },
+  {
+    "name": "Pumpkin leaves",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "A. Rongalao paat; B. Kumra shak; G. Kolam na pan; H. Kumhra sag; Kan. Kumbale soppu; Kash. Aal kaniji; Kh. Sla pathaw; Mal. Manthan elakai; M. Mairen mana; Mar. Bhopla chipan; O. Khakaru saga; P. Petha de pate; Tel. Gummadi akulu; Tam. Parangi ilai; U. Kaddu ka patta.",
+    "tags": "6"
+  },
+  {
+    "name": "Radish leaves",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "Vegetables",
+    "tags": "Vegetarian"
+  },
+  {
+    "name": "Rumex leaves",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "Vegetables",
+    "tags": "Vegetarian"
+  },
+  {
+    "name": "Spinach",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "Vegetables",
+    "tags": "Vegetarian"
+  },
+  {
+    "name": "Tamarind leaves",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "B. Tetul pata; G. Amli na pan; H.",
+    "tags": "Tam. Puliam ilaigal; Mar. Chinchecha pala; O. Tentuli; Tel. Chinta chiguru; A. Teteli paat; M. Mange Mana; Kh. Sla sohkyntoi."
+  },
+  {
+    "name": "Ash gourd",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "White gourd",
+    "tags": "Tallow gourd"
+  },
+  {
+    "name": "Bamboo shoot",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "A. Bahgaj; B. Bansber ankur; E. Bamboo sprouts; G. Lilo vans; H. Baans; Kan. Baimbale",
+    "tags": "Other Vegetables"
+  },
+  {
+    "name": "Bean scarlet",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "A. Lesera mah; E. Runner bean",
+    "tags": "Multiflora bean; G. Chodi; H. Sem; Kash. Hyambi; Kh. U buri; M. Hawai Ashaangbi; P. Sem fali."
+  },
+  {
+    "name": "Bitter gourd",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "elongate",
+    "tags": "A. Kerela; B. Korola; E. Bitter melon"
+  },
+  {
+    "name": "Bottle gourd",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "Lagenaria vulgaris",
+    "tags": "White flowered gourd; G. Dudhi; H. Lowki; Kan. Sorekai; Kash. Zeeth aal; Kh. U klong; Mal. Cheranga; M. Khongdrum; Mar. Pandhara; N. Lauka; O. Lau; P. Kadu; S. Kaarabellam; Tam. Suraikkai; Tel. Sorrakaya; U. Lowki."
+  },
+  {
+    "name": "Brinjal 1",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "Aubergine; G. Ringna; H. Baingan; Kan. Badane; Kash. Wagun; Kh. Sohbaingon jyrngam; Mal. Vazhuthiniga; M. Lam Khamen; Mar. Vange; N. Bhantaa; O. Baigan; P. Baigan; S. Vruntaakam; Tam. Kathirikkai; Tel. Vankaya; U. Baigan.",
+    "tags": "1"
+  },
+  {
+    "name": "Brinjal 2",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "Aubergine; G. Ringna; H. Baingan; Kan. Badane; Kash. Wagun; Kh. Sohbaingon jyrngam; Mal. Vazhuthiniga; M. Lam Khamen; Mar. Vange; N. Bhantaa; O. Baigan; P. Baigan; S. Vruntaakam; Tam. Kathirikkai; Tel. Vankaya; U. Baigan.",
+    "tags": "1"
+  },
+  {
+    "name": "Brinjal 3",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "Aubergine; G. Ringna; H. Baingan; Kan. Badane; Kash. Wagun; Kh. Sohbaingon jyrngam; Mal. Vazhuthiniga; M. Lam Khamen; Mar. Vange; N. Bhantaa; O. Baigan; P. Baigan; S. Vruntaakam; Tam. Kathirikkai; Tel. Vankaya; U. Baigan.",
+    "tags": "2"
+  },
+  {
+    "name": "Brinjal 4",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "Aubergine; G. Ringna; H. Baingan; Kan. Badane; Kash. Wagun; Kh. Sohbaingon jyrngam; Mal. Vazhuthiniga; M. Lam Khamen; Mar. Vange; N. Bhantaa; O. Baigan; P. Baigan; S. Vruntaakam; Tam. Kathirikkai; Tel. Vankaya; U. Baigan.",
+    "tags": "4"
+  },
+  {
+    "name": "Brinjal 5",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "Aubergine; G. Ringna; H. Baingan; Kan. Badane; Kash. Wagun; Kh. Sohbaingon jyrngam; Mal. Vazhuthiniga; M. Lam Khamen; Mar. Vange; N. Bhantaa; O. Baigan; P. Baigan; S. Vruntaakam; Tam. Kathirikkai; Tel. Vankaya; U. Baigan",
+    "tags": "3"
+  },
+  {
+    "name": "Brinjal 6",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "Aubergine; G. Ringna; H. Baingan; Kan. Badane; Kash. Wagun; Kh. Sohbaingon jyrngam; Mal. Vazhuthiniga; M. Lam Khamen; Mar. Vange; N. Bhantaa; O. Baigan; P. Baigan; S. Vruntaakam; Tam. Kathirikkai; Tel. Vankaya; U. Baigan",
+    "tags": "2"
+  },
+  {
+    "name": "Brinjal 7",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "Aubergine; G. Ringna; H. Baingan; Kan. Badane; Kash. Wagun; Kh. Sohbaingon jyrngam; Mal. Vazhuthiniga; M. Lam Khamen; Mar. Vange; N. Bhantaa; O. Baigan; P. Baigan; S. Vruntaakam; Tam. Kathirikkai; Tel. Vankaya; U. Baigan",
+    "tags": "1"
+  },
+  {
+    "name": "Brinjal 8",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "Aubergine; G. Ringna; H. Baingan; Kan. Badane; Kash. Wagun; Kh. Sohbaingon jyrngam; Mal. Vazhuthiniga; M. Lam Khamen; Mar. Vange; N. Bhantaa; O. Baigan; P. Baigan; S. Vruntaakam; Tam. Kathirikkai; Tel. Vankaya; U. Baigan.",
+    "tags": "3"
+  },
+  {
+    "name": "Brinjal 9",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "Aubergine; G. Ringna; H. Baingan; Kan. Badane; Kash. Wagun; Kh. Sohbaingon jyrngam; Mal. Vazhuthiniga; M. Lam Khamen; Mar. Vange; N. Bhantaa; O. Baigan; P. Baigan; S. Vruntaakam; Tam. Kathirikkai; Tel. Vankaya; U. Baigan.",
+    "tags": "2"
+  },
+  {
+    "name": "Brinjal 10",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "Aubergine; G. Ringna; H. Baingan; Kan. Badane; Kash. Wagun; Kh. Sohbaingon jyrngam; Mal. Vazhuthiniga; M. Lam Khamen; Mar. Vange; N. Bhantaa; O. Baigan; P. Baigan; S. Vruntaakam; Tam. Kathirikkai; Tel. Vankaya; U. Baigan.",
+    "tags": "2"
+  },
+  {
+    "name": "Brinjal 11",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "Aubergine; G. Ringna; H. Baingan; Kan. Badane; Kash. Wagun; Kh. Sohbaingon jyrngam; Mal. Vazhuthiniga; M. Lam Khamen; Mar. Vange; N. Bhantaa; O. Baigan; P. Baigan; S. Vruntaakam; Tam. Kathirikkai; Tel. Vankaya; U. Baigan.",
+    "tags": "6"
+  },
+  {
+    "name": "Brinjal 12",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "Aubergine; G. Ringna; H. Baingan; Kan. Badane; Kash. Wagun; Kh. Sohbaingon jyrngam; Mal. Vazhuthiniga; M. Lam Khamen; Mar. Vange; N. Bhantaa; O. Baigan; P. Baigan; S. Vruntaakam; Tam. Kathirikkai; Tel. Vankaya; U. Baigan.",
+    "tags": "2"
+  },
+  {
+    "name": "Brinjal 13",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "Aubergine; G. Ringna; H. Baingan; Kan. Badane; Kash. Wagun; Kh. Sohbaingon jyrngam; Mal. Vazhuthiniga; M. Lam Khamen; Mar. Vange; N. Bhantaa; O. Baigan; P. Baigan; S. Vruntaakam; Tam. Kathirikkai; Tel. Vankaya; U. Baigan.",
+    "tags": "1"
+  },
+  {
+    "name": "Brinjal 14",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "Aubergine; G. Ringna; H. Baingan; Kan. Badane; Kash. Wagun; Kh. Sohbaingon jyrngam; Mal. Vazhuthiniga; M. Lam Khamen; Mar. Vange; N. Bhantaa; O. Baigan; P. Baigan; S. Vruntaakam; Tam. Kathirikkai; Tel. Vankaya; U. Baigan.",
+    "tags": "3"
+  },
+  {
+    "name": "Brinjal 15",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "Aubergine; G. Ringna; H. Baingan; Kan. Badane; Kash. Wagun; Kh. Sohbaingon jyrngam; Mal. Vazhuthiniga; M. Lam Khamen; Mar. Vange; N. Bhantaa; O. Baigan; P. Baigan; S. Vruntaakam; Tam. Kathirikkai; Tel. Vankaya; U. Baigan.",
+    "tags": "4"
+  },
+  {
+    "name": "Brinjal 16",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "Aubergine; G. Ringna; H. Baingan; Kan. Badane; Kash. Wagun; Kh. Sohbaingon jyrngam; Mal. Vazhuthiniga; M. Lam Khamen; Mar. Vange; N. Bhantaa; O. Baigan; P. Baigan; S. Vruntaakam; Tam. Kathirikkai; Tel. Vankaya; U. Baigan.",
+    "tags": "1"
+  },
+  {
+    "name": "Brinjal 17",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "Aubergine; G. Ringna; H. Baingan; Kan. Badane; Kash. Wagun; Kh. Sohbaingon jyrngam; Mal. Vazhuthiniga; M. Lam Khamen; Mar. Vange; N. Bhantaa; O. Baigan; P. Baigan; S. Vruntaakam; Tam. Kathirikkai; Tel. Vankaya; U. Baigan.",
+    "tags": "1"
+  },
+  {
+    "name": "Brinjal 18",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "Aubergine; G. Ringna; H. Baingan; Kan. Badane; Kash. Wagun; Kh. Sohbaingon jyrngam; Mal. Vazhuthiniga; M. Lam Khamen; Mar. Vange; N. Bhantaa; O. Baigan; P. Baigan; S. Vruntaakam; Tam. Kathirikkai; Tel. Vankaya; U. Baigan.",
+    "tags": "3"
+  },
+  {
+    "name": "Brinjal 19",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "Aubergine; G. Ringna; H. Baingan; Kan. Badane; Kash. Wagun; Kh. Sohbaingon jyrngam; Mal. Vazhuthiniga; M. Lam Khamen; Mar. Vange; N. Bhantaa; O. Baigan; P. Baigan; S. Vruntaakam; Tam. Kathirikkai; Tel. Vankaya; U. Baigan.",
+    "tags": "3"
+  },
+  {
+    "name": "Brinjal 20",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "Aubergine; G. Ringna; H. Baingan; Kan. Badane; Kash. Wagun; Kh. Sohbaingon jyrngam; Mal. Vazhuthiniga; M. Lam Khamen; Mar. Vange; N. Bhantaa; O. Baigan; P. Baigan; S. Vruntaakam; Tam. Kathirikkai; Tel. Vankaya; U. Baigan.",
+    "tags": "5"
+  },
+  {
+    "name": "Brinjal 21",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "Aubergine; G. Ringna; H. Baingan; Kan. Badane; Kash. Wagun; Kh. Sohbaingon jyrngam; Mal. Vazhuthiniga; M. Lam Khamen; Mar. Vange; N. Bhantaa; O. Baigan; P. Baigan; S. Vruntaakam; Tam. Kathirikkai; Tel. Vankaya; U. Baigan.",
+    "tags": "2"
+  },
+  {
+    "name": "Brinjal - all varieties",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "Aubergine; G. Ringna; H. Baingan; Kan. Badane; Kash. Wagun; Kh. Sohbaingon jyrngam; Mal. Vazhuthiniga; M. Lam Khamen; Mar. Vange; N. Bhantaa; O. Baigan; P. Baigan; S. Vruntaakam; Tam. Kathirikkai; Tel. Vankaya; U. Baigan.",
+    "tags": "6"
+  },
+  {
+    "name": "Broad beans",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "Faba bean",
+    "tags": "Bell bean"
+  },
+  {
+    "name": "Capsicum",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "A. Kashmiri jalakia; B. Lanka (bilathi); G. Bhuler marcha; H. Shimla mirch; Kan. Donnmena-sinakayi; Kash. Shimla marchwangan; Kh. Sohmynken jhur jyrngam; Mal. Undamulagu; Mar. Bhoplimirchi; O. Shimla Lanka; P. Shimle-di-mirchi; Tam. Koda milagai; Tel. Shimla mirchi; U. Shimla mirchi.",
+    "tags": "6"
+  },
+  {
+    "name": "Cauliflower",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "Vegetables",
+    "tags": "Vegetarian"
+  },
+  {
+    "name": "Celery stalk",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "Vegetables",
+    "tags": "Vegetarian"
+  },
+  {
+    "name": "Cho-cho-marrow",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "Chayote; H. Cho-cho-marrow; Kan. Cho-cho-marrow; M. Dasakusa; Mal. Cho-cho-marrow; Mar. Cho cho sara; O. Phuti kakudi; Kh. Biskot; Tam. Chow-chow.",
+    "tags": "4"
+  },
+  {
+    "name": "Cluster beans",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "Vegetables",
+    "tags": "Vegetarian"
+  },
+  {
+    "name": "Colocasia",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "Colocasia esculenta",
+    "tags": "Other Vegetables"
+  },
+  {
+    "name": "Corn",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "Kash. Makai; Kh. Riewhadem lung; M. Chujaak; P. Shoti shalli.",
+    "tags": "6"
+  },
+  {
+    "name": "Cucumber",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "Cucumis sativus",
+    "tags": "Kachumbar; Kan. Southe kayi; Kash. Laar; Kh. Sohkhia; Mal. Vellarikka; M. Thabi; Mar. Kakadi; N. Kakro; O. Kakudi; P. Khira; S. Patolah; Tam. Vellarikkai; Tel. Dosa kaya; U. Kheera."
+  },
+  {
+    "name": "Drumstick",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "Benzoil; G. Saragavo; H. Saijan-ki-phalli; Kan. Nugga kayi; Kh. Dieng sajana; Mal. Muringakkai; M. Sajana; Mar. Shevanga sheng; O. Sajana chhuin; P. Suhanjana di phalliya; Tam. Murungakkai; Tel. Mulakaada; U. Sujne ki palli.",
+    "tags": "6"
+  },
+  {
+    "name": "Field beans",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "Phaseolus vulgaris",
+    "tags": "Fieldbean"
+  },
+  {
+    "name": "French beans",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "A. French bean; E. Green beans; G. Fansi; H. Bakla; Kan. Huruli kayi; Kash. Hyambi; Kh. Presbin phyrngop; Mal. Beans; Mar. Pharasebee; N. Ghiu Simi; O. Beans; P. Fras bean; Tam. Vidaiavarai; Tel. Sannachikkudu; U. Beans.",
+    "tags": "5"
+  },
+  {
+    "name": "Jack fruit",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "A. Kothal; B. Kanthal; E. Jackfruit; G. Phanas; H. Kathal; Kash. Bindu; Kan. Halasu; Kh. Soh phan; M. Theibong; Mal. Chakka; Mar. Phanas; N. Katahar; O. Panasa; P. Kathal ki beej; S. Panasa; Tam. Palapazham; Tel. Panasa; U. Kathahal.",
+    "tags": "5"
+  },
+  {
+    "name": "Knol - Khol",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "Vegetables",
+    "tags": "Vegetarian"
+  },
+  {
+    "name": "Kovai",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "A. Kunduli; B. Telakucha; E. Ivy gourd",
+    "tags": "Kowai; Kan. Tondekayi; Kh. Jhur thliem; Mal. Kova kai; Mar. Tondale; O. Kunduru; Tam. Kova kai; Tel. Donda kaya; U. Tindli."
+  },
+  {
+    "name": "Ladies finger",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "Okro",
+    "tags": "Other Vegetables"
+  },
+  {
+    "name": "Mango",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "Mangifera indica",
+    "tags": "Other Vegetables"
+  },
+  {
+    "name": "Onion",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "A. Piyaj paat; B. Piyaz kali; E. Spring onion",
+    "tags": "Other Vegetables"
+  },
+  {
+    "name": "Papaya",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "A. Kesa omita; B. Pempe (Kacha); E. Papaw",
+    "tags": "Other Vegetables"
+  },
+  {
+    "name": "Parwar",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "Vegetables",
+    "tags": "Vegetarian"
+  },
+  {
+    "name": "Plantain",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "A. Koldil; B. Mocha; E. Banana flower; G. Kel phool; H. Kele-ka phool; Kan. Bale motho; Kh. Pashor kait; Mal. Vazhapoo; M. Lafu Tharo; Mar. Kel phool; O. Kadali bhanda; P. Kele-da-phool; Tam. Vazhapoo; Tel. Arati puvvu; U. Kela ka phool.",
+    "tags": "6"
+  },
+  {
+    "name": "Pumpkin",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "Cucurbita maxima",
+    "tags": "Other Vegetables"
+  },
+  {
+    "name": "Ridge gourd",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "Loofah; G. Turia; H. Torai; Kan. Heeraikai; Kash. Turrel ; Kh. Jingka; Kon. Gurdudde; Mal. Peechinga; M. Sebot; Mar. Dodka; O. Janhi; P. Kali tori; Tam. Peerkankai; Tel. Beera kaya; U. Turai.",
+    "tags": "6"
+  },
+  {
+    "name": "Snake gourd",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "Trichosanthes anguina",
+    "tags": "Other Vegetables"
+  },
+  {
+    "name": "Tinda",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "E. Indian squash",
+    "tags": "Indian round gourd"
+  },
+  {
+    "name": "Tomato",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "A. Kesa bilahi; B. Kacha Tomato; H. Tamator ; Kan. Goore Hannu; Kash. Rowagun; Kh. Soh saw jyrngam; Mal. Takkali; M. Khamen Ashinba; Mar. Hara velvangi; O. Bilati Baigan; P. Kaccha tamator; Tam. Thakkali kai; Tel. Ramamulagakaya; U. Kaccha tamatar.",
+    "tags": "6"
+  },
+  {
+    "name": "Zucchini",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "B. Dhudul; E. Courgette",
+    "tags": "Other Vegetables"
+  },
+  {
+    "name": "Apple",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "A. Apel; B. Sev; G. Safarjan; H. Sev; Kan. Sebu; Kash. Tsoonth; Kh. Soh apple saw; Mal.",
+    "tags": "Fruits"
+  },
+  {
+    "name": "Apricot",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "A. Malhoi; B. Suska khubani; G. Jardaloo (Suka velu); H. Khoomani; Kan. Jaldaru Hannu; Kash. Tser; Mal. Sheema bedhaam pazham; M. Malhei; Mar. Jardaalu; N. Khattu; P. Kharamani; Tel. Seema Badam/ Jallaru Pandu; Tam. Sakkarai badhami; U. Khubaani.",
+    "tags": "6"
+  },
+  {
+    "name": "Avocado fruit",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "Fruits",
+    "tags": "Vegetarian"
+  },
+  {
+    "name": "Bael fruit",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "Bengal quince",
+    "tags": "Japanese bitter orange"
+  },
+  {
+    "name": "Banana",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "Musa x paradisiaca",
+    "tags": "Fruits"
+  },
+  {
+    "name": "Black berry",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "Fruits",
+    "tags": "Vegetarian"
+  },
+  {
+    "name": "Cherries",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "G. Cherry; H. Gilas; Kan. Kadugempu; Kash. Gilas; Kh. Soh sherri; Mal. Cherrypazham; Mar. Cherry phal; P. Cherry; Tam. Cherry pazham; Tel. Cherri pandu.",
+    "tags": "4"
+  },
+  {
+    "name": "Currants",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "A. kismis; E. Zante currants",
+    "tags": "Corinthian raisins; G. kadi draksh; H. Munakka; Kan. Nerale hannu; Kh. Soh kismis iong; Mal. Najavalppazham; Mar. Kala pravaha; Tam. Karunthiratcha; Tel. Nalla Kishmish; U. kala kishmish."
+  },
+  {
+    "name": "Custard apple",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "Sweetsop; G. Sitapad; H. Sharifa; Kan. Sharifa; O. Ata; Mal.",
+    "tags": "Fruits"
+  },
+  {
+    "name": "Dates",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "Phoenix dactylifera",
+    "tags": "Fruits"
+  },
+  {
+    "name": "Fig",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "Fruits",
+    "tags": "Vegetarian"
+  },
+  {
+    "name": "Goosberry",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "Fruits",
+    "tags": "Vegetarian"
+  },
+  {
+    "name": "Grapes",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "black",
+    "tags": "A. Angoor; B. Angoor; G. Kadi Draksha; H. Angoor; Kan. Draksha; Kash. Dach; Kh. Soh grape iong; Mal. Mundiringa; M. Angoor; Mar. Draksha; N. Angoor; O. Angoor; P. Angoor; S. Draakssaa; Tam. Panneer dratchai; Tel. Draksha padu."
+  },
+  {
+    "name": "Guava",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "A. Madhurium; B. Peyara; G. Jamphad; H. Amrud; Kan. Seebe; Kash. Amrodh; Kh. Soh pyriam; Mal. Perakka (nattu); M. Pungton; Mar. Peru; N. Aamba; O. Pijuli (deshi); P. Amrud; S. Peruka; Tam. Koiyapazham; Tel. Jama pandu; U. Amrood.",
+    "tags": "5"
+  },
+  {
+    "name": "Jambu fruit",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "A. Jamu; B. Jaamrool; E. Java apple",
+    "tags": "Wax jambu; H. Jamun; Kan. Neralai; Mal. Naval pazham; Mar. Jambhool; O. Jamukoli; P. Jamun; Tam. Nagapazham; Tel. Neredupandu."
+  },
+  {
+    "name": "Karonda fruit",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "dindimi; Kan. Karekayi; Mar. Karvand; Mal. Karakka; O. Sushena; P. Karonda; S. Karamazda; Tam. Kalakkay/ Parungala; Tel. Kalive.",
+    "tags": "1"
+  },
+  {
+    "name": "Lemon",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "H. Nimbhu; Tel. Nimapandu ; O. Kagaji limbu; B. Pati Lebu; G. Limbu; P. Nibu; U. Neembu; A. Nemu; Kash. Nyomb; S. Lehin; N. Kaagati; M. Champra Mahi; Kh. Soh jew.",
+    "tags": "6"
+  },
+  {
+    "name": "Lime",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "Citrus limetta",
+    "tags": "Fruits"
+  },
+  {
+    "name": "Litchi",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "Fruits",
+    "tags": "Vegetarian"
+  },
+  {
+    "name": "Mangosteen",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "Fruits",
+    "tags": "Vegetarian"
+  },
+  {
+    "name": "Manila tamarind",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "Fruits",
+    "tags": "Vegetarian"
+  },
+  {
+    "name": "Musk melon",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "A. Siral; B. Kharamuja; E. Muskmelon; G. Kharbujo; H. Kharbooja; Kan. Kharbooja; Kash. Kherbuz; Mal. Mulam pazham; Mar. Kharbooja; O. Kharbooja; P. Kharbooja; S. Kharbuuja; Tam. Mulam pazham; Tel. Kharbooja; U. Kharbuz.",
+    "tags": "5"
+  },
+  {
+    "name": "Orange",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "A. Komola; B. Kamala lebu; G. Santra; H. Santra; Kan. Kithilai; Kash. Sangtar; Kh. Soh niamtra; Mal. Madhura naranga; M. Komla; Mar. Santre; N. Suntala; O. Kamala; P. Santra; S. Naarangga; Tam. Saathukudi; Tel. Kamala padu; U. Santra.",
+    "tags": "6"
+  },
+  {
+    "name": "Palm fruit",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "E. Doub palm",
+    "tags": "Tala palm"
+  },
+  {
+    "name": "Peach",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "Fruits",
+    "tags": "Vegetarian"
+  },
+  {
+    "name": "Pear",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "Fruits",
+    "tags": "Vegetarian"
+  },
+  {
+    "name": "Phalsa",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "Fruits",
+    "tags": "Vegetarian"
+  },
+  {
+    "name": "Pineapple",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "Fruits",
+    "tags": "Vegetarian"
+  },
+  {
+    "name": "Plum",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "Fruits",
+    "tags": "Vegetarian"
+  },
+  {
+    "name": "Pomegranate",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "A. dalim; B. Bedana; G. Dadam; H. Anar; Kan. Dalimbari; Kash. Daan; Kh. Soh pomegranate; Kon. Dalimb; Mal. Mathalam pazhham; M. Kamphoi; Mar. Dalimb; O. Dalimba; P. Anar; S. Daaddima; Tam. Madhulam pazham; Tel. Danimma pandu; U. Anaar.",
+    "tags": "6"
+  },
+  {
+    "name": "Pummelo",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "Fruits",
+    "tags": "Vegetarian"
+  },
+  {
+    "name": "Raisins",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "Vitis vinifera",
+    "tags": "Fruits"
+  },
+  {
+    "name": "Rambutan",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "Fruits",
+    "tags": "Vegetarian"
+  },
+  {
+    "name": "Sapota",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "Fruits",
+    "tags": "Vegetarian"
+  },
+  {
+    "name": "Soursop",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "Fruits",
+    "tags": "Vegetarian"
+  },
+  {
+    "name": "Star fruit",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "Starfruit; G. Amrakh; H. Kazmal/Kamrakh; Kan. Kamaraka/ Kapazakshi hannu; Kh. Soh pyrshong; Mal. Caturappuli; M. Heinoujom; Mar. Karambal; O. Karamanga; Tam. Tamarattai; U. Kamrakh.",
+    "tags": "1"
+  },
+  {
+    "name": "Strawberry",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "Fruits",
+    "tags": "Vegetarian"
+  },
+  {
+    "name": "Tamarind",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "A. Teteli; B. Tetul; G. Amli; H. Imli; Kan. Hunise hannu; Kash. Tambari; Kh. Soh kyntoi; Mal. Puli; M. Mange; Mar. Chinch; N. Imali; O. Tentuli; P. Imli; S. Sucukrika; Tam. Puli; Tel. Chintha pandu; U. Imli.",
+    "tags": "6"
+  },
+  {
+    "name": "Water melon",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "A. Tormuj; B. Tarmuj; E. Watermelon; G. Tadbuj; H. Tarbuj; Kan. Kallangadi; Kash. Hend wend; Kh. Soh watermelon; Kon. Bacchanga; Mal. Thannir mathan; M. Tarbuj; Mar. Kalingad; N. Kharbuja; O. Tarvuja; P. Dawana; Tam. Darbusani; Tel. Puchakaya; U. Tarbuja.",
+    "tags": "6"
+  },
+  {
+    "name": "Wood apple",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "Fruits",
+    "tags": "Vegetarian"
+  },
+  {
+    "name": "Zizyphus",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "Ziziphus; G. Ber; H. Ber; Kan. Yelachi; Kash. Brey; Kh. Soh broi heh; Kon. Bor; Mal. Elanth pazham; M. Boroi; Mar. Bor; O. Barakoli; P. Beri; S. Badarii; Tam. Elanthai pazham; Tel. Regu pandu; U. Ber.",
+    "tags": "1"
+  },
+  {
+    "name": "Beetroot",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "Beet",
+    "tags": "Garden beet"
+  },
+  {
+    "name": "Carrot",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "A. Gajor; B. Gajar; G. Gajar; H. Gajar; Kan. Gajjare; Kash. Ghahzir; Kh. U kajor; Mal. Carrot; M. Gajar; Mar. Gajar; N. Gajar; O. Gajara; P. Gajar; S. Grunjanam; Tam. Carrot; Tel. Gajjara gadda; U. Gajar.",
+    "tags": "6"
+  },
+  {
+    "name": "Lotus root",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "Kamal kakdi; Kan. Tavare dantu; Kash. Nader; Kh. Thied lotus; Mal. Thamara thandu; M. Thambou; Mar. Kamalkaakdi; O. Padma nad; P. Kamal zahr; Tam. Thamaraithandu; Tel. Thamara kada; U. Kanwal kakri.",
+    "tags": "3"
+  },
+  {
+    "name": "Potato",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "Solanum tuberosum",
+    "tags": "Roots and Tubers"
+  },
+  {
+    "name": "Radish",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "Raphanus sativus",
+    "tags": "Roots and Tubers"
+  },
+  {
+    "name": "Sweet potato",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "A. Meetha aloo; B. Ranga alu; G. Sakkaria; H. Shakarkand; Kan. Genasu; Kh. Phankaro iong; Mal. Sakkarvalli kazhangu; M. Manghra; Mar. Ratalu; N. Sakhar Khand; O. Kandamula; P. Sakkargandi; Tam. Sakkarvalli kizhangu; Tel. Chilagada dumpa; U. Ratalu.",
+    "tags": "4"
+  },
+  {
+    "name": "Tapioca",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "Roots and Tubers",
+    "tags": "Vegetarian"
+  },
+  {
+    "name": "Water Chestnut",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "Mar. Shingara; Kash. Goer; Mal. Karimpolam; M. Kaothum; O. Pani singhara; P. Shingada; Tam. Singhara; Tel. Kubyakam.",
+    "tags": "1"
+  },
+  {
+    "name": "Yam",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "A. Ol kachu; B. Ol; E. Elephant foot yam",
+    "tags": "Roots and Tubers"
+  },
+  {
+    "name": "Chillies",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "A. Kesa jalakia; E. Chili pepper; G. Lila marcha; H. Hara Mirchi; Kan. Hasi Menasinakayi; Kash. Marach wangun; Kh. Sohmynken heh; Mal. Mulaku; M. Morok; Mar. Mulaku; N. Hariyo khursani; O. Kancha Lanka; P. Hara mirchi; S. Marichika; Tam. Pachhai milagai; Tel. Pacchi Mirapakaya; U. Hara mirchi.",
+    "tags": "5"
+  },
+  {
+    "name": "Coriander leaves",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "Chinese parsley; G. Dhana pandada; H. Hara dhania; Kan. Kothambari; Kash. Daaniwal; Kh. Dhonia dkhar; Mal. Kothamalli; M. Fadhighom Mana; Mar. Kothimbir; N. Hario Dhaniya; O. Dhania Patra; P. Hara dhaniya patta; Tam. Kothamalli; Tel. Kothimiri; U. Hara dhaniya.",
+    "tags": "6"
+  },
+  {
+    "name": "Curry leaves",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "Condiments and Spices",
+    "tags": "Vegetarian"
+  },
+  {
+    "name": "Garlic",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "A. Nohoru; B. Rashun; G. Lasan; H. Lehsan; Kan. Bellulli; Kash. Ruhan; Kh. Rynsun heh/ Rynsun dkhar; Mal. Vellulli; M. Chanam; Mar. Lasoon; N. Lasun; O. Rasuna; P. Lasan; S. Lashoonam; Tam. Poondu; Tel. Vellulli; U. Laisan.",
+    "tags": "6"
+  },
+  {
+    "name": "Ginger",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "A. Ada kesa; B. Ada; G. Adu; H. Adrak ; Kan. Shunti; Kash. Adrak; Kh. Sying bah; Mal. Inji; M. Sing; Mar. Ale; N. Aduwa; O. Ada; P. Adrak; S. Aadrak; Tam. Inji; Tel. Allam; U. Adrak.",
+    "tags": "6"
+  },
+  {
+    "name": "Mango ginger",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "Condiments and Spices",
+    "tags": "Vegetarian"
+  },
+  {
+    "name": "Mint leaves",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "Condiments and Spices",
+    "tags": "Vegetarian"
+  },
+  {
+    "name": "Asafoetida",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "Jowani Badian",
+    "tags": "Ingu"
+  },
+  {
+    "name": "Cardamom",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "A. Ilasi; B. Elach; E. True cardamom; G. Alechi; H. Elaychi; Kan. Yelakki; Kash. Aa’l budu’a aa’ l; Kh. Elaishi; Mal. Elakkai; M. Elaichi; Mar. Veldoda; N. Alaichi; O. Alaichi; P. Shoti elaychi; S. Ela; Tam. Elakkai; Tel. Elakkai; U. Elaichi.",
+    "tags": "6"
+  },
+  {
+    "name": "Cloves",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "Condiments and Spices",
+    "tags": "Vegetarian"
+  },
+  {
+    "name": "Coriander seeds",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "Chinese parsley seeds; G. Sukha dhana; H. Dhania; Kan. Kothambari; Kash. Daaniwal; Kh. Symbai dhania; Mal. Kothambalari; M. Fadhighom Maru; Mar. Dhane; N. Dhania; O. Dhania; P. Dhania; S. Dhanyaka; Tam. Kothamalli vidhai; Tel. Dhaniyalu; U. Dhaniya.",
+    "tags": "6"
+  },
+  {
+    "name": "Cumin seeds",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "Condiments and Spices",
+    "tags": "Vegetarian"
+  },
+  {
+    "name": "Fenugreek seeds",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "Condiments and Spices",
+    "tags": "Vegetarian"
+  },
+  {
+    "name": "Mace",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "Condiments and Spices",
+    "tags": "Vegetarian"
+  },
+  {
+    "name": "Nutmeg",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "True nutmeg; G. Jayaphad; H. Jaiphal; Kan. Jayikayi mara; Kash. Zaaphal; Mal. Jathikai; Mar. Jayaphala; N. Jaiphal; O. Jaiphal; P. Jaiphal; S. Jatiphala; Tam. Jathikai; Tel. Jajikaya; U. Jaifal.",
+    "tags": "6"
+  },
+  {
+    "name": "Omum",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "Ajowan",
+    "tags": "Ajman"
+  },
+  {
+    "name": "Pippali",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "Indian long pepper; G. Khus khus; H. Pipli; Kan. Kandan Lippili; Kh. Sohmarit khlaw; Mal. Tippali; Mar. Pimpli; O. Sarupippali; P.  Javantri; S. Pippali; Tam. Tippili; Tel. Pippallu; U. Pipul.",
+    "tags": "6"
+  },
+  {
+    "name": "Pepper",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "A. Kola jaluk; B. Golmarichi; E. Peppercorn; G. Mari; H. Kalimirchi; Kan. Kari menasu; Kash. Marutus; Kh. Soh marit; Mal. Kurumlaku; Mar. Mire; N. Marich; O. Golomarcho; P. Kalimirchi; S. Marich ushna",
+    "tags": "Condiments and Spices"
+  },
+  {
+    "name": "Poppy seeds",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "Condiments and Spices",
+    "tags": "Vegetarian"
+  },
+  {
+    "name": "Turmeric powder",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "Condiments and Spices",
+    "tags": "Vegetarian"
+  },
+  {
+    "name": "Almond",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "Nuts and Oil Seeds",
+    "tags": "Vegetarian"
+  },
+  {
+    "name": "Arecanut",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "Areca catechu",
+    "tags": "Betel nut; G. Sopari; H. Supari; Kan. Adike; Kash. Supari; Kh. Kwai tyrkhong; Mal. Adakka; M. Kwa Maru; Mar. Supari; N. Supari; O. Gua; P. Supari; S. Puuga; Tam. Kottai paakku; Tel. Vakka; U. Supari."
+  },
+  {
+    "name": "Cashew nut",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "Nuts and Oil Seeds",
+    "tags": "Vegetarian"
+  },
+  {
+    "name": "Coconut",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "Cocos nucifera",
+    "tags": "Nuts and Oil Seeds"
+  },
+  {
+    "name": "Gingelly seeds",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "A. Kola til; B. Til; E. Sesame seeds; G. Kada tal; H. Til; Kan. Acchellu; Kash. Til; Kh. Nei iong; Mal. Ellu; M. Thoiding Amuba; Mar. Til; N. Teel; O. Rasi; P. Til; S. Til; Tam. Ellu; Tel. Nuvvulu; U. Til .",
+    "tags": "6"
+  },
+  {
+    "name": "Ground nut",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "Groundnut",
+    "tags": "Nuts and Oil Seeds"
+  },
+  {
+    "name": "Mustard seeds",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "Nuts and Oil Seeds",
+    "tags": "Vegetarian"
+  },
+  {
+    "name": "Linseeds",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "Common flax; G. Adsi; H. Alsi; Kan. Agasi; Kash. Ailsh; Mal. Cheruchana vithu; Mar. Jawas; O. Pesi; P. Alsi; S. Atasii; Tam. Ali vidai; Tel. Avise ginzalu; U. Alsi.",
+    "tags": "6"
+  },
+  {
+    "name": "Niger seeds",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "A. Sorguja; B. Ram til; G. Kada tal; H. Kala til; Kan. Gurellu; Kash. Bazar-Bhang; Mal. Karim jeerakam; Mar. Karale; Tam. Kattelu; Tel. Valasulu.",
+    "tags": "4"
+  },
+  {
+    "name": "Pine seeds",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "Nuts and Oil Seeds",
+    "tags": "Vegetarian"
+  },
+  {
+    "name": "Pistachio nuts",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "Nuts and Oil Seeds",
+    "tags": "Vegetarian"
+  },
+  {
+    "name": "Safflower seeds",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "Nuts and Oil Seeds",
+    "tags": "Vegetarian"
+  },
+  {
+    "name": "Sunflower seeds",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "Nuts and Oil Seeds",
+    "tags": "Vegetarian"
+  },
+  {
+    "name": "Walnut",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "Nuts and Oil Seeds",
+    "tags": "Vegetarian"
+  },
+  {
+    "name": "Jaggery",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "A. Gur; B. Gurh; G. God; H. Gud; Kan. Bella; Kash. Gor; Kh. Mithai Gur; Kon. Godd; Mal. Vellam; M. Chini Anganba; Mar. Gul; O. Guda; P. Gud; Tam. Mandavellam; Tel. Bellam; U. Gud.",
+    "tags": "6"
+  },
+  {
+    "name": "Sugarcane",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "A. Kunhiyar; B. Akher rosh; G. Sherdino ras; H. Ganne-ka-ras; Kan. Kabbina halu; Kash. Ganne rus; Kh. Soh Pai; Mal. Karumbin neeru; M. Chuhing; Mar. Usacha rasa; O. Aakhu Dorua; P. Ganne-da-ras; Tam. Karumbu charu; Tel. Cheruku rasam; U. Ganne-ke-ras.",
+    "tags": "6"
+  },
+  {
+    "name": "Button mushroom",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "A. Mushroom; B. Banger chata; E. Common mushroom",
+    "tags": "Mushrooms"
+  },
+  {
+    "name": "Chicken mushroom",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "A. Mushroom; B. Banger chata; G. Biladi no top; Kan. Aanabay/Aanabe; Kash. Hadder; Kh. Tit tyndong; Mal. Kun koon; M. Chenghum; Mar. Bhoochhtra; O. Chatu; P. Khoomba; Tam. Kaalaan; Tel. Putta Godugu.",
+    "tags": "1"
+  },
+  {
+    "name": "Shiitake mushroom",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "A. Mushroom; B. Banger chata; G. Biladi no top; Kan. Aanabay/Aanabe; Kash. Hadder; Mal. Kun koon; M. Uyen; Mar. Bhoochhtra; O. Chatu; P. Khoomba; Tam. Kaalaan; Tel. Putta Godugu.",
+    "tags": "1"
+  },
+  {
+    "name": "Oyster mushroom",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "B. Banger chata; G. Biladino top; Kan. Aanabay/Aanabe; Kash. Hadder; Mal. Kun koon; M. Chenghum; Mar. Bhoochhtra; O. Chatu; P. Khoomba; Tam. Kaalaan; Tel. Putta Godugu.",
+    "tags": "1"
+  },
+  {
+    "name": "Toddy",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "O. Tadi; P. Todhi; Mal.",
+    "tags": "Tel. Kallu."
+  },
+  {
+    "name": "Coconut water",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "Miscellaneous Foods",
+    "tags": "Vegetarian"
+  },
+  {
+    "name": "Milk",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "",
+    "tags": "Milk and Milk Products"
+  },
+  {
+    "name": "Paneer",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "Milk and Milk Products",
+    "tags": "Vegetarian"
+  },
+  {
+    "name": "Khoa",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "H.",
+    "tags": "Mal."
+  },
+  {
+    "name": "Egg",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "raw",
+    "tags": "A. Koni; B. Dim; G. Indu; H. Anda; Kan. Motte; Kash. Thool; Kh. Pylleng; Kon. Tandri/Tanti; Mal. Mutta; M. Yairum; Mar. Ande; N. Anda/Phool; O. Anda; P. Anda; Tam. Muttai; Tel. Guddu; U. Anda."
+  },
+  {
+    "name": "Chicken",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "skinless",
+    "tags": "A. Murgir Theng/Bhori; B. Murgir Thyang/Ran; G. Marghi ni Tang; H. Murga Tang/Murgi ki Raan; Kan. Koli Kaalu; Kh. Syiar Kjat; Kon. Kombi Paayn/Paanv; Mal. Kozhi Kaal; M. Yen Khong; Mar. Kombdi Tangdi/Mandi; N. Kukhura ko Khutta; O. Kukuda Goda; P. Murge di Latt/Raan; Tam. Kozhi Kaal; Tel. Kodi Kaallu; U. Murgh ki Tang/Raan."
+  },
+  {
+    "name": "Poultry",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "",
+    "tags": "Poultry"
+  },
+  {
+    "name": "Country hen",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "",
+    "tags": "Poultry"
+  },
+  {
+    "name": "Duck",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "",
+    "tags": "Poultry"
+  },
+  {
+    "name": "Emu",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "",
+    "tags": "Poultry"
+  },
+  {
+    "name": "Guinea fowl",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "",
+    "tags": "Poultry"
+  },
+  {
+    "name": "Pigeon",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "",
+    "tags": "Poultry"
+  },
+  {
+    "name": "Quail",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "",
+    "tags": "Poultry"
+  },
+  {
+    "name": "Turkey",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "",
+    "tags": "Poultry"
+  },
+  {
+    "name": "Goat",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "",
+    "tags": "Animal Meat"
+  },
+  {
+    "name": "Sheep",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "A. Bherar Kandh; B. Bherar Kandh; G. Gheta no Khabho; H. Bhed ka Kandha/Dast; Kan. Kuri Bhujada Mamsa; Kh. Langbrot Tyrpeng; Kon. Sheracho Khand; Mal. Chemmariyattin Chumal Irachi; Mar. Mendhiche Khande; N. Bheda ko Kaandh; O. Mendha Kandha Mansa; P. Bhed da Modha; Tam. Semmari Aattu Tholpattai Kari; Tel. Gorre Bhujamu Mamsam; U. Bhed ka Kandha/Shana.",
+    "tags": "5"
+  },
+  {
+    "name": "Beef",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "B. Goru Kandh; H. Gaay ka Kandha/Dast; Kan. Dana Bhujada Mamsa; Kh. Masidab Tyrpeng; Kon. Gaayicho Khand; Mal. Pothirachi Chumal; Mar. Gaiche Khande; N. Gai ko Kaandh; O. Goru Kandha Mansa; P. Gaaye da Modha; Tam. Maattu Tholpattai Kari; Tel. Aavu Bhujamu Mamsam; U. Gaay ka Kandha/Shana.",
+    "tags": "6"
+  },
+  {
+    "name": "Calf",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "B. Bachhurer Kandh; H. Bachhde ka Kandha/Dast; Kan. Karu Bhujada Mamsa; Kh. ?. Tyrpeng; Kon. Padkulem Khand; Mal. Kuttyirachi Chumal; Mar. Vasrache Khande; N. Bachcha ko Kaandh; O. Bachhuri Kandha Mansa; P. Vachhe da Modha; Tam. Kannukutti Tholpattai Kari; Tel. Dooda Bhujamu Mamsam; U. Bachhde ka Kandha/Shana.",
+    "tags": "2"
+  },
+  {
+    "name": "Mithun",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "A. Mithunor Kandh; B. Mithuner Kandh; H. Mithun ka Kandha; N. Mithun ko Kaandh. (Less common elsewhere).",
+    "tags": "1"
+  },
+  {
+    "name": "Pork",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "A. Gahorir Kandh; B. Shukorer Kandh; G. Suar no Khabho; H. Suar ka Kandha; Kan. Handi Bhujada Mamsa; Kh. ?. Tyrpeng; Kon. Dukracho Khand; Mal. Panni Irachi Chumal; M. Ok Leikha?; Mar. Dukkarache Khande; N. Sungur ko Kaandh; O. Ghusuri Kandha Mansa; P. Suar da Modha; Tam. Panri Tholpattai Kari; Tel. Pandi Bhujamu Mamsam; U. Suar ka Kandha.",
+    "tags": "6"
+  },
+  {
+    "name": "Hare",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "H. Khargosh ka Kandha; P. Khargosh da Modha; Tam. Muyal Tholpattai; U. Khargosh ka Kandha. (Hare/Rabbit often use same term 'Khargosh')",
+    "tags": "1"
+  },
+  {
+    "name": "Rabbit",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "A. Xoha Posur Kandh; B. Shoshoker Kandh; G. Sasla no Khabho; H. Khargosh ka Kandha; Kan. Molada Bhujada Mamsa; Mal. Muyal Chumal; Mar. Sasa che Khande; N. Kharayo ko Kaandh; O. Thekua Kandha Mansa; P. Khargosh da Modha; Tam. Muyal Tholpattai Kari; Tel. Kundelu Bhujamu Mamsam; U. Khargosh ka Kandha.",
+    "tags": "1"
+  },
+  {
+    "name": "Allathi",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "Ladyfish",
+    "tags": "Vallipoomeen; Mar. Shonas"
+  },
+  {
+    "name": "Aluva",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "Brown Pomfret",
+    "tags": "Adadio; Kan. Thondrotte; Kon. Halwa; Mal. Karuvolli"
+  },
+  {
+    "name": "Anchovy",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "Hardenberg`s anchovy; Mal. Conetholi; Mar. Dindus; Tam. Tamil Nethilli; Tel. Nattoo; [Place of collection: Chennai and Kochi]",
+    "tags": "2"
+  },
+  {
+    "name": "Ari fish",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "Komu kila; E. Green jobfish; [Place of collection: Kochi]",
+    "tags": "1"
+  },
+  {
+    "name": "Betki",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "Asian sea bass",
+    "tags": "Cock up"
+  },
+  {
+    "name": "Black snapper",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "Marine Fish",
+    "tags": "Vegetarian"
+  },
+  {
+    "name": "Bombay duck",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "Lutia",
+    "tags": "Gulchi; Mar. Bunmalo"
+  },
+  {
+    "name": "Bommuralu",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "Pambu meen; Tel. Kotla pama",
+    "tags": "Dagger tooth pike conger; Common. Eel; [Place of collection: Chennai"
+  },
+  {
+    "name": "Cat fish",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "Giant Sea Catfish; Common. Marine catfish; [Place of collection: Chennai]",
+    "tags": "1"
+  },
+  {
+    "name": "Chakla",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "Black kingfish",
+    "tags": "Butterfish"
+  },
+  {
+    "name": "Chappal",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "Thol Meen; Tel. Kommu Thoka; Mal. Clathi; Mar. Phutaki; E. Unicorn leatherjacket; Common. Filefish; [Place of collection: Goa]",
+    "tags": "1"
+  },
+  {
+    "name": "Chelu",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "Rainbow yellowtail",
+    "tags": "Hawaiian salmon; Mal. Poomeen"
+  },
+  {
+    "name": "Chembali",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "Chembally; Tam. Vellakkara; Tel. Rangoo; E. Five lined snapper",
+    "tags": "Fivelines Seaperch"
+  },
+  {
+    "name": "Eri meen",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "Velameen; Tam. Eri meen",
+    "tags": "Crimson snapper"
+  },
+  {
+    "name": "Gobro",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "Six barred Reef Cod",
+    "tags": "Spinycheek Grouper"
+  },
+  {
+    "name": "Guitar fish",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "Prahli Guitarfish; Common. Ray; [Place of collection: Chennai]",
+    "tags": "1"
+  },
+  {
+    "name": "Hilsa",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "Hilsa",
+    "tags": "Indian Shad"
+  },
+  {
+    "name": "Jallal",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "Marine Fish",
+    "tags": "Vegetarian"
+  },
+  {
+    "name": "Jathi vela meen",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "Silver Spotted Sea Bream",
+    "tags": "Kadu; Tam. Valamin; Tel. Karua; Common. Emperor fish; [Place of collection: Mumbai and Mandapam]"
+  },
+  {
+    "name": "Kadal bral",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "Kechi; Tam. Palli Meen",
+    "tags": "Marine Fish"
+  },
+  {
+    "name": "Kadali",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "Kendai; Mal. Murumeen",
+    "tags": "Goli; E. Redfilament Threadfin bream; [Place of collection: Chennai]"
+  },
+  {
+    "name": "Kalamaara",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "Monk Fish",
+    "tags": "Row Ball"
+  },
+  {
+    "name": "Kalava",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "Panni Kalava; Tam. Kalavan",
+    "tags": "Gobra; Kan. Gopra; E. Orange spotted grouper"
+  },
+  {
+    "name": "Kanamayya",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "Maori Snapper",
+    "tags": "Marine Fish"
+  },
+  {
+    "name": "Kannadi paarai",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "Kattamparei; Mal. Kannadi Paarai",
+    "tags": "Indian threadfish"
+  },
+  {
+    "name": "Karimeen",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "Pearlspot cichlid",
+    "tags": "Striped chromide"
+  },
+  {
+    "name": "Karnagawala",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "Poruva; Mal. Netholi",
+    "tags": "Marine Fish"
+  },
+  {
+    "name": "Kayrai",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "Yellow Fin Tuna; G. Gedar",
+    "tags": "Gedar"
+  },
+  {
+    "name": "Kiriyan",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "Northern yellowtail scad",
+    "tags": "Deep trevally"
+  },
+  {
+    "name": "Kite fish",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "Marine Fish",
+    "tags": "Vegetarian"
+  },
+  {
+    "name": "Korka",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "Target Fish",
+    "tags": "Crescent Perch"
+  },
+  {
+    "name": "Kulam paarai",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "Pulli Paarai; Mal. Manja Paarai; Tel. Pulli Para; E. Yellowspotted trevally",
+    "tags": "Goldspotted trevally"
+  },
+  {
+    "name": "Maagaa",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "Budatha Maga; Tam. Pozhakkala; O. Sahala; B. Tape Machh; Mar. Rawas; E. Striped threadfin; Common. Marine fish; [Place of collection: Vizag]",
+    "tags": "1"
+  },
+  {
+    "name": "Mackerel",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "Rake Gillat Mackerel; G. Bangada; Kan. Bangda",
+    "tags": "Bangada; Kon. Bangada; Mal. Ayila"
+  },
+  {
+    "name": "Manda clathi",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "Marine Fish",
+    "tags": "Vegetarian"
+  },
+  {
+    "name": "Matha",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "Blue lined surgeonfish; Mal. Pala; Common. Marine tropical fish; [Place of collection: Chennai and vizag]",
+    "tags": "2"
+  },
+  {
+    "name": "Milk fish",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "Milk fish",
+    "tags": "Hoomeenu"
+  },
+  {
+    "name": "Moon fish",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "Amattikatti; Common. Perch fish; [Place of collection: Mumbai]",
+    "tags": "1"
+  },
+  {
+    "name": "Mullet",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "Flathead Greymullet; B. Ain; G. Bhomat",
+    "tags": "Gandhia; Kan. Mala; Mal. Tirutha"
+  },
+  {
+    "name": "Mural",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "Crocodile needlefish",
+    "tags": "Keran; Mar. Tol; Tam. Pahmum kolah; Tel. Wahlah kuddera; Common. Game fish; [Place of collection: Mandapam]"
+  },
+  {
+    "name": "Myil meen",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "Peacock Fish",
+    "tags": "Indian Sail Fish"
+  },
+  {
+    "name": "Nalla bontha",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "Wekhanu",
+    "tags": "Muni Meenu; Kon. Gobri; Mal. Kalawa; Mar. Gobra"
+  },
+  {
+    "name": "Narba",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "Bigeye jack",
+    "tags": "Six banded trevally"
+  },
+  {
+    "name": "Paarai",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "Karunkanni Paarai; Mal. Para; Tel. Para; E. Blacktip trevally",
+    "tags": "Yellowtail kingfish; Common. Large marine fish; [Place of collection: Chennnai]"
+  },
+  {
+    "name": "Padayappa",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "Spotted oceanic triggerfish; Common. Triggerfish; [Place of collection: Kochi]",
+    "tags": "1"
+  },
+  {
+    "name": "Pali kora",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "Marine Fish",
+    "tags": "Vegetarian"
+  },
+  {
+    "name": "Pambada",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "Small head hairtail",
+    "tags": "Small Headed Ribbon Fish"
+  },
+  {
+    "name": "Pandukopa",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "Redlip croaker",
+    "tags": "Little yellow croaker"
+  },
+  {
+    "name": "Parava",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "Big jawed jumper",
+    "tags": "Dangri"
+  },
+  {
+    "name": "Parcus",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "Indian Turbot; G. Hario",
+    "tags": "Bhakas; Tam. Erumei nakku; Tel. Noree nalaka; Common. Large primitive flatfish; [Place of collection: Mumbai]"
+  },
+  {
+    "name": "Parrot fish",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "Blue trim parrotfish",
+    "tags": "Globe headed parrotfish"
+  },
+  {
+    "name": "Perinkilichai",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "Polei oolavai; Common. Snapper; [Place of collection: Chennai]",
+    "tags": "1"
+  },
+  {
+    "name": "Phopat",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "Common dolphinfish",
+    "tags": "Adadio"
+  },
+  {
+    "name": "Piranha",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "Marine Fish",
+    "tags": "Vegetarian"
+  },
+  {
+    "name": "Pomfret",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "E. Black pomfret",
+    "tags": "Adadio; Kan. Thondrotte; Kon. Halwa; Mal. Vellavoli"
+  },
+  {
+    "name": "Pranel",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "Deepbody mojarra; Kan. Paiya; Mal. Pranjin; Mar. Charbat; Tam. Oodan; Common. Mojarras; [Place of collection: Kochi]",
+    "tags": "1"
+  },
+  {
+    "name": "Pulli paarai",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "Golden kingfish",
+    "tags": "King trevally"
+  },
+  {
+    "name": "Queen fish",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "Talang Queenfish; G. Sag; Kan. Palaimeenu",
+    "tags": "Katta; Tel. Pasupara; Common. Coastal fish; [Place of collection: Chennai"
+  },
+  {
+    "name": "Raai fish",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "Brown Tripletail",
+    "tags": "Brown Tripletail; G. Katkola; Mal. Parrandee; Mar. Katkola; O. Chota Bekkut; Tam. Musalli; Common. Warm water marine fish; [Place of collection: Chennai and Vizag]"
+  },
+  {
+    "name": "Raai vanthu",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "Souman",
+    "tags": "Brown spotted grouper"
+  },
+  {
+    "name": "Rani",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "Sankara; Mal. Kilimeen",
+    "tags": "Threadfin bream; Common. Freshwater gamefish; [Place of collection: Goa"
+  },
+  {
+    "name": "Ray fish",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "Rhina ancylostoma",
+    "tags": "Shark ray"
+  },
+  {
+    "name": "Red snapper",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "Mangrove jack",
+    "tags": "Stuart evader"
+  },
+  {
+    "name": "Sadaya",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "Thotti Meen; Mal. Nandan; E. Orbicular batfish",
+    "tags": "Orbiculate batfish"
+  },
+  {
+    "name": "Salmon",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "Marine Fish",
+    "tags": "Vegetarian"
+  },
+  {
+    "name": "Sangada",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "Puthuputtan Kendai; Tel. Goli; Mal. Kerachoondan; G. Bamni; E. Japanese threadfin bream; Common. Marine fish; [Place of collection: Chennai]",
+    "tags": "1"
+  },
+  {
+    "name": "Sankata parai",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "Lowly trevally",
+    "tags": "Giant kingfish"
+  },
+  {
+    "name": "Sardine",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "Malabar Sardine; G. Tarali; Kan. Baige",
+    "tags": "Boothai"
+  },
+  {
+    "name": "Shark",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "Sorrah shark; Kan. Shirat; Mar. Balda",
+    "tags": "Marine Fish"
+  },
+  {
+    "name": "Shelavu",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "Banded Barracuda",
+    "tags": "Badvi"
+  },
+  {
+    "name": "Silan",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "Silondia Vacha",
+    "tags": "Silan"
+  },
+  {
+    "name": "Silk fish",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "Alfonsin",
+    "tags": "Red bream"
+  },
+  {
+    "name": "Silver carp",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "Asian carp; [Place of collection: Kolkata]",
+    "tags": "1"
+  },
+  {
+    "name": "Sole fish",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "Marine Fish",
+    "tags": "Vegetarian"
+  },
+  {
+    "name": "Stingray",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "Blue Stingray; Mal. Thirukay; Common. Stingray; [Place of collection: Kolkata]",
+    "tags": "1"
+  },
+  {
+    "name": "Tarlava",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "Moon-fish",
+    "tags": "Spotted Drepane; G. Chand; Mar. Chand; Tam. Therattai"
+  },
+  {
+    "name": "Tholam",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "Grey Sweetlip; Mar. Harvil; Common. Gamefish; [Place of collection: Chennai and Mandapam]",
+    "tags": "2"
+  },
+  {
+    "name": "Tilapia",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "Japani kawoi; Tam. Tilapia; Common. Tilapia",
+    "tags": "Marine Fish"
+  },
+  {
+    "name": "Tuna",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "Kawakawa",
+    "tags": "Bugudi"
+  },
+  {
+    "name": "Valava",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "Tenpounder; Tam. Kiru-wahlah; Tel. Wahlah; Common. Herring; [Place of collection: Vizag]",
+    "tags": "1"
+  },
+  {
+    "name": "Vanjaram",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "Barred Seer Fish",
+    "tags": "Chhapri; Kan. Thavar; Mal. Ayakora"
+  },
+  {
+    "name": "Vela meen",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "Kurali; Tam. Vela meen",
+    "tags": "Komu kila; E. Green jobfish; Common. Snapper; [Place of collection: Mandapam]"
+  },
+  {
+    "name": "Vora",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "Marine Fish",
+    "tags": "Vegetarian"
+  },
+  {
+    "name": "Whale shark",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "Bhoavar",
+    "tags": "Pilithatte; Mal. Valiasurav"
+  },
+  {
+    "name": "Xiphinis",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "Broadbills",
+    "tags": "Tadmachhi; Mal. Kuthirameen; Mar. Tadmasa; Common. Billfish"
+  },
+  {
+    "name": "Eggs",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "A. Pabho koni; B. Pabda dim; H. Pabda ande; O. Pabdah anda; E. Butter catfish; Common. Sheatfish; [Place of collection: Kolkata]",
+    "tags": "1"
+  },
+  {
+    "name": "Crab",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "Nalli; Kon. Kulli; Mal. Njandu; Mar. Khekada",
+    "tags": "Endrakaya; U. Kekra; E. Florida stone crab; [Place of collection: Kolkata]"
+  },
+  {
+    "name": "Lobster",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "B. Koral chingri; H. Chappal jhinga; Kan. Kalla sigadi; Mal. Adipan chemmeen; Mar. Phati; Tam. Matta singi eral",
+    "tags": "Bay lobster"
+  },
+  {
+    "name": "Mud crab",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "Mandu nandu; Tel. Buradha peetha; E. Mangrove crab",
+    "tags": "Marine Shellfish"
+  },
+  {
+    "name": "Oyster",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "Muru; Tam. Kalungu",
+    "tags": "Patti; [Place of collection: Goa]"
+  },
+  {
+    "name": "Tiger prawns",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "A. Misa maas; B. Chingri; G. Jinga; H. Jhinga; Kan. Sigadi; Kon. Sungat; Mal. Chemmeen; Mar. Kolambi; O. Chingudi; P. Jhinga; Tam. Iraal; Tel. Royya; U. Jhinga; Common. Marine crustacean; [Place of collection: Chennai]",
+    "tags": "1"
+  },
+  {
+    "name": "Tiger Prawns",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "A. Misa maas; B. Bagda chingri; G. Tiger jinga; H. Bagda jhinga; Kan. Hebbagani sigadi; Kon. Wagho sungat; Mal. Kara chemmeen",
+    "tags": "Asian tiger shrimp; Common. Marine crustacean; [Place of collection: Kochi]"
+  },
+  {
+    "name": "Clam",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "E. Asian green mussel",
+    "tags": "Kadukka; Common. Mussel"
+  },
+  {
+    "name": "Octopus",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "Ane bondaas; Kon. Octopus; Mal. Neerali; Mar. Ashtapad; O. Octopus; P. Octopus; Tam. Kanavai",
+    "tags": "Marine Mollusks"
+  },
+  {
+    "name": "Squid",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "B. Kali squid; H. Kala squid; Kan. Kappu bondaas; Mal. Karutha koonthal; Mar. Kali maakli; Tam. Karuppu kanavai; Tel. Nalla squid; [Place of collection: Kolkata]",
+    "tags": "1"
+  },
+  {
+    "name": "Catla",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "Bhakua",
+    "tags": "Pla Kra Ho; G. Tambra"
+  },
+  {
+    "name": "Fresh water Eel",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "Baam; H. Baam machli; Kan. Havu meenu; Mal. Mananjil",
+    "tags": "Ahir; O. Baamo; P. Baam; Tam. Vilangu meen; Tel. Malugu chepa"
+  },
+  {
+    "name": "Gold fish",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "Chinna meenu; Mal. Swarna matsyam; Mar. Soneri masa; O. Suna machha; P. Sunahri machhi; Tam. Thanga meen; Tel. Bangaru chepa; U. Sunahri machli; E. Goldfish; Common. Freshwater fish",
+    "tags": "Fresh Water Fish and Shellfish"
+  },
+  {
+    "name": "Pangas",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "Fresh Water Fish and Shellfish",
+    "tags": "Vegetarian"
+  },
+  {
+    "name": "Rohu",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "Rui",
+    "tags": "Rohiti"
+  },
+  {
+    "name": "Prawns",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "A. Bor misa; B. Golda chingri; H. Bada jhinga; Kan. Dodda sigadi; Mal. Aattu konchu",
+    "tags": "Yera; Tel. Gudi royya; E. Giant freshwater prawn"
+  },
+  {
+    "name": "Coconut oil",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "Edible Oils and Fats",
+    "tags": "Vegetarian"
+  },
+  {
+    "name": "Corn oil",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "Edible Oils and Fats",
+    "tags": "Vegetarian"
+  },
+  {
+    "name": "Cotton seed oil",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "Binola tel; Kan. Hatthi beeja enne; Mar. Kapsache tel",
+    "tags": "Edible Oils and Fats"
+  },
+  {
+    "name": "Gingelly oil",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "Ellenna; Mar. Tila che tel; N. Til ko tel; O. Rasi tela; P. Til da tel; S. Tila taila; Tam. Nallennai",
+    "tags": "Edible Oils and Fats"
+  },
+  {
+    "name": "Groundnut oil",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "Magafali nu tel; H. Moongphali ka tel; Kan. Kadale kaayi enne",
+    "tags": "Nilakkadala enna; Mar. Shengdana tel; N. Mungfali tel; O. China badama tela; P. Mungfali da tel; S. Bhuchanaka taila; Tam. Kadalai ennai; Tel. Verusenaga nune"
+  },
+  {
+    "name": "Mustard oil",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "Rai nu tel; H. Sarson ka tel; Kan. Sasive enne; Kash. Sarshaf tel; Kon. Sasvanche tel; Mal. Kadugu enna; Mar. Mohariche tel; N. Tori ko tel; O. Sorisa tela; P. Sarhon da tel; S. Sarshapa taila; Tam. Kadugu ennai; Tel. Aava nune; U. Sarson ka tel",
+    "tags": "6"
+  },
+  {
+    "name": "Palm oil",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "Edible Oils and Fats",
+    "tags": "Vegetarian"
+  },
+  {
+    "name": "Rice bran oil",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "Chaler kundo tel; G. Chokha na bhusa nu tel; H. Chawal ki bhusi ka tel; Kan. Akki tavadu enne; Mal. Ari thavidu enna; Mar. Tandul kondya che tel; O. Chaula chopa tela",
+    "tags": "Edible Oils and Fats"
+  },
+  {
+    "name": "Safflower oil",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "Edible Oils and Fats",
+    "tags": "Vegetarian"
+  },
+  {
+    "name": "Safflower oil (blended)",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "Edible Oils and Fats",
+    "tags": "Vegetarian"
+  },
+  {
+    "name": "Soyabean oil",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "Edible Oils and Fats",
+    "tags": "Vegetarian"
+  },
+  {
+    "name": "Sunflower oil",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "Suryakanthi nune; U. Surajmukhi ka tel",
+    "tags": "6"
+  },
+  {
+    "name": "Ghee",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "Edible Oils and Fats",
+    "tags": "Vegetarian"
+  },
+  {
+    "name": "Vanaspati",
+    "energy_kcal": null,
+    "protein_g": null,
+    "fat_g": null,
+    "carbohydrate_g": null,
+    "fibre_g": null,
+    "group": "Dalda; H. Dalda; Kan. Dalda; Mal. Dalda; Mar. Dalda; O. Banaspati",
+    "tags": "Dalda; Tam. Dalda; Tel. Dalda; U. Banaspati"
+  }
+]

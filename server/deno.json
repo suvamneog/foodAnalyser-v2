@@ -1,0 +1,5 @@
+{
+  "imports": {
+    "@nodef/ifct2017": "jsr:@nodef/ifct2017@^1.4.5"
+  }
+}

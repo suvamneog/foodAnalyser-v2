@@ -2,6 +2,7 @@
 /* eslint-disable react/prop-types */
 import { createContext, useContext, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { API_ENDPOINTS, isDevelopment } from "../utils/apiConfig";
 
 const AuthContext = createContext();
 
@@ -40,7 +41,7 @@ export const AuthProvider = ({ children }) => {
       const top = window.screenY + (window.outerHeight - height) / 2;
 
       const popup = window.open(
-        `https://foodanalyser.onrender.com/api/auth/${provider}`,
+        API_ENDPOINTS.AUTH_PROVIDER(provider),
         `${provider}Login`,
         `width=${width},height=${height},left=${left},top=${top}`
       );
@@ -51,13 +52,17 @@ export const AuthProvider = ({ children }) => {
 
       // Listen for messages from the popup
       const messageHandler = (event) => {
-        if (event.origin !== "https://foodanalyser.onrender.com") return;
+        // Check origin based on environment
+        const expectedOrigin = isDevelopment 
+          ? 'http://localhost:3000' 
+          : 'https://foodanalyser.onrender.com';
+        
+        if (event.origin !== expectedOrigin) return;
 
         if (event.data.type === "social_auth_success") {
           const { token } = event.data;
           login(token);
           navigate("/");
-       
         }
 
         if (event.data.type === "social_auth_failure") {

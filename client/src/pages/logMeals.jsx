@@ -37,7 +37,7 @@ function LogMeals() {
     setError(null);
     
     try {
-      const response = await axios.get("https://foodanalyser.onrender.com/api/meal/logs", {
+      const response = await axios.get("https://localhost/api/meal/logs", {
         headers: { Authorization: `Bearer ${token}` }
       });
       setMeals(response.data);
@@ -167,7 +167,7 @@ function LogMeals() {
     };
   
     try {
-      const response = await axios.post("https://foodanalyser.onrender.com/api/meal/log", newMeal, {
+      const response = await axios.post("https://localhost/api/meal/log", newMeal, {
         headers: { Authorization: `Bearer ${token}` }
       });
   
@@ -210,7 +210,7 @@ function LogMeals() {
     setError(null);
     
     try {
-      await axios.delete(`https://foodanalyser.onrender.com/api/meal/log/${mealId}`, {
+      await axios.delete(`https://localhost/api/meal/log/${mealId}`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       setMeals(meals.filter(meal => meal._id !== mealId));
