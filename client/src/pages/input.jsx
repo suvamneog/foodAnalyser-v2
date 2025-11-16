@@ -10,6 +10,7 @@ function PlaceholdersAndVanishInputDemo({
   setOutput,
   loading,
   setLoading,
+  setOriginalQuery
 }) {
   const [error, setError] = useState(null);
 
@@ -25,7 +26,7 @@ function PlaceholdersAndVanishInputDemo({
     setError(null);
   };
 
-  const onSubmit = async () => {
+    const onSubmit = async () => {
     if (loading) return;
 
     const trimmedFoodName = foodName.trim();
@@ -49,24 +50,16 @@ function PlaceholdersAndVanishInputDemo({
         throw new Error(`No results found for "${trimmedFoodName}" in our databases.`);
       }
 
-      // ✅ FIX: data is already an array from fetchFoodData
-      setOutput(Array.isArray(data) ? data : [data]);
+      // ✅ Pass the original query to adjust nutrition values
+      const resultsWithQuery = Array.isArray(data) ? data : [data];
+      resultsWithQuery.originalQuery = trimmedFoodName; // Attach original query
+      
+      setOutput(resultsWithQuery);
       setFoodName("");
-      console.log("✅ Food data retrieved:", data);
-      console.log(`✅ Displaying ${Array.isArray(data) ? data.length : 1} results`);
+      setOriginalQuery(trimmedFoodName); // Also store separately if needed
       
     } catch (err) {
-      console.error("❌ Search error:", err);
-      
-      if (err.message.includes("No results found")) {
-        setError(
-          `"${trimmedFoodName}" not found in Indian food databases. Try another food item.`
-        );
-      } else if (err.message.includes("database") || err.message.includes("unavailable")) {
-        setError(err.message);
-      } else {
-        setError("Failed to search food databases. Please try again later.");
-      }
+     console.log(err);
     } finally {
       setLoading(false);
     }

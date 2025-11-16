@@ -22,6 +22,11 @@ export const API_ENDPOINTS = {
   
   // Auth endpoints
   AUTH_PROVIDER: (provider) => `${API_BASE_URL}/api/auth/${provider}`,
+  
+  // Scan endpoints
+  SCAN_UPLOAD: `${API_BASE_URL}/api/scan/upload`,
+  SCAN_PRODUCT: (barcode) => `${API_BASE_URL}/api/scan/product/${barcode}`,
+  SCAN_HEALTH_SCORE: `${API_BASE_URL}/api/scan/health-score`,
 };
 
 export const isDevelopment = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';

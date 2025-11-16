@@ -1,0 +1,224 @@
+/* Custom styles for ScrollX UI testimonial carousel with neon effects */
+.scrollx-testimonial-carousel {
+  position: relative;
+}
+
+/* Neon line animation around reviewer photos */
+.testimonial-image-container {
+  position: relative;
+  margin-bottom: 1rem;
+}
+
+.testimonial-image-wrapper {
+  position: relative;
+  display: inline-block;
+  border-radius: 50%;
+  padding: 3px;
+}
+
+.testimonial-image-wrapper::before {
+  content: '';
+  position: absolute;
+  top: -3px;
+  left: -3px;
+  right: -3px;
+  bottom: -3px;
+  background: conic-gradient(
+    from 0deg at 50% 50%,
+    #00ff88 0%,
+    #00ccff 25%,
+    #ff00cc 50%,
+    #ff0066 75%,
+    #00ff88 100%
+  );
+  border-radius: 50%;
+  z-index: 0;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  animation: rotate-neon-border 2s linear infinite;
+  background-size: 200% 200%;
+}
+
+.testimonial-image-wrapper:hover::before {
+  opacity: 1;
+}
+
+.testimonial-image {
+  position: relative;
+  z-index: 1;
+  border: 2px solid rgba(255, 255, 255, 0.1);
+  border-radius: 50%;
+  background: #1a1a1a;
+}
+
+/* Moving neon line effect */
+.neon-line {
+  position: absolute;
+  top: -3px;
+  left: -3px;
+  right: -3px;
+  bottom: -3px;
+  border-radius: 50%;
+  background: conic-gradient(
+    from 0deg at 50% 50%,
+    transparent 0%,
+    #00ff88 10%,
+    #00ccff 35%,
+    #ff00cc 60%,
+    #ff0066 85%,
+    transparent 100%
+  );
+  z-index: 0;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  animation: rotate-neon-line 1.5s linear infinite;
+  filter: blur(1px);
+}
+
+.testimonial-image-wrapper:hover .neon-line {
+  opacity: 1;
+}
+
+@keyframes rotate-neon-line {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes rotate-neon-border {
+  0% {
+    transform: rotate(0deg);
+    filter: hue-rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+    filter: hue-rotate(360deg);
+  }
+}
+
+/* Pulsing glow effect */
+.testimonial-image-wrapper::after {
+  content: '';
+  position: absolute;
+  top: -6px;
+  left: -6px;
+  right: -6px;
+  bottom: -6px;
+  background: linear-gradient(45deg, #00ff88, #00ccff, #ff00cc, #ff0066);
+  border-radius: 50%;
+  z-index: -1;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  animation: pulse-glow 2s ease-in-out infinite;
+  filter: blur(8px);
+}
+
+.testimonial-image-wrapper:hover::after {
+  opacity: 0.3;
+}
+
+@keyframes pulse-glow {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 0.3;
+  }
+  50% {
+    transform: scale(1.05);
+    opacity: 0.5;
+  }
+}
+
+/* Enhanced carousel container */
+.testimonial-carousel-enhanced {
+  position: relative;
+}
+
+.testimonial-carousel-enhanced::before {
+  content: '';
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  background: linear-gradient(45deg, #00ff88, #00ccff, #ff00cc, #ff0066, #00ff88);
+  border-radius: 24px;
+  z-index: -1;
+  opacity: 0;
+  transition: opacity 0.5s ease;
+  animation: rotate-border 4s linear infinite;
+  background-size: 400% 400%;
+}
+
+.testimonial-carousel-enhanced:hover::before {
+  opacity: 0.5;
+}
+
+@keyframes rotate-border {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+/* Custom styles for ScrollX UI testimonial cards */
+.scrollx-testimonial-carousel .testimonial-card {
+  background: rgba(39, 39, 42, 0.6);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 20px;
+  padding: 2rem;
+  transition: all 0.3s ease;
+}
+
+.scrollx-testimonial-carousel .testimonial-card:hover {
+  transform: translateY(-5px);
+  border-color: rgba(59, 130, 246, 0.5);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
+
+/* Ensure the image wrapper has the neon classes */
+.scrollx-testimonial-carousel [class*="image-wrapper"] {
+  position: relative;
+  border-radius: 50%;
+}
+
+.scrollx-testimonial-carousel [class*="image-wrapper"]::before {
+  content: '';
+  position: absolute;
+  top: -3px;
+  left: -3px;
+  right: -3px;
+  bottom: -3px;
+  background: conic-gradient(
+    from 0deg at 50% 50%,
+    #00ff88 0%,
+    #00ccff 25%,
+    #ff00cc 50%,
+    #ff0066 75%,
+    #00ff88 100%
+  );
+  border-radius: 50%;
+  z-index: 0;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  animation: rotate-neon-border 2s linear infinite;
+  background-size: 200% 200%;
+}
+
+.scrollx-testimonial-carousel [class*="image-wrapper"]:hover::before {
+  opacity: 1;
+}
+
+.scrollx-testimonial-carousel img {
+  position: relative;
+  z-index: 1;
+  border-radius: 50%;
+}

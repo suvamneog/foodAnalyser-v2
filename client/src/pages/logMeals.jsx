@@ -43,7 +43,6 @@ function LogMeals() {
   // Smart food search with secure backend calls
   const searchFoodData = async (foodName, quantity, unit) => {
     try {
-      console.log(`🔍 Searching for: ${foodName} (${quantity}${unit})`);
       
       // Step 1: Try CalorieNinjas via secure backend endpoint
       try {
@@ -64,7 +63,7 @@ function LogMeals() {
 
         if (response.data.items && response.data.items.length > 0) {
           const item = response.data.items[0];
-          console.log(`✅ Found via backend CalorieNinjas: ${item.name}`);
+         
           
           return {
             name: foodName,
@@ -102,7 +101,7 @@ function LogMeals() {
             bestMatch = primaryMatches[0];
           }
           
-          console.log(`✅ Found in Indian DB: ${bestMatch.name} from ${bestMatch.source}`);
+         
           
           // Calculate nutrition based on quantity and unit
           const baseServing = bestMatch.serving_size_g || 100;
@@ -308,13 +307,12 @@ function LogMeals() {
         headers: { Authorization: `Bearer ${token}` }
       });
 
-      const sources = [...new Set(enrichedFoodItems.map(item => item.source))];
-      const sourceInfo = sources.length > 0 ? ` (Data from: ${sources.join(', ')})` : '';
+     
       
       if (failedItems.length > 0) {
-        setSuccess(`Meal logged successfully!${sourceInfo} Some items skipped: ${failedItems.join(', ')}`);
+        setSuccess(`Meal logged successfully! Some items skipped: ${failedItems.join(', ')}`);
       } else {
-        setSuccess(`Meal logged successfully!${sourceInfo}`);
+        setSuccess(`Meal logged successfully!`);
       }
 
       setMealName('');

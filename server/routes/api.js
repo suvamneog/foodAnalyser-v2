@@ -245,7 +245,7 @@ router.get("/search", async (req, res) => {
         );
 
         if (response.data.items?.length > 0) {
-          console.log(`✅ STEP 3 RESULT: Found ${response.data.items.length} items in CalorieNinjas`);
+         
           
           const calorieNinjasResults = response.data.items.slice(0, 3).map(item => ({
             source: "CalorieNinjas (Global Fallback)",
@@ -265,12 +265,12 @@ router.get("/search", async (req, res) => {
           }));
 
           allResults = [...allResults, ...calorieNinjasResults];
-          console.log(`✅ Added ${calorieNinjasResults.length} CalorieNinjas results`);
+          console.log(`Added ${calorieNinjasResults.length} CalorieNinjas results`);
         } else {
-          console.log(`❌ STEP 3 RESULT: No results in CalorieNinjas for "${query}"`);
+          console.log(`STEP 3 RESULT: No results in CalorieNinjas for "${query}"`);
         }
       } catch (err) {
-        console.error("⚠️ STEP 3 ERROR: CalorieNinjas API failed:", err.message);
+        console.error("STEP 3 ERROR: CalorieNinjas API failed:", err.message);
       }
     }
 

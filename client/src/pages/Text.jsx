@@ -1,4 +1,3 @@
-
 /* eslint-disable react/prop-types */
 "use client"
 
@@ -9,6 +8,18 @@ import { CardBody, CardContainer, CardItem } from "../components/ui/3D-card";
 import { useAuth } from "../utils/AuthContext";
 import { Link } from "react-router-dom";
 import LoadingCard from '../components/ui/loadingCard';
+
+// Helper function to extract gram amount from query
+function extractGramAmount(query) {
+  if (!query) return null;
+  
+  // Match patterns like "50g rice", "100g chicken", "25 g pasta", "200g", etc.
+  const gramMatch = query.match(/(\d+)\s*g\s*/i);
+  if (gramMatch) {
+    return parseInt(gramMatch[1]);
+  }
+  return null;
+}
 
 function analyzeFood(food) {
   // Safe access with default values
@@ -62,7 +73,14 @@ function formatNumber(value) {
   return Number.isInteger(num) ? num.toString() : num.toFixed(2);
 }
 
-function FoodAnalyzer({ output, loading }) {
+// Helper function to clean query by removing gram information
+function cleanQuery(query) {
+  if (!query) return "";
+  // Remove patterns like "50g ", "100g " from the beginning or anywhere
+  return query.replace(/(\d+\s*g\s*)/gi, '').trim();
+}
+
+function FoodAnalyzer({ output, loading, originalQuery }) {
   const { isAuthenticated } = useAuth();
   const [isVisible, setIsVisible] = useState(false);
   const [showLoading, setShowLoading] = useState(false);
@@ -192,6 +210,25 @@ function FoodAnalyzer({ output, loading }) {
 
   const { pros, cons } = analyzeFood(currentFood);
   const sourceColor = getSourceColor(currentFood.source);
+  
+  // Extract gram amount from ORIGINAL QUERY (not food name)
+  const searchedGrams = extractGramAmount(originalQuery);
+  const displayName = cleanQuery(originalQuery) || currentFood.name || "Unknown Food";
+  
+  // Calculate multiplier for nutrition values if searched grams are different from serving size
+  const servingSize = currentFood.serving_size_g || 100;
+  const multiplier = searchedGrams ? searchedGrams / servingSize : 1;
+  
+  // Calculate adjusted values for display
+  const adjustedCalories = (currentFood.calories || 0) * multiplier;
+  const adjustedProtein = (currentFood.protein_g || 0) * multiplier;
+  const adjustedCarbs = (currentFood.carbohydrates_total_g || 0) * multiplier;
+  const adjustedFat = (currentFood.fat_total_g || 0) * multiplier;
+  const adjustedFiber = (currentFood.fiber_g || 0) * multiplier;
+  const adjustedSugar = (currentFood.sugar_g || 0) * multiplier;
+  const adjustedSaturatedFat = (currentFood.fat_saturated_g || 0) * multiplier;
+  const adjustedSodium = (currentFood.sodium_mg || 0) * multiplier;
+  const adjustedCholesterol = (currentFood.cholesterol_mg || 0) * multiplier;
 
   return (
     <div className={`flex flex-col justify-center items-center w-full gap-4 transition-opacity duration-500 ease-in-out ${
@@ -244,8 +281,20 @@ function FoodAnalyzer({ output, loading }) {
             <CardItem>
               <CardHeader className="p-2 sm:p-3">
                 <CardTitle className="text-base sm:text-lg md:text-xl text-white text-center">
-                  {currentFood.name || "Unknown Food"}
+                  {displayName}
                 </CardTitle>
+                
+                {/* Searched Gram Information */}
+                {searchedGrams && (
+                  <CardDescription className="text-xs sm:text-sm text-yellow-400 text-center mt-1">
+                    Showing nutrition for: <strong>{searchedGrams}g</strong>
+                    {servingSize !== searchedGrams && (
+                      <span className="text-gray-400 ml-1">
+                        (adjusted from {servingSize}g base)
+                      </span>
+                    )}
+                  </CardDescription>
+                )}
                 
                 {/* Source Information */}
                 <CardDescription className="text-xs sm:text-sm flex items-center justify-center gap-1 mt-1">
@@ -259,9 +308,9 @@ function FoodAnalyzer({ output, loading }) {
                 {/* Serving Size Information */}
                 <CardDescription className="text-xs sm:text-sm flex items-center justify-center gap-1 mt-1">
                   <Scale className="w-3 h-3" />
-                  <span className="text-gray-400">Serving: </span>
+                  <span className="text-gray-400">Base Serving: </span>
                   <span className="text-gray-300">
-                    {currentFood.serving_size_g || 100}g {currentFood.serving_description && `(${currentFood.serving_description})`}
+                    {servingSize}g {currentFood.serving_description && `(${currentFood.serving_description})`}
                   </span>
                 </CardDescription>
 
@@ -284,7 +333,7 @@ function FoodAnalyzer({ output, loading }) {
                   <div className="flex items-center justify-between">
                     <span className="text-xs sm:text-sm md:text-base text-white">Total Calories</span>
                     <span className="text-base sm:text-lg md:text-xl font-bold text-white">
-                      {formatNumber(currentFood.calories)} kcal
+                      {formatNumber(adjustedCalories)} kcal
                     </span>
                   </div>
 
@@ -294,7 +343,7 @@ function FoodAnalyzer({ output, loading }) {
                       <Card className="bg-[#0C0C0C] border-white/[0.05]">
                         <CardHeader className="p-1 sm:p-2 md:p-3">
                           <CardTitle className="text-xs sm:text-sm md:text-base">Protein</CardTitle>
-                          <p className="text-sm sm:text-base md:text-lg font-bold">{formatNumber(currentFood.protein_g)} g</p>
+                          <p className="text-sm sm:text-base md:text-lg font-bold">{formatNumber(adjustedProtein)} g</p>
                         </CardHeader>
                       </Card>
                     </CardItem>
@@ -302,7 +351,7 @@ function FoodAnalyzer({ output, loading }) {
                       <Card className="bg-[#0C0C0C] border-white/[0.05]">
                         <CardHeader className="p-1 sm:p-2 md:p-3">
                           <CardTitle className="text-xs sm:text-sm md:text-base">Carbs</CardTitle>
-                          <p className="text-sm sm:text-base md:text-lg font-bold">{formatNumber(currentFood.carbohydrates_total_g)} g</p>
+                          <p className="text-sm sm:text-base md:text-lg font-bold">{formatNumber(adjustedCarbs)} g</p>
                         </CardHeader>
                       </Card>
                     </CardItem>
@@ -310,26 +359,44 @@ function FoodAnalyzer({ output, loading }) {
                       <Card className="bg-[#0C0C0C] border-white/[0.05]">
                         <CardHeader className="p-1 sm:p-2 md:p-3">
                           <CardTitle className="text-xs sm:text-sm md:text-base">Fats</CardTitle>
-                          <p className="text-sm sm:text-base md:text-lg font-bold">{formatNumber(currentFood.fat_total_g)} g</p>
+                          <p className="text-sm sm:text-base md:text-lg font-bold">{formatNumber(adjustedFat)} g</p>
                         </CardHeader>
                       </Card>
                     </CardItem>
                   </div>
 
                   {/* Additional Nutrients */}
-                  {(currentFood.fiber_g > 0 || currentFood.sugar_g > 0) && (
+                  {(adjustedFiber > 0 || adjustedSugar > 0 || adjustedSaturatedFat > 0 || adjustedSodium > 0 || adjustedCholesterol > 0) && (
                     <CardItem>
                       <div className="grid grid-cols-2 gap-2">
-                        {currentFood.fiber_g > 0 && (
+                        {adjustedFiber > 0 && (
                           <div className="flex items-center justify-between">
                             <span className="text-xs sm:text-sm text-white">Dietary Fiber</span>
-                            <span className="text-sm font-bold text-white">{formatNumber(currentFood.fiber_g)} g</span>
+                            <span className="text-sm font-bold text-white">{formatNumber(adjustedFiber)} g</span>
                           </div>
                         )}
-                        {currentFood.sugar_g > 0 && (
+                        {adjustedSugar > 0 && (
                           <div className="flex items-center justify-between">
                             <span className="text-xs sm:text-sm text-white">Sugar</span>
-                            <span className="text-sm font-bold text-white">{formatNumber(currentFood.sugar_g)} g</span>
+                            <span className="text-sm font-bold text-white">{formatNumber(adjustedSugar)} g</span>
+                          </div>
+                        )}
+                        {adjustedSaturatedFat > 0 && (
+                          <div className="flex items-center justify-between">
+                            <span className="text-xs sm:text-sm text-white">Saturated Fat</span>
+                            <span className="text-sm font-bold text-white">{formatNumber(adjustedSaturatedFat)} g</span>
+                          </div>
+                        )}
+                        {adjustedSodium > 0 && (
+                          <div className="flex items-center justify-between">
+                            <span className="text-xs sm:text-sm text-white">Sodium</span>
+                            <span className="text-sm font-bold text-white">{formatNumber(adjustedSodium)} mg</span>
+                          </div>
+                        )}
+                        {adjustedCholesterol > 0 && (
+                          <div className="flex items-center justify-between">
+                            <span className="text-xs sm:text-sm text-white">Cholesterol</span>
+                            <span className="text-sm font-bold text-white">{formatNumber(adjustedCholesterol)} mg</span>
                           </div>
                         )}
                       </div>

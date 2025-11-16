@@ -57,7 +57,7 @@ const History = () => {
     }
 
     try {
-      console.log("🔍 Fetching history from:", API_ENDPOINTS.FOOD_HISTORY);
+     
       
       const response = await fetch(API_ENDPOINTS.FOOD_HISTORY, {
         method: "GET",
@@ -90,7 +90,7 @@ const History = () => {
       // Filter and validate the history items
       const validHistory = historyData.filter(isValidFoodData);
 
-      console.log(`📊 Loaded ${validHistory.length} valid history items`);
+    
 
       setSearchHistory(validHistory);
       
@@ -246,7 +246,7 @@ const handleBulkDelete = async () => {
   const authToken = localStorage.getItem("authToken");
 
   try {
-    console.log("🗑️ Attempting to clear all history...");
+   
     
     const response = await fetch(API_ENDPOINTS.FOOD_HISTORY_CLEAR, {
       method: "DELETE",
@@ -278,7 +278,7 @@ const handleBulkDelete = async () => {
       throw new Error(errorMessage);
     }
 
-    const data = await response.json();
+    
     
     setSearchHistory([]);
     setBulkDeleteMode(false);
@@ -286,7 +286,7 @@ const handleBulkDelete = async () => {
     
     // Show success message
     setError(null);
-    console.log(`✅ Cleared ${data.deletedCount} items`);
+  
     
   } catch (err) {
     console.error("Error clearing history:", err);

@@ -19,19 +19,7 @@ export const fetchFoodData = async (foodName) => {
 
     const response = await axios.get(url, { headers });
 
-    console.log("🔍 Unified API Response:", response.data);
     
-    // ✅ DEBUG: Check what's in the items array
-    if (response.data.items && Array.isArray(response.data.items) && response.data.items.length > 0) {
-      console.log(`🔍 Found ${response.data.items.length} items in response`);
-      response.data.items.forEach((item, idx) => {
-        console.log(`  Item ${idx + 1}:`, {
-          name: item.name,
-          source: item.source,
-          hasServingSize: item.serving_size_g,
-        });
-      });
-    }
 
     // ✅ Handle ANY response format
     let foodItems = [];
@@ -75,8 +63,7 @@ export const fetchFoodData = async (foodName) => {
       };
     });
 
-    console.log("✅ Final food data:", mappedItems);
-    console.log(`✅ Returning ${mappedItems.length} items`);
+   
     
     return mappedItems;
     
