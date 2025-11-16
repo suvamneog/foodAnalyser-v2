@@ -14,16 +14,15 @@ function LogMeals() {
   }]);
   const [mealName, setMealName] = useState('');
   const [loading, setLoading] = useState(false);
-  // New state for error handling
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(null);
   const token = localStorage.getItem("authToken");
 
   // Indian food suggestions
   const indianFoodSuggestions = [
-    "Roti", "Naan", "ou tenga curry",
-    "Dal", "Palak Paneer", "Butter Chicken", 
-    "Gulab Jamun", "Samosa", "Pakora", "Paneer Tikka"
+    "Roti", "Naan", "Chapati", "Dal", "Rice", "Biryani", "Pulao",
+    "Palak Paneer", "Butter Chicken", "Samosa", "Pakora", "Dosa",
+    "Idli", "Vada", "Poha", "Upma", "Curd", "Lassi", "Chai"
   ];
 
   // Indian meal types
@@ -31,26 +30,134 @@ function LogMeals() {
     "Breakfast", "Lunch", "Dinner", "Snack"
   ];
 
+  // Parse nutrition values safely
+  const parseNutritionValue = (value) => {
+    if (value === "N/A" || value === undefined || value === null) return 0;
+    if (typeof value === 'string') {
+      const cleaned = value.replace(/[^\d.-]/g, '');
+      return Number(cleaned) || 0;
+    }
+    return Number(value) || 0;
+  };
+
+  // Smart food search with secure backend calls
+  const searchFoodData = async (foodName, quantity, unit) => {
+    try {
+      console.log(`🔍 Searching for: ${foodName} (${quantity}${unit})`);
+      
+      // Step 1: Try CalorieNinjas via secure backend endpoint
+      try {
+        const query = unit === 'g' 
+          ? `${quantity}g ${foodName}`
+          : `${quantity} ${foodName}`;
+          
+        const response = await axios.get(
+          `http://localhost:3000/api/meal/nutrition?query=${encodeURIComponent(query)}`,
+          {
+            headers: { 
+              Authorization: `Bearer ${token}`,
+              "Content-Type": "application/json"
+            },
+            timeout: 5000
+          }
+        );
+
+        if (response.data.items && response.data.items.length > 0) {
+          const item = response.data.items[0];
+          console.log(`✅ Found via backend CalorieNinjas: ${item.name}`);
+          
+          return {
+            name: foodName,
+            quantity: quantity,
+            unit: unit,
+            calories: parseNutritionValue(item.calories),
+            protein_g: parseNutritionValue(item.protein_g),
+            carbohydrates_g: parseNutritionValue(item.carbohydrates_total_g),
+            fat_g: parseNutritionValue(item.fat_total_g),
+            fiber_g: parseNutritionValue(item.fiber_g),
+            sugar_g: parseNutritionValue(item.sugar_g),
+            source: "CalorieNinjas (Generic)",
+            data_source: 'calorieninjas'
+          };
+        }
+      } catch {
+        console.log("⚠️ Backend CalorieNinjas failed, trying unified search...");
+      }
+
+      // Step 2: Fallback to unified search (IFCT + INDB) for Indian dishes
+      try {
+        const unifiedResponse = await axios.get(
+          `http://localhost:3000/api/food/search?q=${encodeURIComponent(foodName)}`
+        );
+        
+        if (unifiedResponse.data.items && unifiedResponse.data.items.length > 0) {
+          // Find the best match
+          let bestMatch = unifiedResponse.data.items[0];
+          
+          const primaryMatches = unifiedResponse.data.items.filter(item => 
+            item.name.toLowerCase().startsWith(foodName.toLowerCase())
+          );
+          
+          if (primaryMatches.length > 0) {
+            bestMatch = primaryMatches[0];
+          }
+          
+          console.log(`✅ Found in Indian DB: ${bestMatch.name} from ${bestMatch.source}`);
+          
+          // Calculate nutrition based on quantity and unit
+          const baseServing = bestMatch.serving_size_g || 100;
+          let multiplier = 1;
+          
+          if (unit === 'g') {
+            multiplier = quantity / baseServing;
+          } else if (unit === 'pcs') {
+            multiplier = quantity * (baseServing / 100);
+          }
+          
+          return {
+            name: bestMatch.name,
+            quantity: quantity,
+            unit: unit,
+            calories: parseNutritionValue(bestMatch.calories * multiplier),
+            protein_g: parseNutritionValue(bestMatch.protein_g * multiplier),
+            carbohydrates_g: parseNutritionValue(bestMatch.carbohydrates_total_g * multiplier),
+            fat_g: parseNutritionValue(bestMatch.fat_total_g * multiplier),
+            fiber_g: parseNutritionValue((bestMatch.fiber_g || 0) * multiplier),
+            sugar_g: parseNutritionValue((bestMatch.sugar_g || 0) * multiplier),
+            source: bestMatch.source,
+            data_source: 'indian_db'
+          };
+        }
+      } catch (unifiedError) {
+        console.error("Unified search failed:", unifiedError);
+      }
+
+      console.log(`❌ No results found for: ${foodName}`);
+      return null;
+      
+    } catch (error) {
+      console.error("Error searching food data:", error);
+      return null;
+    }
+  };
+
   const fetchMeals = async () => {
     if (loading) return;
     setLoading(true);
     setError(null);
     
     try {
-      const response = await axios.get("https://localhost/api/meal/logs", {
+      const response = await axios.get("http://localhost:3000/api/meal/logs", {
         headers: { Authorization: `Bearer ${token}` }
       });
       setMeals(response.data);
     } catch (error) {
       console.error("Error fetching meals:", error);
       if (error.response) {
-        // The request was made and the server responded with an error status
         setError(`Error fetching meals: ${error.response.data.message || error.response.statusText}`);
       } else if (error.request) {
-        // The request was made but no response was received
         setError("Network error. Please check your connection and try again.");
       } else {
-        // Something else happened while setting up the request
         setError(`Error: ${error.message}`);
       }
     } finally {
@@ -76,20 +183,16 @@ function LogMeals() {
   const handleFoodItemChange = (index, field, value) => {
     const newFoodItems = [...foodItems];
     
-    // Validation for quantity field
     if (field === 'quantity') {
-      // Allow empty string for user typing
       if (value === "") {
         newFoodItems[index] = { ...newFoodItems[index], quantity: "" };
       } else {
         const numValue = Number(value);
-        // Prevent negative values
         if (numValue >= 0) {
           newFoodItems[index] = { ...newFoodItems[index], quantity: numValue };
         }
       }
     } else {
-      // For other fields
       newFoodItems[index] = { ...newFoodItems[index], [field]: value };
     }
     
@@ -111,7 +214,6 @@ function LogMeals() {
   };
 
   const validateForm = () => {
-    // Basic validation
     if (!mealName.trim()) {
       setError("Please enter a meal name");
       return false;
@@ -129,7 +231,6 @@ function LogMeals() {
         return false;
       }
 
-      // Check for reasonable limits
       if (item.unit === 'g' && item.quantity > 5000) {
         setError(`Quantity for ${item.name} (${item.quantity}g) seems too high. Please verify.`);
         return false;
@@ -148,54 +249,86 @@ function LogMeals() {
     e.preventDefault();
     if (loading) return;
     
-    // Clear previous messages
     setError(null);
     setSuccess(null);
     
-    // Validate form
     if (!validateForm()) return;
   
     setLoading(true);
   
-    const newMeal = {
-      mealName,
-      foodItems: foodItems.map(item => ({
-        name: item.name,
-        quantity: Number(item.quantity),
-        unit: item.unit
-      }))
-    };
-  
     try {
-      const response = await axios.post("https://localhost/api/meal/log", newMeal, {
+      const enrichedFoodItems = [];
+      let failedItems = [];
+
+      for (const food of foodItems) {
+        const nutritionData = await searchFoodData(food.name, food.quantity, food.unit);
+        
+        if (nutritionData) {
+          enrichedFoodItems.push({
+            name: food.name,
+            quantity: Number(food.quantity),
+            unit: food.unit,
+            calories: parseNutritionValue(nutritionData.calories),
+            protein_g: parseNutritionValue(nutritionData.protein_g),
+            carbohydrates_g: parseNutritionValue(nutritionData.carbohydrates_g),
+            fat_g: parseNutritionValue(nutritionData.fat_g),
+            fiber_g: parseNutritionValue(nutritionData.fiber_g),
+            sugar_g: parseNutritionValue(nutritionData.sugar_g),
+            data_source: nutritionData.data_source,
+            source: nutritionData.source
+          });
+        } else {
+          failedItems.push(food.name);
+        }
+      }
+
+      if (enrichedFoodItems.length === 0) {
+        setError("Could not find nutritional data for any of the food items. Please check the food names and try again.");
+        setLoading(false);
+        return;
+      }
+
+      const totals = enrichedFoodItems.reduce((acc, item) => ({
+        calories: acc.calories + (item.calories || 0),
+        protein_g: acc.protein_g + (item.protein_g || 0),
+        carbohydrates_g: acc.carbohydrates_g + (item.carbohydrates_g || 0),
+        fat_g: acc.fat_g + (item.fat_g || 0)
+      }), { calories: 0, protein_g: 0, carbohydrates_g: 0, fat_g: 0 });
+
+      const newMeal = {
+        mealName,
+        foodItems: enrichedFoodItems,
+        totalCalories: Number(totals.calories.toFixed(2)),
+        totalProtein: Number(totals.protein_g.toFixed(2)),
+        totalCarbs: Number(totals.carbohydrates_g.toFixed(2)),
+        totalFat: Number(totals.fat_g.toFixed(2))
+      };
+
+      await axios.post("http://localhost:3000/api/meal/log", newMeal, {
         headers: { Authorization: `Bearer ${token}` }
       });
-  
-      // Check for warnings in response
-      if (response.data && response.data.warnings) {
-        setSuccess(`Meal logged with some items skipped: ${response.data.warnings.failedItems.join(', ')}`);
+
+      const sources = [...new Set(enrichedFoodItems.map(item => item.source))];
+      const sourceInfo = sources.length > 0 ? ` (Data from: ${sources.join(', ')})` : '';
+      
+      if (failedItems.length > 0) {
+        setSuccess(`Meal logged successfully!${sourceInfo} Some items skipped: ${failedItems.join(', ')}`);
       } else {
-        setSuccess("Meal logged successfully!");
+        setSuccess(`Meal logged successfully!${sourceInfo}`);
       }
-  
-      // Reset form
+
       setMealName('');
       setFoodItems([{ name: '', quantity: '', unit: 'g' }]);
-  
-      // Fetch updated meals
       await fetchMeals();
       
     } catch (error) {
       console.error("Error logging meal:", error);
       
       if (error.response) {
-        // Server returned an error
         setError(`Error: ${error.response.data.message || error.response.statusText}`);
       } else if (error.request) {
-        // Network error
         setError("Network error. Please check your connection and try again.");
       } else {
-        // Other error
         setError(`Error: ${error.message}`);
       }
     } finally {
@@ -210,7 +343,7 @@ function LogMeals() {
     setError(null);
     
     try {
-      await axios.delete(`https://localhost/api/meal/log/${mealId}`, {
+      await axios.delete(`http://localhost:3000/api/meal/log/${mealId}`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       setMeals(meals.filter(meal => meal._id !== mealId));
@@ -229,8 +362,6 @@ function LogMeals() {
       setLoading(false);
     }
   };
-
-  // Rest of the functions remain the same
 
   const calculateDailyTotals = () => {
     const today = new Date().toISOString().split('T')[0];
@@ -277,7 +408,26 @@ function LogMeals() {
   const totals = calculateDailyTotals();
   const groupedMeals = groupMealsByDate();
 
-  const formatNumber = (num) => Number(num.toFixed(2));
+  const formatNumber = (num) => {
+    if (num === undefined || num === null) return '0';
+    const number = typeof num === 'string' ? parseFloat(num) : num;
+    if (isNaN(number)) return '0';
+    return Number(number.toFixed(2));
+  };
+
+  const getSourceBadgeColor = (source) => {
+    if (source?.includes('CalorieNinjas')) return 'bg-blue-500 text-white';
+    if (source?.includes('IFCT')) return 'bg-purple-500 text-white';
+    if (source?.includes('INDB')) return 'bg-green-500 text-white';
+    return 'bg-gray-500 text-white';
+  };
+
+  const getShortSourceName = (source) => {
+    if (source?.includes('CalorieNinjas')) return 'Generic';
+    if (source?.includes('IFCT')) return 'IFCT';
+    if (source?.includes('INDB')) return 'INDB';
+    return 'DB';
+  };
 
   return (
     <div className="relative min-h-screen bg-black text-white flex items-center justify-center p-6">
@@ -292,7 +442,6 @@ function LogMeals() {
       >
         <div className="min-h-screen p-8 mt-20">
           <div className="max-w-4xl mx-auto">
-            {/* Error/Success Alert */}
             {error && (
               <div className="bg-red-600 text-white p-4 rounded-lg mb-6 shadow-lg">
                 <p>{error}</p>
@@ -307,7 +456,7 @@ function LogMeals() {
             
             <div className="bg-zinc-900 rounded-lg p-6 mb-8">
               <h2 className="text-2xl font-bold mb-2">Log Your Meal</h2>
-              <p className="text-gray-400 mb-4">Track your daily nutrition intake</p>
+              <p className="text-gray-400 mb-4">Track your daily nutrition intake using smart food database search</p>
               
               <form onSubmit={handleSubmit} className="space-y-4">
                 <div>
@@ -321,7 +470,7 @@ function LogMeals() {
                     placeholder="e.g., Breakfast, Lunch, Dinner"
                     value={mealName}
                     onChange={(e) => setMealName(e.target.value)}
-                    className="w-full bg-zinc-800 rounded-lg p-3 border border-zinc-700"
+                    className="w-full bg-zinc-800 rounded-lg p-3 border border-zinc-700 text-white"
                     required
                   />
                   <datalist id="meal-options">
@@ -339,7 +488,7 @@ function LogMeals() {
                         <button
                           type="button"
                           onClick={() => removeFoodItem(index)}
-                          className="text-red-400 hover:text-red-300"
+                          className="text-red-400 hover:text-red-300 text-sm"
                         >
                           Remove
                         </button>
@@ -357,7 +506,7 @@ function LogMeals() {
                           placeholder="e.g., Roti, Rice, Dal"
                           value={item.name}
                           onChange={(e) => handleFoodItemChange(index, 'name', e.target.value)}
-                          className="w-full bg-zinc-700 rounded-lg p-3 border border-zinc-600"
+                          className="w-full bg-zinc-700 rounded-lg p-3 border border-zinc-600 text-white"
                           required
                         />
                         <datalist id="indian-foods">
@@ -376,7 +525,7 @@ function LogMeals() {
                           placeholder={`Amount in ${item.unit}`}
                           value={item.quantity}
                           onChange={(e) => handleFoodItemChange(index, 'quantity', e.target.value)}
-                          className="bg-zinc-700 rounded-lg p-3 border border-zinc-600 w-full"
+                          className="bg-zinc-700 rounded-lg p-3 border border-zinc-600 w-full text-white"
                           min="0"
                           step="any"
                           required
@@ -390,7 +539,7 @@ function LogMeals() {
                           id={`food-unit-${index}`}
                           value={item.unit}
                           onChange={(e) => handleFoodItemChange(index, 'unit', e.target.value)}
-                          className="bg-zinc-700 rounded-lg p-3 border border-zinc-600 w-full"
+                          className="bg-zinc-700 rounded-lg p-3 border border-zinc-600 w-full text-white"
                         >
                           <option value="g">grams (g)</option>
                           <option value="pcs">pieces (pcs)</option>
@@ -411,9 +560,9 @@ function LogMeals() {
                 <button
                   type="submit"
                   disabled={loading}
-                  className="w-full bg-white text-black px-6 py-3 rounded-lg font-semibold hover:bg-gray-200 transition-colors disabled:bg-gray-400"
+                  className="w-full bg-white text-black px-6 py-3 rounded-lg font-semibold hover:bg-gray-200 transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed"
                 >
-                  {loading ? 'Logging...' : 'Log Meal'}
+                  {loading ? 'Logging Meal...' : 'Log Meal'}
                 </button>
               </form>
             </div>
@@ -426,19 +575,19 @@ function LogMeals() {
                 <div className="grid grid-cols-2 gap-4">
                   <div className="bg-zinc-800 p-4 rounded-lg">
                     <p className="text-gray-400">Calories</p>
-                    <p className="text-2xl font-bold">{totals.calories}kcal</p>
+                    <p className="text-2xl font-bold">{formatNumber(totals.calories)} kcal</p>
                   </div>
                   <div className="bg-zinc-800 p-4 rounded-lg">
                     <p className="text-gray-400">Protein</p>
-                    <p className="text-2xl font-bold">{totals.protein_g}g</p>
+                    <p className="text-2xl font-bold">{formatNumber(totals.protein_g)} g</p>
                   </div>
                   <div className="bg-zinc-800 p-4 rounded-lg">
                     <p className="text-gray-400">Carbs</p>
-                    <p className="text-2xl font-bold">{totals.carbohydrates_g}g</p>
+                    <p className="text-2xl font-bold">{formatNumber(totals.carbohydrates_g)} g</p>
                   </div>
                   <div className="bg-zinc-800 p-4 rounded-lg">
                     <p className="text-gray-400">Fat</p>
-                    <p className="text-2xl font-bold">{totals.fat_g}g</p>
+                    <p className="text-2xl font-bold">{formatNumber(totals.fat_g)} g</p>
                   </div>
                 </div>
               </div>
@@ -448,56 +597,69 @@ function LogMeals() {
                 <p className="text-gray-400 mb-4">Your logged meals by date</p>
                 
                 <div className="space-y-6 max-h-[500px] overflow-y-auto">
-                  {groupedMeals.map(([date, dateMeals]) => (
-                    <div key={date} className="space-y-2">
-                      <h3 className="font-semibold text-gray-300">
-                        {date === 'Unknown Date' ? date : new Date(date).toLocaleDateString('en-US', {
-                          weekday: 'long',
-                          year: 'numeric',
-                          month: 'long',
-                          day: 'numeric'
-                        })}
-                      </h3>
-                      <div className="space-y-2">
-                        {dateMeals.map((meal) => (
-                          <div key={meal._id} className="bg-zinc-800 p-4 rounded-lg">
-                            <div className="flex justify-between items-center">
-                              <h4 className="font-bold">{meal.mealName}</h4>
-                              <button
-                                onClick={() => deleteMeal(meal._id)}
-                                className="text-red-400 hover:text-red-300"
-                                disabled={loading}
-                              >
-                                Delete
-                              </button>
-                            </div>
-                            {meal.foodItems.map((food, foodIndex) => (
-                              <div key={`${meal._id}-food-${foodIndex}`} className="mt-2">
-                                <p className="text-gray-400">
-                                  {food.name} - {food.quantity}{food.unit}
-                                </p>
-                                <div className="grid grid-cols-4 gap-2 mt-1 text-sm">
-                                  <p>🔥 {formatNumber(food.calories)}kcal</p>
-                                  <p>🥩 {formatNumber(food.protein_g)}g</p>
-                                  <p>🍚 {formatNumber(food.carbohydrates_g)}g</p>
-                                  <p>🥑 {formatNumber(food.fat_g)}g</p>
+                  {groupedMeals.length > 0 ? (
+                    groupedMeals.map(([date, dateMeals]) => (
+                      <div key={date} className="space-y-2">
+                        <h3 className="font-semibold text-gray-300">
+                          {date === 'Unknown Date' ? date : new Date(date).toLocaleDateString('en-US', {
+                            weekday: 'long',
+                            year: 'numeric',
+                            month: 'long',
+                            day: 'numeric'
+                          })}
+                        </h3>
+                        <div className="space-y-2">
+                          {dateMeals.map((meal) => (
+                            <div key={meal._id} className="bg-zinc-800 p-4 rounded-lg">
+                              <div className="flex justify-between items-center mb-3">
+                                <h4 className="font-bold text-lg">{meal.mealName}</h4>
+                                <button
+                                  onClick={() => deleteMeal(meal._id)}
+                                  className="text-red-400 hover:text-red-300 text-sm"
+                                  disabled={loading}
+                                >
+                                  Delete
+                                </button>
+                              </div>
+                              {meal.foodItems.map((food, foodIndex) => (
+                                <div key={`${meal._id}-food-${foodIndex}`} className="mt-3 p-3 bg-zinc-700 rounded-lg">
+                                  <div className="flex items-center justify-between mb-2">
+                                    <p className="text-gray-300 font-medium">
+                                      {food.name} - {food.quantity}{food.unit}
+                                    </p>
+                                    {food.source && (
+                                      <span className={`text-xs px-2 py-1 rounded-full ${getSourceBadgeColor(food.source)}`}>
+                                        {getShortSourceName(food.source)}
+                                      </span>
+                                    )}
+                                  </div>
+                                  <div className="grid grid-cols-4 gap-2 text-sm">
+                                    <p>🔥 {formatNumber(food.calories)} kcal</p>
+                                    <p>🥩 {formatNumber(food.protein_g)} g</p>
+                                    <p>🍚 {formatNumber(food.carbohydrates_g)} g</p>
+                                    <p>🥑 {formatNumber(food.fat_g)} g</p>
+                                  </div>
+                                </div>
+                              ))}
+                              <div className="mt-4 pt-3 border-t border-zinc-600">
+                                <p className="font-semibold text-gray-300 mb-2">Meal Total:</p>
+                                <div className="grid grid-cols-4 gap-2 text-sm font-medium">
+                                  <p>🔥 {formatNumber(meal.totalCalories)} kcal</p>
+                                  <p>🥩 {formatNumber(meal.totalProtein)} g</p>
+                                  <p>🍚 {formatNumber(meal.totalCarbs)} g</p>
+                                  <p>🥑 {formatNumber(meal.totalFat)} g</p>
                                 </div>
                               </div>
-                            ))}
-                            <div className="mt-3 pt-2 border-t border-zinc-700">
-                              <p className="font-semibold">Total:</p>
-                              <div className="grid grid-cols-4 gap-2 text-sm">
-                                <p>🔥 {formatNumber(meal.totalCalories)}kcal</p>
-                                <p>🥩 {formatNumber(meal.totalProtein)}g</p>
-                                <p>🍚 {formatNumber(meal.totalCarbs)}g</p>
-                                <p>🥑 {formatNumber(meal.totalFat)}g</p>
-                              </div>
                             </div>
-                          </div>
-                        ))}
+                          ))}
+                        </div>
                       </div>
+                    ))
+                  ) : (
+                    <div className="text-center text-gray-400 py-8">
+                      <p>No meals logged yet. Start by logging your first meal above!</p>
                     </div>
-                  ))}
+                  )}
                 </div>
               </div>
             </div>

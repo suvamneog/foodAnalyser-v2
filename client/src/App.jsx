@@ -13,6 +13,7 @@ import Text from "./pages/Text"
 import BarcodeScanner from "./pages/barcodeScanner"
 import FoodScanner from "./pages/FoodImageRecognition"
 import NavBar from "./pages/navBar"
+import TargetCursor from "./components/TargetCursor"
 
 function App() {
   const [foodName, setFoodName] = useState("");
@@ -21,6 +22,11 @@ function App() {
 
   return (
     <AuthProvider>
+      <TargetCursor
+        spinDuration={2}
+        hideDefaultCursor={true}
+        parallaxOn={true}
+      />
       <NavBar />
       <Routes>
         <Route

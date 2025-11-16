@@ -35,16 +35,16 @@ const Navbar = () => {
     <>
       <Link
         to="/logmeals"
-        className="text-gray-600 hover:text-gray-900 px-3 py-2 text-sm font-medium transition-colors"
+        className="cursor-target text-gray-600 hover:text-gray-900 px-3 py-2 text-sm font-medium transition-colors"
       >
         Log Meals
       </Link>
-      <Link to="/history" className="text-gray-600 hover:text-gray-900 px-3 py-2 text-sm font-medium transition-colors">
+      <Link to="/history" className="cursor-target text-gray-600 hover:text-gray-900 px-3 py-2 text-sm font-medium transition-colors">
         History
       </Link>
       <Link
         to="/addfoods"
-        className="text-gray-600 hover:text-gray-900 px-3 py-2 text-sm font-medium transition-colors"
+        className="cursor-target text-gray-600 hover:text-gray-900 px-3 py-2 text-sm font-medium transition-colors"
       >
         Add Food
       </Link>
@@ -57,7 +57,7 @@ const Navbar = () => {
         <div className="flex justify-between h-16">
           {/* Logo Section */}
           <div className="flex-shrink-0 flex items-center">
-            <button onClick={handleLogoClick} className="text-xl font-semibold text-gray-900">
+            <button onClick={handleLogoClick} className="cursor-target text-xl font-semibold text-gray-900">
               Food Analyser <span className="text-gray-400">×</span>
               <span className="text-gray-900"> fit</span>
             </button>
@@ -66,19 +66,19 @@ const Navbar = () => {
           <div className="hidden md:flex items-center space-x-8">
             <Link
               to="/calculator"
-              className="text-gray-600 hover:text-gray-900 px-3 py-2 text-sm font-medium transition-colors"
+              className="cursor-target text-gray-600 hover:text-gray-900 px-3 py-2 text-sm font-medium transition-colors"
             >
               Calories Calculator
             </Link>
             <Link
               to="/scan"
-              className="text-gray-600 hover:text-gray-900 px-3 py-2 text-sm font-medium transition-colors"
+              className="cursor-target text-gray-600 hover:text-gray-900 px-3 py-2 text-sm font-medium transition-colors"
             >
              Scan
             </Link>
             <Link
               to="/image"
-              className="text-gray-600 hover:text-gray-900 px-3 py-2 text-sm font-medium transition-colors"
+              className="cursor-target text-gray-600 hover:text-gray-900 px-3 py-2 text-sm font-medium transition-colors"
             >
              Image
             </Link>
@@ -88,13 +88,13 @@ const Navbar = () => {
                 <>
                   <Link
                     to="/signup"
-                    className="text-gray-600 hover:text-gray-900 px-3 py-2 text-sm font-medium transition-colors"
+                    className="cursor-target text-gray-600 hover:text-gray-900 px-3 py-2 text-sm font-medium transition-colors"
                   >
                     Sign up
                   </Link>
                   <Link
                     to="/login"
-                    className="bg-gray-900 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-gray-800 transition-colors"
+                    className="cursor-target bg-gray-900 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-gray-800 transition-colors"
                   >
                     Login
                   </Link>
@@ -102,7 +102,7 @@ const Navbar = () => {
               ) : (
                 <button
                   onClick={handleLogout}
-                  className="bg-gray-900 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-gray-800 transition-colors"
+                  className="cursor-target bg-gray-900 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-gray-800 transition-colors"
                 >
                   Logout
                 </button>

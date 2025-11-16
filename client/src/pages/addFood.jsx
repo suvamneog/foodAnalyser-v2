@@ -31,9 +31,7 @@ function AddFood() {
   
   const [newFood, setNewFood] = useState(emptyFood);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [isRequesting, setIsRequesting] = useState(false); // Track request state
-
-  
+  const [isRequesting, setIsRequesting] = useState(false);
 
   useEffect(() => {
     fetchFoods();
@@ -41,6 +39,7 @@ function AddFood() {
 
   const fetchFoods = async () => {
     try {
+      setIsLoading(true);
       const response = await fetch('https://localhost/api/food', {
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('authToken')}`
@@ -54,28 +53,45 @@ function AddFood() {
       
       const data = await response.json();
       setFoodHistory(data);
+      setError(null);
     } catch (err) {
-      setError(err.message);
-      console.error('Error fetching foods:', err);
+      console.error('❌ Error fetching foods:', err);
+      setError(err.message || 'Failed to load foods');
     } finally {  
       setIsLoading(false);
     }
   };
 
+  const validateFoodData = (foodData) => {
+    if (!foodData.name || !foodData.name.trim()) {
+      throw new Error('Valid food name is required');
+    }
+    
+    if (foodData.calories === undefined || foodData.calories === null || foodData.calories === '') {
+      throw new Error('Calories are required');
+    }
+
+    const calories = Number(foodData.calories);
+    if (isNaN(calories) || calories < 0) {
+      throw new Error('Invalid calories value. Must be a positive number.');
+    }
+
+    return true;
+  };
+
   const handleAddOrUpdateFood = async () => {
-    if (isRequesting) return; // Prevent multiple requests
+    if (isRequesting) return;
     setIsRequesting(true);
   
     try {
-      if (!newFood.name || !newFood.calories) {
-        throw new Error('Name and calories are required');
-      }
-  
+      // Validate input data
+      validateFoodData(newFood);
+
       const prosArray = newFood.pros.split(',').map(pro => pro.trim()).filter(Boolean);
       const consArray = newFood.cons.split(',').map(con => con.trim()).filter(Boolean);
-  
+
       const foodData = {
-        ...newFood,
+        name: newFood.name.trim(),
         calories: Number(newFood.calories),
         protein: Number(newFood.protein) || 0,
         carbs: Number(newFood.carbs) || 0,
@@ -83,13 +99,15 @@ function AddFood() {
         pros: prosArray,
         cons: consArray
       };
-  
+
       const url = isEditing 
         ? `https://localhost/api/food/${editingId}` 
         : 'https://localhost/api/food';
-  
+
       const method = isEditing ? 'PUT' : 'POST';
-  
+
+      console.log(`🍎 ${isEditing ? 'Updating' : 'Creating'} food:`, foodData.name);
+
       const response = await fetch(url, {
         method,
         headers: {
@@ -98,23 +116,25 @@ function AddFood() {
         },
         body: JSON.stringify(foodData)
       });
-  
+
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.message || 'Failed to save food');
+        throw new Error(errorData.message || `Failed to ${isEditing ? 'update' : 'create'} food`);
       }
-  
+
       await fetchFoods();
       setNewFood(emptyFood);
       setIsEditing(false);
       setEditingId(null);
       setIsDialogOpen(false);
       setError(null);
+      
+      console.log(`✅ Food ${isEditing ? 'updated' : 'created'} successfully`);
     } catch (err) {
+      console.error(`❌ Error ${isEditing ? 'updating' : 'creating'} food:`, err);
       setError(err.message);
-      console.error('Error saving food:', err);
     } finally {
-      setIsRequesting(false); // Allow new requests
+      setIsRequesting(false);
     }
   };
   
@@ -123,10 +143,10 @@ function AddFood() {
     setEditingId(food._id);
     setNewFood({
       name: food.name,
-      calories: food.calories,
-      protein: food.protein,
-      carbs: food.carbs,
-      fats: food.fats,
+      calories: food.calories.toString(),
+      protein: food.protein.toString(),
+      carbs: food.carbs.toString(),
+      fats: food.fats.toString(),
       pros: food.pros.join(', '),
       cons: food.cons.join(', ')
     });
@@ -134,31 +154,40 @@ function AddFood() {
   };
 
   const handleDelete = async (id) => {
-    if (isRequesting) return; // Prevent multiple requests
+    if (isRequesting) return;
+    
+    if (!window.confirm('Are you sure you want to delete this food?')) {
+      return;
+    }
+
     setIsRequesting(true);
   
     try {
+      console.log(`🗑️ Deleting food: ${id}`);
+      
       const response = await fetch(`https://localhost/api/food/${id}`, {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('authToken')}`
         }
       });
-  
+
       if (!response.ok) {
         const errorData = await response.json();
         throw new Error(errorData.message || 'Failed to delete food');
       }
-  
+
       await fetchFoods();
       setError(null);
+      console.log(`✅ Food deleted successfully`);
     } catch (err) {
+      console.error('❌ Error deleting food:', err);
       setError(err.message);
-      console.error('Error deleting food:', err);
     } finally {
-      setIsRequesting(false); // Allow new requests
+      setIsRequesting(false);
     }
   };
+
   const handleDialogClose = () => {
     setIsDialogOpen(false);
     setNewFood(emptyFood);
@@ -167,7 +196,17 @@ function AddFood() {
     setError(null);
   };
 
-  if (isLoading) return <div>Loading...</div>;
+  if (isLoading) {
+    return (
+      <div className="relative bg-black min-h-screen p-6 mt-14 flex items-center justify-center">
+        <div className="absolute inset-0 pointer-events-none">
+          <StarsBackground />
+          <ShootingStars />
+        </div>
+        <div className="text-white text-lg">Loading foods...</div>
+      </div>
+    );
+  }
 
   return (
     <div className="relative bg-black min-h-screen p-6 mt-14">
@@ -175,11 +214,13 @@ function AddFood() {
         <StarsBackground />
         <ShootingStars />
       </div>
+      
       {error && (
         <div className="max-w-4xl mx-auto mb-4 p-4 bg-red-100 border border-red-400 text-red-700 rounded">
           {error}
         </div>
       )}
+      
       <motion.div
         initial={{ opacity: 0, scale: 0.9 }}
         animate={{ opacity: 1, scale: 1 }}
@@ -189,11 +230,15 @@ function AddFood() {
           <div className="flex justify-between items-center mb-6">
             <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
               <DialogTrigger asChild>
-                <Button className="gap-2" onClick={() => {
-                  setNewFood(emptyFood);
-                  setIsEditing(false);
-                  setEditingId(null);
-                }}>
+                <Button 
+                  className="gap-2" 
+                  onClick={() => {
+                    setNewFood(emptyFood);
+                    setIsEditing(false);
+                    setEditingId(null);
+                    setError(null);
+                  }}
+                >
                   <Plus size={16} />
                   Add Food
                 </Button>
@@ -204,23 +249,26 @@ function AddFood() {
                 </DialogHeader>
                 <div className="grid gap-4 py-4">
                   <div className="grid gap-2">
-                    <Label htmlFor="name">Food Name</Label>
+                    <Label htmlFor="name">Food Name *</Label>
                     <Input
                       id="name"
                       value={newFood.name}
                       onChange={(e) => setNewFood(prev => ({ ...prev, name: e.target.value }))}
                       className="text-white"
+                      placeholder="Enter food name"
                     />
                   </div>
                   <div className="grid grid-cols-2 gap-4">
                     <div className="grid gap-2">
-                      <Label htmlFor="calories">Calories</Label>
+                      <Label htmlFor="calories">Calories *</Label>
                       <Input
                         id="calories"
                         type="number"
                         value={newFood.calories}
                         onChange={(e) => setNewFood(prev => ({ ...prev, calories: e.target.value }))}
                         className="text-white"
+                        placeholder="0"
+                        min="0"
                       />
                     </div>
                     <div className="grid gap-2">
@@ -231,6 +279,8 @@ function AddFood() {
                         value={newFood.protein}
                         onChange={(e) => setNewFood(prev => ({ ...prev, protein: e.target.value }))}
                         className="text-white"
+                        placeholder="0"
+                        min="0"
                       />
                     </div>
                   </div>
@@ -243,6 +293,8 @@ function AddFood() {
                         value={newFood.carbs}
                         onChange={(e) => setNewFood(prev => ({ ...prev, carbs: e.target.value }))}
                         className="text-white"
+                        placeholder="0"
+                        min="0"
                       />
                     </div>
                     <div className="grid gap-2">
@@ -253,6 +305,8 @@ function AddFood() {
                         value={newFood.fats}
                         onChange={(e) => setNewFood(prev => ({ ...prev, fats: e.target.value }))}
                         className="text-white"
+                        placeholder="0"
+                        min="0"
                       />
                     </div>
                   </div>
@@ -277,11 +331,19 @@ function AddFood() {
                     />
                   </div>
                   <div className="flex gap-2 justify-end">
-                    <Button variant="outline" onClick={handleDialogClose}
+                    <Button 
+                      variant="outline" 
+                      onClick={handleDialogClose}
                       className="text-white border-white hover:bg-white hover:text-black transition"
-                    >Cancel</Button>
-                    <Button onClick={handleAddOrUpdateFood}>
-                      {isEditing ? 'Update Food' : 'Add Food'}
+                      disabled={isRequesting}
+                    >
+                      Cancel
+                    </Button>
+                    <Button 
+                      onClick={handleAddOrUpdateFood}
+                      disabled={isRequesting}
+                    >
+                      {isRequesting ? 'Saving...' : (isEditing ? 'Update Food' : 'Add Food')}
                     </Button>
                   </div>
                 </div>
@@ -311,6 +373,7 @@ function AddFood() {
                         size="icon"
                         className="text-blue-500 hover:text-blue-700 hover:bg-blue-100"
                         onClick={() => handleEdit(food)}
+                        disabled={isRequesting}
                       >
                         <Edit2 className="w-4 h-4" />
                       </Button>
@@ -319,6 +382,7 @@ function AddFood() {
                         size="icon"
                         className="text-red-500 hover:text-red-700 hover:bg-red-100"
                         onClick={() => handleDelete(food._id)}
+                        disabled={isRequesting}
                       >
                         <Trash2 className="w-4 h-4" />
                       </Button>

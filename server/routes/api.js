@@ -328,53 +328,50 @@ router.get("/history", auth, async (req, res) => {
   }
 });
 
-// 🗑️ Delete Single History Item
-router.delete("/history/:id", auth, async (req, res) => {
+// ------------------------------------
+// HISTORY ENDPOINTS (FIXED VERSION - REORDERED)
+// ------------------------------------
+
+// 🗑️ Clear All History (MOVE THIS BEFORE :id)
+router.delete("/history/clear", auth, async (req, res) => {
   try {
-    const itemId = req.params.id;
+    console.log(`🗑️ Clearing all history for user: ${req.user.id}`);
     
-    console.log(`🗑️ Attempting to delete history item: ${itemId} for user: ${req.user.id}`);
-    
-    // Validate MongoDB ID format
-    if (!mongoose.Types.ObjectId.isValid(itemId)) {
-      console.log(`❌ Invalid history item ID format: ${itemId}`);
-      return res.status(400).json({ 
-        error: "Invalid history item ID format",
-        receivedId: itemId
-      });
+    // Check database connection
+    if (mongoose.connection.readyState !== 1) {
+      console.error('❌ Database connection not ready');
+      return res.status(503).json({ error: "Database connection unavailable" });
     }
 
-    const deletedItem = await FoodSearch.findOneAndDelete({
-      _id: new mongoose.Types.ObjectId(itemId),
+    // Use deleteMany to delete all user's history
+    const result = await FoodSearch.deleteMany({
       userID: req.user.id
     });
 
-    if (!deletedItem) {
-      console.log(`❌ History item not found: ${itemId}`);
-      return res.status(404).json({ 
-        error: "History item not found",
-        itemId: itemId
-      });
-    }
-
-    console.log(`✅ Deleted history item for user ${req.user.id}: ${deletedItem.query}`);
+    console.log(`✅ Cleared all history for user ${req.user.id}: ${result.deletedCount} items deleted`);
     res.json({ 
-      message: "History item deleted successfully",
-      deletedItem: {
-        id: deletedItem._id,
-        query: deletedItem.query
-      }
+      message: "All history cleared successfully",
+      deletedCount: result.deletedCount
     });
   } catch (error) {
-    console.error("❌ Error deleting history item:", error);
+    console.error("❌ Error clearing history:", error);
+    
+    let errorMessage = "Failed to clear history";
+    
+    if (error.name === 'MongoError') {
+      errorMessage = "Database error occurred while clearing history";
+    } else if (error.name === 'CastError') {
+      errorMessage = "Invalid user ID format";
+    }
+    
     res.status(500).json({ 
-      error: "Failed to delete history item",
+      error: errorMessage,
       details: process.env.NODE_ENV === 'development' ? error.message : undefined
     });
   }
 });
 
-// 🗑️ Bulk Delete History Items (FIXED)
+// 🗑️ Bulk Delete History Items (MOVE THIS BEFORE :id TOO)
 router.delete("/history/bulk", auth, async (req, res) => {
   try {
     const { itemIds } = req.body;
@@ -443,40 +440,64 @@ router.delete("/history/bulk", auth, async (req, res) => {
   }
 });
 
-// 🗑️ Clear All History (FIXED)
-router.delete("/history/clear", auth, async (req, res) => {
+// 📜 Get Search History (KEEP THIS BEFORE :id)
+router.get("/history", auth, async (req, res) => {
   try {
-    console.log(`🗑️ Clearing all history for user: ${req.user.id}`);
+    console.log(`📜 Fetching history for user: ${req.user.id}`);
     
-    // Check database connection
-    if (mongoose.connection.readyState !== 1) {
-      console.error('❌ Database connection not ready');
-      return res.status(503).json({ error: "Database connection unavailable" });
+    const history = await FoodSearch.find({ userID: req.user.id })
+      .sort({ searchedAt: -1 })
+      .limit(50);
+
+    console.log(`✅ Retrieved ${history.length} history items for user ${req.user.id}`);
+    res.json({ history });
+  } catch (error) {
+    console.error("❌ Error fetching history:", error);
+    res.status(500).json({ error: "Failed to fetch search history" });
+  }
+});
+
+// 🗑️ Delete Single History Item (THIS SHOULD BE LAST)
+router.delete("/history/:id", auth, async (req, res) => {
+  try {
+    const itemId = req.params.id;
+    
+    console.log(`🗑️ Attempting to delete history item: ${itemId} for user: ${req.user.id}`);
+    
+    // Validate MongoDB ID format
+    if (!mongoose.Types.ObjectId.isValid(itemId)) {
+      console.log(`❌ Invalid history item ID format: ${itemId}`);
+      return res.status(400).json({ 
+        error: "Invalid history item ID format",
+        receivedId: itemId
+      });
     }
 
-    // Use deleteMany to delete all user's history
-    const result = await FoodSearch.deleteMany({
+    const deletedItem = await FoodSearch.findOneAndDelete({
+      _id: new mongoose.Types.ObjectId(itemId),
       userID: req.user.id
     });
 
-    console.log(`✅ Cleared all history for user ${req.user.id}: ${result.deletedCount} items deleted`);
+    if (!deletedItem) {
+      console.log(`❌ History item not found: ${itemId}`);
+      return res.status(404).json({ 
+        error: "History item not found",
+        itemId: itemId
+      });
+    }
+
+    console.log(`✅ Deleted history item for user ${req.user.id}: ${deletedItem.query}`);
     res.json({ 
-      message: "All history cleared successfully",
-      deletedCount: result.deletedCount
+      message: "History item deleted successfully",
+      deletedItem: {
+        id: deletedItem._id,
+        query: deletedItem.query
+      }
     });
   } catch (error) {
-    console.error("❌ Error clearing history:", error);
-    
-    let errorMessage = "Failed to clear history";
-    
-    if (error.name === 'MongoError') {
-      errorMessage = "Database error occurred while clearing history";
-    } else if (error.name === 'CastError') {
-      errorMessage = "Invalid user ID format";
-    }
-    
+    console.error("❌ Error deleting history item:", error);
     res.status(500).json({ 
-      error: errorMessage,
+      error: "Failed to delete history item",
       details: process.env.NODE_ENV === 'development' ? error.message : undefined
     });
   }

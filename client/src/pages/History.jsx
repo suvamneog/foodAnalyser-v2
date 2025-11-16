@@ -242,48 +242,63 @@ const handleBulkDelete = async () => {
   };
 
   const clearAllHistory = async () => {
-    setDeleteLoading(true);
-    const authToken = localStorage.getItem("authToken");
+  setDeleteLoading(true);
+  const authToken = localStorage.getItem("authToken");
 
-    try {
-      const response = await fetch(API_ENDPOINTS.FOOD_HISTORY_CLEAR, {
-        method: "DELETE",
-        headers: {
-          Authorization: `Bearer ${authToken}`,
-          "Content-Type": "application/json",
-        },
-      });
+  try {
+    console.log("🗑️ Attempting to clear all history...");
+    
+    const response = await fetch(API_ENDPOINTS.FOOD_HISTORY_CLEAR, {
+      method: "DELETE",
+      headers: {
+        Authorization: `Bearer ${authToken}`,
+        "Content-Type": "application/json",
+      },
+    });
 
-      if (!response.ok) {
-        if (response.status === 401) {
-          localStorage.removeItem("authToken");
-          throw new Error("Your session has expired. Please log in again.");
-        }
-        throw new Error(`Failed to clear history (Status: ${response.status})`);
+    if (!response.ok) {
+      // Try to get more detailed error information
+      let errorMessage = `Failed to clear history (Status: ${response.status})`;
+      
+      try {
+        const errorData = await response.json();
+        errorMessage = errorData.error || errorMessage;
+        console.error("Backend error details:", errorData);
+      } catch (parseError) {
+        console.error("Could not parse error response:", parseError);
       }
-
-      const data = await response.json();
       
-      setSearchHistory([]);
-      setBulkDeleteMode(false);
-      setSelectedItems(new Set());
-      
-      // Show success message
-      setError(null);
-      console.log(`✅ Cleared ${data.deletedCount} items`);
-      
-    } catch (err) {
-      console.error("Error clearing history:", err);
-      if (err.message.includes("Failed to fetch")) {
-        setError("Cannot connect to server. Please check your connection.");
-      } else {
-        setError(err.message || "Failed to clear history.");
+      if (response.status === 401) {
+        localStorage.removeItem("authToken");
+        errorMessage = "Your session has expired. Please log in again.";
+      } else if (response.status === 400) {
+        errorMessage = "Invalid request. Please try again.";
       }
-    } finally {
-      setDeleteLoading(false);
+      
+      throw new Error(errorMessage);
     }
-  };
 
+    const data = await response.json();
+    
+    setSearchHistory([]);
+    setBulkDeleteMode(false);
+    setSelectedItems(new Set());
+    
+    // Show success message
+    setError(null);
+    console.log(`✅ Cleared ${data.deletedCount} items`);
+    
+  } catch (err) {
+    console.error("Error clearing history:", err);
+    if (err.message.includes("Failed to fetch")) {
+      setError("Cannot connect to server. Please check your connection.");
+    } else {
+      setError(err.message || "Failed to clear history.");
+    }
+  } finally {
+    setDeleteLoading(false);
+  }
+};
   const formatDate = (dateString) => {
     return new Date(dateString).toLocaleDateString('en-US', {
       year: 'numeric',
