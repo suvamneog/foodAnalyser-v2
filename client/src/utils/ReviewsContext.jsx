@@ -13,48 +13,76 @@ export const useReviews = () => {
 
 export const ReviewsProvider = ({ children }) => {
   const [reviews, setReviews] = useState([]);
+  const [loading, setLoading] = useState(false);
 
   // Consistent profile photo for all users
   const DEFAULT_USER_PHOTO = "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?q=80&w=2080&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D";
 
-  // Load reviews from localStorage on component mount
-  useEffect(() => {
-    const savedReviews = localStorage.getItem('foodAnalyzerReviews');
-    if (savedReviews) {
-      try {
-        const parsedReviews = JSON.parse(savedReviews);
-        setReviews(parsedReviews);
-      } catch (error) {
-        console.error('Error loading reviews from localStorage:', error);
+  // Load reviews from database on component mount
+  const fetchReviews = async () => {
+    try {
+      setLoading(true);
+      const response = await fetch('/api/reviews');
+      if (response.ok) {
+        const data = await response.json();
+        setReviews(data.reviews || []);
+      } else {
+        console.error('Failed to fetch reviews');
         setReviews([]);
       }
-    }
-  }, []);
-
-  // Save reviews to localStorage whenever reviews change
-  useEffect(() => {
-    try {
-      localStorage.setItem('foodAnalyzerReviews', JSON.stringify(reviews));
     } catch (error) {
-      console.error('Error saving reviews to localStorage:', error);
+      console.error('Error fetching reviews:', error);
+      setReviews([]);
+    } finally {
+      setLoading(false);
     }
-  }, [reviews]);
-
-  const addReview = (review) => {
-    const newReview = {
-      ...review,
-      id: Date.now().toString(),
-      date: new Date().toISOString(),
-      handle: `⭐ ${review.rating}/5`,
-      image: DEFAULT_USER_PHOTO // Always use the same photo
-    };
-    setReviews(prev => [newReview, ...prev]);
-    
-    // ✅ FIX: Return a success object to match what ReviewPage expects
-    return { success: true, review: newReview };
   };
 
-  // ✅ ADD: Calculate stats for the About page
+  useEffect(() => {
+    fetchReviews();
+  }, []);
+
+  const addReview = async (review) => {
+    try {
+      setLoading(true);
+      
+      const token = localStorage.getItem('token');
+      const response = await fetch('/api/reviews', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          ...(token && { 'Authorization': `Bearer ${token}` })
+        },
+        body: JSON.stringify(review)
+      });
+
+      if (response.ok) {
+        const result = await response.json();
+        
+        // Add the new review to local state with proper formatting
+        const newReview = {
+          ...result.review,
+          id: result.review._id || Date.now().toString(),
+          date: result.review.createdAt || new Date().toISOString(),
+          handle: `⭐ ${review.rating}/5`,
+          image: DEFAULT_USER_PHOTO
+        };
+        
+        setReviews(prev => [newReview, ...prev]);
+        return { success: true, review: newReview };
+      } else {
+        const errorData = await response.json();
+        return { success: false, error: errorData.error || 'Failed to submit review' };
+      }
+    } catch (error) {
+      console.error('Error submitting review:', error);
+      return { success: false, error: 'Network error. Please try again.' };
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Calculate stats for the About page
   const calculateStats = () => {
     const totalReviews = reviews.length;
     const averageRating = totalReviews > 0 
@@ -72,10 +100,10 @@ export const ReviewsProvider = ({ children }) => {
   const value = {
     reviews,
     addReview,
-    stats: calculateStats(), // ✅ ADD: Provide stats for About page
-    loading: false, // ✅ ADD: For compatibility
-    fetchReviews: () => {}, // ✅ ADD: For compatibility
-    fetchStats: () => {}, // ✅ ADD: For compatibility
+    stats: calculateStats(),
+    loading,
+    fetchReviews,
+    fetchStats: () => {}, // For compatibility
   };
 
   return (

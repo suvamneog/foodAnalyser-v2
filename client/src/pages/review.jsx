@@ -35,42 +35,39 @@ export default function ReviewPage() {
     if (error) setError("");
   };
 
-const handleSubmit = async (e) => {
-  e.preventDefault();
-  
-  if (!formData.name || !formData.description || formData.rating === 0) {
-    setError("Please fill in all required fields and provide a rating.");
-    return;
-  }
-
-  setIsSubmitting(true);
-  setError("");
-
-  try {
-    const result = await addReview({
-      name: formData.name.trim(),
-      description: formData.description.trim(),
-      rating: formData.rating,
-    });
-
+  const handleSubmit = async (e) => {
+    e.preventDefault();
     
-
-    // ✅ FIX: Handle both old and new context responses
-    if (result?.success === true || result === undefined) {
-      // If success is true OR result is undefined (old context), consider it successful
-      setIsSubmitted(true);
-      setFormData({ name: "", description: "", rating: 0 });
-      setTimeout(() => setIsSubmitted(false), 3000);
-    } else {
-      setError(result?.error || "Failed to submit review.");
+    if (!formData.name || !formData.description || formData.rating === 0) {
+      setError("Please fill in all required fields and provide a rating.");
+      return;
     }
-  } catch (err) {
-    console.error("Review submission error:", err);
-    setError(err.message || "An unexpected error occurred.");
-  } finally {
-    setIsSubmitting(false);
-  }
-};
+
+    setIsSubmitting(true);
+    setError("");
+
+    try {
+      const result = await addReview({
+        name: formData.name.trim(),
+        description: formData.description.trim(),
+        rating: formData.rating,
+      });
+
+      if (result?.success === true) {
+        setIsSubmitted(true);
+        setFormData({ name: "", description: "", rating: 0 });
+        setTimeout(() => setIsSubmitted(false), 3000);
+      } else {
+        setError(result?.error || "Failed to submit review.");
+      }
+    } catch (err) {
+      console.error("Review submission error:", err);
+      setError(err.message || "An unexpected error occurred.");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   if (isSubmitted) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-neutral-900 to-black flex items-center justify-center p-4">

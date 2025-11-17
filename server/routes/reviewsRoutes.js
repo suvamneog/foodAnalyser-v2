@@ -3,8 +3,8 @@ const router = express.Router();
 const Review = require("../models/review");
 const auth = require("../middleware/authMiddleware");
 
-// 📝 Submit a review
-router.post("/", auth, async (req, res) => {
+// 📝 Submit a review (auth optional for guest reviews)
+router.post("/", async (req, res) => {
   try {
     const { name, description, rating } = req.body;
 
@@ -23,7 +23,7 @@ router.post("/", auth, async (req, res) => {
 
     // Create new review
     const review = new Review({
-      userID: req.user.id,
+      userID: req.user?.id || null, // Optional user ID for guest reviews
       name: name.trim(),
       description: description.trim(),
       rating: parseInt(rating)
@@ -32,11 +32,19 @@ router.post("/", auth, async (req, res) => {
     await review.save();
 
     // Emit real-time update to all connected clients
-    req.app.get('io').emit('new-review', review);
+    if (req.app.get('io')) {
+      req.app.get('io').emit('new-review', review);
+    }
 
     res.status(201).json({
       message: "Review submitted successfully",
-      review
+      review: {
+        ...review._doc,
+        id: review._id.toString(),
+        date: review.createdAt,
+        handle: `⭐ ${rating}/5`,
+        image: "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?q=80&w=2080&auto=format&fit=crop&ixlib=rb-4.0.3"
+      }
     });
 
   } catch (error) {
@@ -59,12 +67,22 @@ router.get("/", async (req, res) => {
       .sort({ createdAt: -1 })
       .skip(skip)
       .limit(limit)
-      .select('-__v');
+      .select('-__v')
+      .lean();
+
+    // Format reviews for frontend
+    const formattedReviews = reviews.map(review => ({
+      ...review,
+      id: review._id.toString(),
+      date: review.createdAt,
+      handle: `⭐ ${review.rating}/5`,
+      image: "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?q=80&w=2080&auto=format&fit=crop&ixlib=rb-4.0.3"
+    }));
 
     const totalReviews = await Review.countDocuments();
 
     res.json({
-      reviews,
+      reviews: formattedReviews,
       pagination: {
         currentPage: page,
         totalPages: Math.ceil(totalReviews / limit),
@@ -130,13 +148,23 @@ router.get("/stats", async (req, res) => {
   }
 });
 
-// 👤 Get user's reviews
+// 👤 Get user's reviews (authenticated)
 router.get("/my-reviews", auth, async (req, res) => {
   try {
     const reviews = await Review.find({ userID: req.user.id })
-      .sort({ createdAt: -1 });
+      .sort({ createdAt: -1 })
+      .lean();
 
-    res.json({ reviews });
+    // Format reviews for frontend
+    const formattedReviews = reviews.map(review => ({
+      ...review,
+      id: review._id.toString(),
+      date: review.createdAt,
+      handle: `⭐ ${review.rating}/5`,
+      image: "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?q=80&w=2080&auto=format&fit=crop&ixlib=rb-4.0.3"
+    }));
+
+    res.json({ reviews: formattedReviews });
 
   } catch (error) {
     console.error("❌ Error fetching user reviews:", error);
@@ -147,7 +175,7 @@ router.get("/my-reviews", auth, async (req, res) => {
   }
 });
 
-// 🗑️ Delete user's review
+// 🗑️ Delete user's review (authenticated)
 router.delete("/:id", auth, async (req, res) => {
   try {
     const review = await Review.findOne({
@@ -164,7 +192,9 @@ router.delete("/:id", auth, async (req, res) => {
     await Review.findByIdAndDelete(req.params.id);
 
     // Emit real-time update
-    req.app.get('io').emit('review-deleted', { id: req.params.id });
+    if (req.app.get('io')) {
+      req.app.get('io').emit('review-deleted', { id: req.params.id });
+    }
 
     res.json({ 
       message: "Review deleted successfully" 

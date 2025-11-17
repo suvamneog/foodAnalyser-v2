@@ -4,17 +4,19 @@ const reviewSchema = new mongoose.Schema({
   userID: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
-    required: true
+    required: false // Allow guest reviews
   },
   name: {
     type: String,
     required: true,
-    trim: true
+    trim: true,
+    maxlength: 50
   },
   description: {
     type: String,
     required: true,
-    trim: true
+    trim: true,
+    maxlength: 500
   },
   rating: {
     type: Number,
@@ -39,5 +41,11 @@ const reviewSchema = new mongoose.Schema({
 // Index for faster queries
 reviewSchema.index({ userID: 1, createdAt: -1 });
 reviewSchema.index({ rating: -1 });
+reviewSchema.index({ createdAt: -1 });
+
+// Virtual for formatted date
+reviewSchema.virtual('formattedDate').get(function() {
+  return this.createdAt.toISOString().split('T')[0];
+});
 
 module.exports = mongoose.model('Review', reviewSchema);
