@@ -16,6 +16,118 @@ const generateToken = (user) => {
   );
 };
 
+// ==================== TRADITIONAL AUTH ROUTES ====================
+
+// Regular signup route
+router.post("/signup", async (req, res) => {
+  try {
+    const { name, email, password } = req.body;
+    
+    console.log("📝 Signup attempt:", { name, email });
+
+    // Validate required fields
+    if (!name || !email || !password) {
+      return res.status(400).json({ 
+        message: "Name, email, and password are required" 
+      });
+    }
+
+    // Check if user already exists
+    const existingUser = await User.findOne({ email });
+    if (existingUser) {
+      return res.status(400).json({ 
+        message: "User already exists with this email" 
+      });
+    }
+
+    // Create new user
+    const user = await User.create({
+      name,
+      email,
+      password, // Note: In production, you should hash passwords!
+    });
+
+    console.log("✅ User created:", user.email);
+    
+    res.status(201).json({ 
+      message: "User created successfully",
+      user: {
+        id: user._id,
+        name: user.name,
+        email: user.email
+      }
+    });
+
+  } catch (error) {
+    console.error("❌ Signup error:", error);
+    
+    if (error.name === 'ValidationError') {
+      return res.status(400).json({ 
+        message: "Validation error",
+        errors: error.errors 
+      });
+    }
+    
+    res.status(500).json({ 
+      message: "Server error during signup" 
+    });
+  }
+});
+
+// Regular login route
+router.post("/login", async (req, res) => {
+  try {
+    const { email, password } = req.body;
+    
+    console.log("🔐 Login attempt:", email);
+
+    // Validate required fields
+    if (!email || !password) {
+      return res.status(400).json({ 
+        message: "Email and password are required" 
+      });
+    }
+
+    // Find user by email
+    const user = await User.findOne({ email });
+    if (!user) {
+      return res.status(400).json({ 
+        message: "Invalid email or password" 
+      });
+    }
+
+    // Check password
+    // Note: Since you're storing plain text passwords for now
+    if (user.password !== password) {
+      return res.status(400).json({ 
+        message: "Invalid email or password" 
+      });
+    }
+
+    // Generate token
+    const token = generateToken(user);
+    
+    console.log("✅ Login successful:", user.email);
+    
+    res.json({ 
+      token, 
+      user: { 
+        id: user._id, 
+        email: user.email, 
+        name: user.name 
+      } 
+    });
+
+  } catch (error) {
+    console.error("❌ Login error:", error);
+    res.status(500).json({ 
+      message: "Server error during login" 
+    });
+  }
+});
+
+// ==================== OAUTH STRATEGIES ====================
+
 // Enhanced GitHub Strategy
 passport.use(
   new GitHubStrategy(
@@ -242,7 +354,7 @@ router.get(
   "/github/callback",
   passport.authenticate("github", { 
     session: false,
-    failureRedirect: '/api/auth/failure'  // FIXED: Added /api prefix
+    failureRedirect: '/api/auth/failure'
   }),
   (req, res) => {
     handleAuthCallback(req, res, 'github');
@@ -258,14 +370,14 @@ router.get(
   "/google/callback",
   passport.authenticate("google", { 
     session: false,
-    failureRedirect: '/api/auth/failure'  // FIXED: Added /api prefix
+    failureRedirect: '/api/auth/failure'
   }),
   (req, res) => {
     handleAuthCallback(req, res, 'google');
   }
 );
 
-// Auth failure route - ADD THIS
+// Auth failure route
 router.get('/failure', (req, res) => {
   console.log('❌ Auth failure reached');
   res.send(`
@@ -320,8 +432,12 @@ router.get("/test-config", (req, res) => {
       callbackUrl: "https://foodanalyser.onrender.com/api/auth/google/callback"
     },
     database: {
-      connected: !!User, // Check if User model is loaded
+      connected: !!User,
       model: User ? "✅ Loaded" : "❌ Missing"
+    },
+    routes: {
+      signup: "✅ /api/auth/signup",
+      login: "✅ /api/auth/login"
     }
   });
 });

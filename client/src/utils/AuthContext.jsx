@@ -52,7 +52,7 @@ export const AuthProvider = ({ children }) => {
 
         // Enhanced message handler
         const messageHandler = (event) => {
-          console.log('🔍 Auth message received:', event.data, 'from:', event.origin);
+         
           
           // Allow multiple origins (both frontend URLs)
           const allowedOrigins = [
@@ -67,7 +67,7 @@ export const AuthProvider = ({ children }) => {
           }
 
           if (event.data.type === "social_auth_success") {
-            console.log('✅ Auth success received');
+          
             const { token } = event.data;
             if (token) {
               login(token);
@@ -82,7 +82,7 @@ export const AuthProvider = ({ children }) => {
           }
 
           if (event.data.type === "social_auth_failure") {
-            console.error(`${provider} login failed:`, event.data.error);
+          
             reject(new Error(event.data.error || `${provider} login failed`));
             popup.close();
             window.removeEventListener("message", messageHandler);

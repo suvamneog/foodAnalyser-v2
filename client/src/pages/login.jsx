@@ -23,6 +23,11 @@ function Login() {
     password: "",
   });
 
+  // Fix: Use the correct backend URL
+  const API_BASE_URL = window.location.hostname === 'localhost' 
+    ? 'http://localhost:3001' 
+    : 'https://foodanalyser.onrender.com';
+
   const validateForm = () => {
     const newErrors = {};
     if (!formData.email) {
@@ -44,7 +49,9 @@ function Login() {
 
     setIsLoading(true);
     try {
-      const response = await axios.post("https:/foodanalyser.onrender.com/api/auth/login", formData);
+      // Fix: Use the correct backend URL
+      const response = await axios.post(`${API_BASE_URL}/api/auth/login`, formData);
+      
       if (response.data.token) {
         login(response.data.token);
         toast({
