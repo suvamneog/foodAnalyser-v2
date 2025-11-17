@@ -1,6 +1,8 @@
 const express = require('express');
 const OpenAI = require('openai');
 const sharp = require('sharp');
+const path = require('path');
+const fs = require('fs');
 const router = express.Router();
 
 // In-memory cache for IFCT data and analysis results
@@ -22,7 +24,7 @@ const loadIFCTData = async () => {
   }
 
   try {
-    const filePath = path.resolve(__dirname, "/Users/suvamneog/foodanalyserr/server/data/ifct_dataset.json");
+    const filePath = path.resolve(__dirname, "../data/ifct_dataset.json");
     console.log("📄 Loading IFCT data for image analysis...");
     const data = await fs.promises.readFile(filePath, 'utf8');
     cache.ifctData = JSON.parse(data);
