@@ -104,7 +104,7 @@ router.get(
     const token = generateToken(req.user);
     res.send(`
       <script>
-        window.opener.postMessage({ type: 'social_auth_success', token: '${token}' }, 'https://foodanalyserr-as72.vercel.app');
+        window.opener.postMessage({ type: 'social_auth_success', token: '${token}' }, 'https://foodanalyserr.vercel.app');
         window.close();
       </script>
     `);
@@ -121,7 +121,7 @@ router.get(
     const token = generateToken(req.user);
     res.send(`
       <script>
-        window.opener.postMessage({ type: 'social_auth_success', token: '${token}' }, 'https://foodanalyserr-as72.vercel.app');
+        window.opener.postMessage({ type: 'social_auth_success', token: '${token}' }, 'https://foodanalyserr.vercel.app');
         window.close();
       </script>
     `);
