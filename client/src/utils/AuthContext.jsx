@@ -55,7 +55,7 @@ export const AuthProvider = ({ children }) => {
         // Check origin based on environment
         const expectedOrigin = isDevelopment 
           ? 'http://localhost:3000' 
-          : 'https://foodanalyser.onrender.com';
+          : 'https://foodanalyserr-as72.vercel.app';
         
         if (event.origin !== expectedOrigin) return;
 
