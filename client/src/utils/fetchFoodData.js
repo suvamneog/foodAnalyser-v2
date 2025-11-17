@@ -3,7 +3,7 @@ import axios from "axios";
 
 export const fetchFoodData = async (foodName) => {
   // ✅ Local development
-  const url = `http://localhost:3000/api/food/search?q=${encodeURIComponent(
+  const url = `https://foodanalyser.onrender.com/api/food/search?q=${encodeURIComponent(
     foodName.trim()
   )}`;
 

@@ -88,27 +88,28 @@ function Home({ foodName, setFoodName, output, setOutput, loading, setLoading, s
                   Type the name of a food or drink in the search bar. For example:
                 </p>
                 <ul className="ml-8 list-disc">
-                  <li><code>apple</code></li>
-                  <li><code>chicken breast</code></li>
-                  <li><code>pasta</code></li>
+                  <li><code>Rice</code></li>
+                  <li><code>Chicken breast</code></li>
+                  <li><code>Dal</code></li>
                 </ul>
               </div>
 
               <div>
-                <p className="font-medium text-white">2. Add Quantities (Optional)</p>
-                <p className="ml-4">
-                  You can specify a quantity for more accurate results. For example:
-                </p>
-                <ul className="ml-8 list-disc">
-                  <li><code>3 tomatoes</code> - for 3 tomatoes</li>
-                  <li><code>1lb beef brisket</code> - for 1 pound of beef</li>
-                  <li><code>200g pasta</code> - for 200 grams of pasta</li>
-                  <li><code>1.5kg watermelon</code> - for 1.5 kilograms of watermelon</li>
-                </ul>
-                <p className="ml-4 mt-2 text-neutral-400">
-                  If no quantity is specified, the default is <strong>100 grams</strong>.
-                </p>
-              </div>
+  <p className="font-medium text-white">2. Add Quantities (Optional)</p>
+  <p className="ml-4">
+    You can specify a quantity in grams for more accurate results. For example:
+  </p>
+  <ul className="ml-8 list-disc">
+    <li><code>100g chicken breast</code> - for 100 grams of chicken</li>
+    <li><code>200g pasta</code> - for 200 grams of pasta</li>
+    <li><code>50g rice</code> - for 50 grams of rice</li>
+  </ul>
+  <p className="ml-4 mt-2 text-neutral-400">
+    If no quantity is specified, the default is <strong>100 grams</strong>.
+    <br />
+    <em>Note: Currently only gram units are supported (e.g., 100g, 250g)</em>
+  </p>
+</div>
 
               <div>
                 <p className="font-medium text-white">3. Get Nutritional Info</p>

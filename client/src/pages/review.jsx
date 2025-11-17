@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useReviews } from "../utils/ReviewsContext";
 import { motion } from "framer-motion";
-import { Star, Send, CheckCircle, ArrowLeft } from "lucide-react";
+import { Star, Send, CheckCircle, ArrowLeft, AlertCircle } from "lucide-react";
 import { Link } from "react-router-dom";
 
 export default function ReviewPage() {
@@ -14,6 +14,7 @@ export default function ReviewPage() {
   const [hoverRating, setHoverRating] = useState(0);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [error, setError] = useState("");
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -21,6 +22,8 @@ export default function ReviewPage() {
       ...prev,
       [name]: value
     }));
+    // Clear error when user starts typing
+    if (error) setError("");
   };
 
   const handleRatingChange = (rating) => {
@@ -28,45 +31,46 @@ export default function ReviewPage() {
       ...prev,
       rating
     }));
+    // Clear error when user selects rating
+    if (error) setError("");
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    
-    if (!formData.name || !formData.description || formData.rating === 0) {
-      alert("Please fill in all required fields and provide a rating.");
-      return;
-    }
+const handleSubmit = async (e) => {
+  e.preventDefault();
+  
+  if (!formData.name || !formData.description || formData.rating === 0) {
+    setError("Please fill in all required fields and provide a rating.");
+    return;
+  }
 
-    setIsSubmitting(true);
+  setIsSubmitting(true);
+  setError("");
 
-    // Simulate API call delay
-    await new Promise(resolve => setTimeout(resolve, 1000));
-
-    const review = {
-      name: formData.name,
-      description: formData.description,
+  try {
+    const result = await addReview({
+      name: formData.name.trim(),
+      description: formData.description.trim(),
       rating: formData.rating,
-      // No need to include image - it will be set by the context
-    };
-
-    addReview(review);
-    setIsSubmitting(false);
-    setIsSubmitted(true);
-    
-    // Reset form
-    setFormData({
-      name: "",
-      description: "",
-      rating: 0,
     });
 
-    // Reset success message after 3 seconds
-    setTimeout(() => {
-      setIsSubmitted(false);
-    }, 3000);
-  };
+    
 
+    // ✅ FIX: Handle both old and new context responses
+    if (result?.success === true || result === undefined) {
+      // If success is true OR result is undefined (old context), consider it successful
+      setIsSubmitted(true);
+      setFormData({ name: "", description: "", rating: 0 });
+      setTimeout(() => setIsSubmitted(false), 3000);
+    } else {
+      setError(result?.error || "Failed to submit review.");
+    }
+  } catch (err) {
+    console.error("Review submission error:", err);
+    setError(err.message || "An unexpected error occurred.");
+  } finally {
+    setIsSubmitting(false);
+  }
+};
   if (isSubmitted) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-neutral-900 to-black flex items-center justify-center p-4">
@@ -120,6 +124,18 @@ export default function ReviewPage() {
           transition={{ delay: 0.1 }}
           className="bg-neutral-800/50 backdrop-blur-sm rounded-3xl p-8 border border-neutral-700"
         >
+          {/* Error Message */}
+          {error && (
+            <motion.div
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="mb-6 p-4 bg-red-500/20 border border-red-500/30 rounded-xl flex items-center gap-3"
+            >
+              <AlertCircle className="w-5 h-5 text-red-400 flex-shrink-0" />
+              <p className="text-red-200 text-sm">{error}</p>
+            </motion.div>
+          )}
+
           <form onSubmit={handleSubmit} className="space-y-8">
             {/* Rating Section */}
             <div>
@@ -134,10 +150,10 @@ export default function ReviewPage() {
                     onClick={() => handleRatingChange(star)}
                     onMouseEnter={() => setHoverRating(star)}
                     onMouseLeave={() => setHoverRating(0)}
-                    className="p-2 transition-all duration-200 hover:scale-110"
+                    className="p-2 transition-all duration-200 hover:scale-110 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-neutral-800 rounded-full"
                   >
                     <Star
-                      className={`w-12 h-12 ${
+                      className={`w-12 h-12 transition-colors duration-200 ${
                         star <= (hoverRating || formData.rating)
                           ? "text-yellow-400 fill-yellow-400"
                           : "text-neutral-500"
@@ -164,6 +180,7 @@ export default function ReviewPage() {
                 className="w-full px-4 py-4 bg-neutral-900 border border-neutral-700 rounded-xl text-white placeholder-neutral-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all text-lg"
                 placeholder="Enter your name"
                 required
+                maxLength={50}
               />
             </div>
 
@@ -180,7 +197,11 @@ export default function ReviewPage() {
                 className="w-full px-4 py-4 bg-neutral-900 border border-neutral-700 rounded-xl text-white placeholder-neutral-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all resize-none text-lg"
                 placeholder="Tell us about your experience with Food Analyzer x fit... What did you like? What could be improved?"
                 required
+                maxLength={500}
               />
+              <div className="text-right text-neutral-500 text-sm mt-2">
+                {formData.description.length}/500 characters
+              </div>
             </div>
 
             {/* Submit Button */}

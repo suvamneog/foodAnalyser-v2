@@ -51,7 +51,7 @@ function LogMeals() {
           : `${quantity} ${foodName}`;
           
         const response = await axios.get(
-          `http://localhost:3000/api/meal/nutrition?query=${encodeURIComponent(query)}`,
+          `https://foodanalyser.onrender.com/api/meal/nutrition?query=${encodeURIComponent(query)}`,
           {
             headers: { 
               Authorization: `Bearer ${token}`,
@@ -86,7 +86,7 @@ function LogMeals() {
       // Step 2: Fallback to unified search (IFCT + INDB) for Indian dishes
       try {
         const unifiedResponse = await axios.get(
-          `http://localhost:3000/api/food/search?q=${encodeURIComponent(foodName)}`
+          `https://foodanalyser.onrender.com/api/food/search?q=${encodeURIComponent(foodName)}`
         );
         
         if (unifiedResponse.data.items && unifiedResponse.data.items.length > 0) {
@@ -146,7 +146,7 @@ function LogMeals() {
     setError(null);
     
     try {
-      const response = await axios.get("http://localhost:3000/api/meal/logs", {
+      const response = await axios.get("https://foodanalyser.onrender.com/api/meal/logs", {
         headers: { Authorization: `Bearer ${token}` }
       });
       setMeals(response.data);
@@ -303,7 +303,7 @@ function LogMeals() {
         totalFat: Number(totals.fat_g.toFixed(2))
       };
 
-      await axios.post("http://localhost:3000/api/meal/log", newMeal, {
+      await axios.post("https://foodanalyser.onrender.com/api/meal/log", newMeal, {
         headers: { Authorization: `Bearer ${token}` }
       });
 
@@ -341,7 +341,7 @@ function LogMeals() {
     setError(null);
     
     try {
-      await axios.delete(`http://localhost:3000/api/meal/log/${mealId}`, {
+      await axios.delete(`https://foodanalyser.onrender.com/api/meal/log/${mealId}`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       setMeals(meals.filter(meal => meal._id !== mealId));

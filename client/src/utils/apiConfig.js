@@ -31,10 +31,4 @@ export const API_ENDPOINTS = {
 
 export const isDevelopment = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
 
-console.log('🔧 API Configuration:', {
-  baseURL: API_BASE_URL,
-  isDevelopment,
-  endpoints: API_ENDPOINTS
-});
-
 export default API_BASE_URL;

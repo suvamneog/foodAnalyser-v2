@@ -19,16 +19,20 @@ const Navbar = () => {
   const handleLogout = () => {
     logout()
     navigate("/")
+    setIsOpen(false)
   }
 
   const handleLogoClick = () => {
     if (window.location.pathname === "/") {
-      // If already on the home page, refresh the page
       window.location.reload()
     } else {
-      // Otherwise, navigate to the home page without refreshing
       navigate("/")
     }
+  }
+
+  const handleNavigation = (path) => {
+    navigate(path)
+    setIsOpen(false)
   }
 
   const AuthenticatedLinks = () => (
@@ -126,7 +130,7 @@ const Navbar = () => {
           <div className="md:hidden flex items-center">
             <button
               onClick={() => setIsOpen(!isOpen)}
-              className="inline-flex items-center justify-center p-2 rounded-md text-gray-600 hover:text-gray-900 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-gray-500"
+              className="inline-flex items-center justify-center p-2 rounded-md text-gray-600 hover:text-gray-900 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-gray-500 transition-all duration-300"
             >
               {isOpen ? <X className="block h-6 w-6" /> : <Menu className="block h-6 w-6" />}
             </button>
@@ -134,78 +138,103 @@ const Navbar = () => {
         </div>
       </div>
 
-      {/* Mobile Menu */}
-      {isOpen && (
-        <div className="md:hidden">
-          <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3 bg-white border-t">
-            <Link
-              to="/calculator"
-              className="block px-3 py-2 rounded-md text-base font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-50 transition-colors"
-            >
-              Calories Calculator
-            </Link>
-            <Link
-              to="/scan"
-              className="text-gray-600 hover:text-gray-900 px-3 py-2 text-sm font-medium transition-colors"
-            >
-             Scan
-            </Link>
-            <Link
-              to="/image"
-              className="text-gray-600 hover:text-gray-900 px-3 py-2 text-sm font-medium transition-colors"
-            >
-             Image
-            </Link>
-            {isAuthenticated && (
+      {/* Mobile Menu - Slides from top to bottom */}
+      <div className={`md:hidden fixed top-16 left-0 right-0 bg-white shadow-lg z-40 transform transition-all duration-300 ease-in-out ${
+        isOpen ? 'translate-y-0 opacity-100' : '-translate-y-4 opacity-0 pointer-events-none'
+      }`}>
+        <div className="px-4 py-4 space-y-1 border-t border-gray-200 max-h-[70vh] overflow-y-auto">
+          {/* Common Links */}
+          <button
+            onClick={() => handleNavigation("/about")}
+            className="block w-full text-left px-3 py-3 rounded-md text-base font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-50 transition-colors"
+          >
+            About
+          </button>
+          <button
+            onClick={() => handleNavigation("/review")}
+            className="block w-full text-left px-3 py-3 rounded-md text-base font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-50 transition-colors"
+          >
+            Review
+          </button>
+          <button
+            onClick={() => handleNavigation("/calculator")}
+            className="block w-full text-left px-3 py-3 rounded-md text-base font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-50 transition-colors"
+          >
+            Calories Calculator
+          </button>
+          <button
+            onClick={() => handleNavigation("/scan")}
+            className="block w-full text-left px-3 py-3 rounded-md text-base font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-50 transition-colors"
+          >
+            Scan
+          </button>
+          <button
+            onClick={() => handleNavigation("/image")}
+            className="block w-full text-left px-3 py-3 rounded-md text-base font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-50 transition-colors"
+          >
+            Image
+          </button>
+
+          {/* Authenticated Links */}
+          {isAuthenticated && (
+            <>
+              <button
+                onClick={() => handleNavigation("/logmeals")}
+                className="block w-full text-left px-3 py-3 rounded-md text-base font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-50 transition-colors"
+              >
+                Log Meals
+              </button>
+              <button
+                onClick={() => handleNavigation("/history")}
+                className="block w-full text-left px-3 py-3 rounded-md text-base font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-50 transition-colors"
+              >
+                History
+              </button>
+              <button
+                onClick={() => handleNavigation("/addfoods")}
+                className="block w-full text-left px-3 py-3 rounded-md text-base font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-50 transition-colors"
+              >
+                Add Food
+              </button>
+            </>
+          )}
+
+          {/* Auth Buttons */}
+          <div className="pt-3 space-y-2 border-t border-gray-200 mt-3">
+            {!isAuthenticated ? (
               <>
-                <Link
-                  to="/logmeals"
-                  className="block px-3 py-2 rounded-md text-base font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-50 transition-colors"
-                >
-                  Log Meals
-                </Link>
-                <Link
-                  to="/history"
-                  className="block px-3 py-2 rounded-md text-base font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-50 transition-colors"
-                >
-                  History
-                </Link>
-                <Link
-                  to="/addfoods"
-                  className="block px-3 py-2 rounded-md text-base font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-50 transition-colors"
-                >
-                  Add Food
-                </Link>
-              </>
-            )}
-            <div className="px-3 py-2 space-y-1">
-              {!isAuthenticated ? (
-                <>
-                  <Link
-                    to="/signup"
-                    className="block px-3 py-2 rounded-md text-base font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-50 transition-colors"
-                  >
-                    Sign up
-                  </Link>
-                  <Link
-                    to="/login"
-                    className="block w-full text-center bg-gray-900 text-white px-4 py-2 rounded-md text-base font-medium hover:bg-gray-800 transition-colors"
-                  >
-                    Login
-                  </Link>
-                </>
-              ) : (
                 <button
-                  onClick={handleLogout}
-                  className="block w-full text-center bg-gray-900 text-white px-4 py-2 rounded-md text-base font-medium hover:bg-gray-800 transition-colors"
+                  onClick={() => handleNavigation("/signup")}
+                  className="block w-full text-center px-3 py-3 rounded-md text-base font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-50 transition-colors border border-gray-200"
                 >
-                  Logout
+                  Sign up
                 </button>
-              )}
-            </div>
+                <button
+                  onClick={() => handleNavigation("/login")}
+                  className="block w-full text-center bg-gray-900 text-white px-4 py-3 rounded-md text-base font-medium hover:bg-gray-800 transition-colors"
+                >
+                  Login
+                </button>
+              </>
+            ) : (
+              <button
+                onClick={handleLogout}
+                className="block w-full text-center bg-gray-900 text-white px-4 py-3 rounded-md text-base font-medium hover:bg-gray-800 transition-colors"
+              >
+                Logout
+              </button>
+            )}
           </div>
         </div>
-      )}
+      </div>
+
+      {/* Mobile Menu Overlay */}
+      <div 
+        className={`md:hidden fixed inset-0 bg-black bg-opacity-50 z-30 transition-opacity duration-300 ${
+          isOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'
+        }`}
+        onClick={() => setIsOpen(false)}
+      />
     </nav>
   )
 }
