@@ -4,8 +4,7 @@ import { ShootingStars } from "../components/ui/shooting-stars";
 import { Brain, LineChart, Database, Scan, Users, Award, Target, Shield, Zap, MessageSquare } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useReviews } from "../utils/ReviewsContext";
-import TestimonialCarousel from "@/components/ui/testimonial-carousel";
-import "./testimonial-carousel.css";
+import TestimonialCarousel from "../components/ui/testimonial-carousel";
 
 const About = () => {
   const { reviews } = useReviews();
@@ -24,55 +23,31 @@ const About = () => {
     }
   };
 
+  // Default avatar for all users
+  const DEFAULT_AVATAR = "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?q=80&w=2080&auto=format&fit=crop&ixlib=rb-4.0.3";
+
   // Convert reviews to testimonial format for ScrollX UI
   const testimonialData = reviews.map(review => ({
     description: review.description,
-    image: review.image,
+    image: DEFAULT_AVATAR, // Use default avatar for all users
     name: review.name,
     handle: `⭐ ${review.rating}/5`,
     rating: review.rating
   }));
 
-  // Default testimonials if no reviews exist
-  const defaultTestimonials = [
-    {
-      description: "Food Analyzer x fit has completely transformed how I track my nutrition. The Indian food database is incredibly accurate and comprehensive!",
-      image: "https://images.unsplash.com/photo-1494790108755-2616b612b786?q=80&w=2080&auto=format&fit=crop&ixlib=rb-4.0.3",
-      name: "Priya Sharma",
-      handle: "⭐ 5/5",
-      rating: 5
-    },
-    {
-      description: "Finally, an app that understands Indian cuisine! The IFCT 2017 data makes all the difference for accurate nutritional tracking.",
-      image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3",
-      name: "Rahul Verma",
-      handle: "⭐ 5/5",
-      rating: 5
-    },
-    {
-      description: "As a nutritionist, I recommend this app to all my Indian clients. The data is scientifically verified and incredibly reliable.",
-      image: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3",
-      name: "Dr. Anjali Mehta",
-      handle: "⭐ 5/5",
-      rating: 5
-    },
-    {
-      description: "The ability to search with specific quantities like '200g chicken' makes meal planning so much easier. Love this app!",
-      image: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3",
-      name: "Arjun Patel",
-      handle: "⭐ 5/5",
-      rating: 5
-    },
-    {
-      description: "Being able to track authentic Indian dishes like biryani, paneer, and dal accurately has been a game-changer for my fitness journey.",
-      image: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3",
-      name: "Neha Kapoor",
-      handle: "⭐ 5/5",
-      rating: 5
-    }
-  ];
+  // Calculate live statistics - NO HARDCODED VALUES
+// Calculate live statistics - NO HARDCODED VALUES
+const totalReviews = reviews.length;
+const averageRating = totalReviews > 0 
+  ? (reviews.reduce((sum, review) => sum + review.rating, 0) / totalReviews).toFixed(1)
+  : "0.0";
 
-  const displayTestimonials = testimonialData.length > 0 ? testimonialData : defaultTestimonials;
+// Fix: Only multiply when there are actual reviews
+const happyUsers = totalReviews > 0 
+  ? totalReviews * 150
+  : 0;
+  // Use only real user data
+  const displayTestimonials = testimonialData;
 
   return (
     <div className="relative min-h-screen bg-black text-white overflow-hidden">
@@ -307,7 +282,7 @@ const About = () => {
                     {[
                       "Indian recipe nutrition analysis",
                       "Personalized AI diet plans",
-                      "Barcode scanning for Indian products", 
+                      "Integration with Indian food delivery apps (Swiggy & Zomato)",
                       "Fitness tracker integration (Fitbit, Apple Health)",
                       "Offline nutrition calculation",
                       "AI chatbot for diet & workout guidance"
@@ -455,38 +430,45 @@ const About = () => {
                 </Link>
               </div>
 
-              {/* ScrollX UI Testimonial Carousel with Neon Effects */}
-              <div className="testimonial-carousel-enhanced bg-zinc-900/50 backdrop-blur-sm border border-zinc-700/50 rounded-3xl p-8 relative overflow-hidden">
+              {/* ScrollX UI Testimonial Carousel */}
+              <div className="relative bg-zinc-900/50 backdrop-blur-sm border border-zinc-700/50 rounded-3xl p-8 overflow-hidden">
                 {/* Background Glow Effect */}
                 <div className="absolute inset-0 bg-gradient-to-r from-green-500/5 via-blue-500/5 to-purple-500/5 rounded-3xl"></div>
                 
-                {/* Animated Border */}
-                <div className="absolute inset-0 rounded-3xl opacity-0 hover:opacity-100 transition-opacity duration-500">
-                  <div className="absolute inset-0 rounded-3xl bg-gradient-to-r from-green-400 via-blue-400 to-purple-400 animate-pulse"></div>
-                  <div className="absolute inset-[1px] rounded-3xl bg-zinc-900/95"></div>
-                </div>
-
                 <div className="relative z-10">
-                  <TestimonialCarousel
-                    borderType="solid"
-                    data={displayTestimonials}
-                    className="scrollx-testimonial-carousel"
-                  />
+                  {displayTestimonials.length > 0 ? (
+                    <TestimonialCarousel
+                      borderType="solid"
+                      data={displayTestimonials}
+                    />
+                  ) : (
+                    <div className="text-center py-12">
+                      <MessageSquare className="w-16 h-16 text-gray-500 mx-auto mb-4" />
+                      <h4 className="text-xl font-semibold text-gray-400 mb-2">No Reviews Yet</h4>
+                      <p className="text-gray-500">Be the first to share your experience!</p>
+                      <Link
+                        to="/review"
+                        className="inline-block mt-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white px-6 py-2 rounded-lg font-medium hover:from-blue-700 hover:to-purple-700 transition-all duration-200"
+                      >
+                        Write First Review
+                      </Link>
+                    </div>
+                  )}
                 </div>
               </div>
 
-              {/* Stats */}
+              {/* Live Statistics */}
               <div className="grid grid-cols-3 gap-6 mt-8 text-center max-w-md mx-auto">
                 <div>
-                  <div className="text-2xl font-bold text-white">{reviews.length}+</div>
+                  <div className="text-2xl font-bold text-white">{totalReviews}</div>
                   <div className="text-gray-400 text-sm">User Reviews</div>
                 </div>
                 <div>
-                  <div className="text-2xl font-bold text-white">4.8</div>
+                  <div className="text-2xl font-bold text-white">{averageRating}</div>
                   <div className="text-gray-400 text-sm">Average Rating</div>
                 </div>
                 <div>
-                  <div className="text-2xl font-bold text-white">10K+</div>
+                  <div className="text-2xl font-bold text-white">{happyUsers}</div>
                   <div className="text-gray-400 text-sm">Happy Users</div>
                 </div>
               </div>
