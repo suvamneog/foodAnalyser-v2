@@ -10,7 +10,8 @@ function PlaceholdersAndVanishInputDemo({
   setOutput,
   loading,
   setLoading,
-  setOriginalQuery
+  setOriginalQuery,
+  setSearchAttempted // Add this prop to track search attempts
 }) {
   const [error, setError] = useState(null);
 
@@ -26,7 +27,7 @@ function PlaceholdersAndVanishInputDemo({
     setError(null);
   };
 
-    const onSubmit = async () => {
+  const onSubmit = async () => {
     if (loading) return;
 
     const trimmedFoodName = foodName.trim();
@@ -43,23 +44,29 @@ function PlaceholdersAndVanishInputDemo({
 
     setLoading(true);
     setError(null);
+    setSearchAttempted(true); // Mark that a search has been attempted
     try {
       const data = await fetchFoodData(trimmedFoodName);
 
       if (!data || (Array.isArray(data) && data.length === 0)) {
-        throw new Error(`No results found for "${trimmedFoodName}" in our databases.`);
+        // Instead of throwing error, set empty output and let FoodAnalyzer handle the error
+        setOutput([]);
+        setOriginalQuery(trimmedFoodName);
+      } else {
+        // ✅ Pass the original query to adjust nutrition values
+        const resultsWithQuery = Array.isArray(data) ? data : [data];
+        resultsWithQuery.originalQuery = trimmedFoodName; // Attach original query
+        
+        setOutput(resultsWithQuery);
+        setFoodName("");
+        setOriginalQuery(trimmedFoodName);
       }
-
-      // ✅ Pass the original query to adjust nutrition values
-      const resultsWithQuery = Array.isArray(data) ? data : [data];
-      resultsWithQuery.originalQuery = trimmedFoodName; // Attach original query
-      
-      setOutput(resultsWithQuery);
-      setFoodName("");
-      setOriginalQuery(trimmedFoodName); // Also store separately if needed
       
     } catch (err) {
-     console.log(err);
+      console.log(err);
+      setError("Failed to fetch food data. Please try again.");
+      setOutput([]); // Set empty output on error
+      setOriginalQuery(trimmedFoodName);
     } finally {
       setLoading(false);
     }

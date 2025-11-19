@@ -1,9 +1,10 @@
+
 /* eslint-disable react/prop-types */
 "use client"
 
 import { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../components/ui/card";
-import { Sparkles, Info, LogIn, Database, Scale, ChevronLeft, ChevronRight } from "lucide-react";
+import { Sparkles, Info, LogIn, Database, Scale, ChevronLeft, ChevronRight, AlertCircle } from "lucide-react";
 import { CardBody, CardContainer, CardItem } from "../components/ui/3D-card";
 import { useAuth } from "../utils/AuthContext";
 import { Link } from "react-router-dom";
@@ -80,7 +81,7 @@ function cleanQuery(query) {
   return query.replace(/(\d+\s*g\s*)/gi, '').trim();
 }
 
-function FoodAnalyzer({ output, loading, originalQuery }) {
+function FoodAnalyzer({ output, loading, originalQuery, searchAttempted }) {
   const { isAuthenticated } = useAuth();
   const [isVisible, setIsVisible] = useState(false);
   const [showLoading, setShowLoading] = useState(false);
@@ -196,7 +197,63 @@ function FoodAnalyzer({ output, loading, originalQuery }) {
     );
   }
 
-  if (!output || output.length === 0) {
+  // Show error message only when a search has been attempted and no results found
+  if (!loading && searchAttempted && (!output || output.length === 0)) {
+    return (
+      <div className="w-full max-w-md mx-auto">
+        <CardContainer className="w-full">
+          <CardBody className="bg-[#0C0C0C]/90 rounded-xl p-4 border border-red-500/[0.3]">
+            <CardItem>
+              <CardHeader className="text-center p-4">
+                <div className="flex justify-center mb-3">
+                  <AlertCircle className="w-12 h-12 text-red-500" />
+                </div>
+                <CardTitle className="text-lg text-white mb-2">
+                  Food Not Found
+                </CardTitle>
+                <CardDescription className="text-gray-300">
+                  We couldn&apos;t find nutrition data for &quot;<span className="text-yellow-400">{originalQuery}</span>&quot;
+                </CardDescription>
+              </CardHeader>
+            </CardItem>
+            
+            <CardItem>
+              <CardContent className="text-center">
+                <div className="space-y-3 text-sm text-gray-400">
+                  <p>This could be because:</p>
+                  <ul className="space-y-2 text-left">
+                    <li className="flex items-start gap-2">
+                      <span className="text-red-400">•</span>
+                      <span>There might be a typo in the food name</span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <span className="text-red-400">•</span>
+                      <span>The food is not in our database</span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <span className="text-red-400">•</span>
+                      <span>Try using more proper names (e.g., &quot;chicken&quot; instead of &quot;chiken&quot;)</span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <span className="text-red-400">•</span>
+                      <span>Check your spelling and try again</span>
+                    </li>
+                  </ul>
+                  
+                  <div className="pt-2 text-xs text-blue-400">
+                    <p>Examples: &quot;banana&quot;, &quot;chicken breast&quot;, &quot;100g rice&quot;</p>
+                  </div>
+                </div>
+              </CardContent>
+            </CardItem>
+          </CardBody>
+        </CardContainer>
+      </div>
+    );
+  }
+
+  // Don't show anything if no search has been attempted or no results
+  if (!searchAttempted || !output || output.length === 0) {
     return null;
   }
 
@@ -205,7 +262,12 @@ function FoodAnalyzer({ output, loading, originalQuery }) {
   // Safe check for current food data
   if (!currentFood) {
     console.error('Current food data is undefined:', { output, currentIndex });
-    return null;
+    return (
+      <div className="w-full max-w-md mx-auto text-center text-red-500 p-4">
+        <AlertCircle className="w-8 h-8 mx-auto mb-2" />
+        <p>Error loading food data. Please try again.</p>
+      </div>
+    );
   }
 
   const { pros, cons } = analyzeFood(currentFood);
