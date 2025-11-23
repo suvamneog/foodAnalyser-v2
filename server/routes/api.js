@@ -46,13 +46,165 @@ function parseNutritionValue(value) {
   return Number(value) || 0;
 }
 
-// IMPROVED search function with RANKING - RETURNS MULTIPLE RESULTS
+// 🆕 Enhanced naming function for Indian foods
+function enhanceFoodName(foodItem, source, originalName) {
+  const baseName = originalName || foodItem.name || foodItem.food_name || "Unknown Food";
+  const lowerName = baseName.toLowerCase();
+  
+  // Common Indian food variations
+  const variations = {
+    'idli': ['idly', 'iddly'],
+    'puri': ['poori', 'puri'],
+    'sambar': ['sambhar', 'sambhar'],
+    'dal': ['daal', 'dhal'],
+    'roti': ['rotti', 'chapati']
+  };
+  
+  // Standardize names
+  let enhancedName = baseName;
+  Object.entries(variations).forEach(([standard, alts]) => {
+    alts.forEach(alt => {
+      if (lowerName.includes(alt)) {
+        enhancedName = baseName.replace(new RegExp(alt, 'gi'), standard);
+      }
+    });
+  });
+  
+  // Add specificity for chicken and meats
+  if (lowerName.includes('chicken')) {
+    enhancedName = addChickenSpecificity(enhancedName, source, foodItem);
+  }
+  
+  // Add preparation info for INDB items
+  if (source.includes('INDB') && foodItem.preparation_method) {
+    enhancedName = `${enhancedName} (${foodItem.preparation_method})`;
+  }
+  
+  return enhancedName;
+}
+
+// 🆕 Add specificity for chicken results
+function addChickenSpecificity(baseName, source, foodItem) {
+  const lowerName = baseName.toLowerCase();
+  
+  // Chicken cuts and parts
+  const cuts = {
+    'breast': 'Breast', 'thigh': 'Thigh', 'leg': 'Leg', 'wing': 'Wing',
+    'drumstick': 'Drumstick', 'whole': 'Whole', 'mince': 'Minced', 'keema': 'Keema',
+    'boneless': 'Boneless', 'with bone': 'With Bone', 'skinless': 'Skinless'
+  };
+  
+  // Preparation styles
+  const preparations = {
+    'curry': 'Curry', 'masala': 'Masala', 'biryani': 'Biryani', 'tandoori': 'Tandoori',
+    'fried': 'Fried', 'roast': 'Roasted', 'grilled': 'Grilled', 'stew': 'Stew',
+    'butter': 'Butter', 'kadhai': 'Kadhai', 'handi': 'Handi', 'korma': 'Korma'
+  };
+  
+  let specificName = baseName;
+  let foundCut = '';
+  let foundPrep = '';
+  
+  // Identify cut/part
+  Object.entries(cuts).forEach(([key, value]) => {
+    if (lowerName.includes(key)) {
+      foundCut = value;
+      // Only modify if not already descriptive
+      if (!specificName.includes(value)) {
+        specificName = specificName.replace(/chicken/gi, `Chicken ${value}`);
+      }
+    }
+  });
+  
+  // Identify preparation style
+  Object.entries(preparations).forEach(([key, value]) => {
+    if (lowerName.includes(key) && !specificName.includes(value)) {
+      foundPrep = value;
+      specificName = `${specificName} ${value}`;
+    }
+  });
+  
+  // Add source context
+  if (source.includes('IFCT') && !foundPrep) {
+    specificName = `${specificName} (Raw)`;
+  } else if (source.includes('INDB') && !foundPrep) {
+    specificName = `${specificName} (Prepared)`;
+  }
+  
+  return {
+    displayName: specificName.trim(),
+    cut: foundCut,
+    preparation: foundPrep,
+    isRaw: source.includes('IFCT') && !foundPrep,
+    isCooked: source.includes('INDB') || !!foundPrep
+  };
+}
+
+// 🆕 Smart grouping to avoid duplicate chicken results
+function groupAndDiversifyResults(results, query) {
+  if (results.length <= 6) return results;
+  
+  const lowerQuery = query.toLowerCase();
+  
+  // Only group for generic queries like "chicken", "rice", etc.
+  const shouldGroup = lowerQuery.includes('chicken') || 
+                     lowerQuery.includes('rice') || 
+                     lowerQuery.includes('dal') ||
+                     lowerQuery.includes('paneer');
+  
+  if (!shouldGroup) return results.slice(0, 6);
+  
+  const groups = {
+    raw: [],
+    curry: [],
+    fried: [],
+    grilled: [],
+    biryani: [],
+    traditional: [],
+    other: []
+  };
+  
+  results.forEach(result => {
+    const name = result.displayName.toLowerCase();
+    const source = result.source || '';
+    
+    if (name.includes('raw') || (source.includes('IFCT') && !name.includes('curry'))) {
+      groups.raw.push(result);
+    } else if (name.includes('curry') || name.includes('masala') || name.includes('gravy')) {
+      groups.curry.push(result);
+    } else if (name.includes('fried')) {
+      groups.fried.push(result);
+    } else if (name.includes('grilled') || name.includes('roast') || name.includes('tandoori')) {
+      groups.grilled.push(result);
+    } else if (name.includes('biryani') || name.includes('pulao')) {
+      groups.biryani.push(result);
+    } else if (name.includes('butter') || name.includes('kadhai') || name.includes('korma')) {
+      groups.traditional.push(result);
+    } else {
+      groups.other.push(result);
+    }
+  });
+  
+  // Take best from each group
+  const finalResults = [];
+  Object.values(groups).forEach(group => {
+    if (group.length > 0) {
+      // Sort by search score and take the best one
+      const bestInGroup = group.sort((a, b) => (b.search_score || 0) - (a.search_score || 0))[0];
+      finalResults.push(bestInGroup);
+    }
+  });
+  
+  // Sort final results by search score
+  return finalResults.sort((a, b) => (b.search_score || 0) - (a.search_score || 0)).slice(0, 6);
+}
+
+// IMPROVED search function with RANKING
 function searchIFCT(query) {
   const lowerQuery = query.toLowerCase().trim();
   
   console.log(`🔍 IFCT SEARCH for: "${query}" (normalized: "${lowerQuery}")`);
   
-  // Find ALL matches and rank them
   const allMatches = ifctData.map(item => {
     if (!item.name) return null;
     
@@ -61,60 +213,30 @@ function searchIFCT(query) {
     
     let score = 0;
     
-    // Scoring system:
-    // +10 points: Exact name match
-    if (itemName === lowerQuery) {
-      score += 10;
+    // Scoring system
+    if (itemName === lowerQuery) score += 10;
+    if (itemWords[0] === lowerQuery) score += 8;
+    if (itemWords.some(word => word === lowerQuery)) score += 5;
+    if (itemName.includes(lowerQuery)) score += 2;
+    
+    // Bonus for Indian food relevance
+    if (lowerQuery.includes('chicken') && itemName.includes('chicken')) {
+      if (itemName.includes('breast') || itemName.includes('thigh') || itemName.includes('leg')) {
+        score += 3;
+      }
     }
     
-    // +8 points: Query is the first word
-    if (itemWords[0] === lowerQuery) {
-      score += 8;
-    }
-    
-    // +5 points: Exact word match anywhere
-    if (itemWords.some(word => word === lowerQuery)) {
-      score += 5;
-    }
-    
-    // +2 points: Contains match
-    if (itemName.includes(lowerQuery)) {
-      score += 2;
-    }
-    
-    // Bonus/Penalty based on food type
-    // Penalize mushroom when searching for meat
-    if (lowerQuery === 'chicken' && itemName.includes('mushroom')) {
-      score -= 10;
-    }
-    
-    // Bonus for meat-related terms when searching for meat
-    if (lowerQuery === 'chicken' && (
-      itemName.includes('poultry') || 
-      itemName.includes('breast') || 
-      itemName.includes('thigh') || 
-      itemName.includes('leg') || 
-      itemName.includes('wing') ||
-      itemName.includes('meat')
-    )) {
-      score += 3;
-    }
-    
-    return { item, score, name: item.name };
-  }).filter(match => match !== null && match.score > 0);
+    return score > 0 ? { item, score, name: item.name } : null;
+  }).filter(match => match !== null);
 
-  // Sort by score (highest first)
   allMatches.sort((a, b) => b.score - a.score);
   
   console.log(`📊 IFCT RANKED MATCHES for "${query}": ${allMatches.length} results`);
-  allMatches.slice(0, 5).forEach((match, index) => {
-    console.log(`   ${index + 1}. "${match.name}" - Score: ${match.score}`);
-  });
   
   return allMatches;
 }
 
-// Improved INDB search with ranking - RETURNS MULTIPLE RESULTS
+// Improved INDB search with ranking
 function searchINDB(query) {
   const lowerQuery = query.toLowerCase().trim();
   
@@ -128,39 +250,30 @@ function searchINDB(query) {
     
     let score = 0;
     
-    // Scoring system:
-    if (itemName === lowerQuery) {
-      score += 10;
+    if (itemName === lowerQuery) score += 10;
+    if (itemWords[0] === lowerQuery) score += 8;
+    if (itemWords.some(word => word === lowerQuery)) score += 5;
+    if (itemName.includes(lowerQuery)) score += 2;
+    
+    // Bonus for traditional preparations
+    if (lowerQuery.includes('chicken') && itemName.includes('chicken')) {
+      if (itemName.includes('curry') || itemName.includes('biryani') || itemName.includes('masala')) {
+        score += 3;
+      }
     }
     
-    if (itemWords[0] === lowerQuery) {
-      score += 8;
-    }
-    
-    if (itemWords.some(word => word === lowerQuery)) {
-      score += 5;
-    }
-    
-    if (itemName.includes(lowerQuery)) {
-      score += 2;
-    }
-    
-    return { item, score, name: item.food_name };
-  }).filter(match => match !== null && match.score > 0);
+    return score > 0 ? { item, score, name: item.food_name } : null;
+  }).filter(match => match !== null);
 
-  // Sort by score (highest first)
   allMatches.sort((a, b) => b.score - a.score);
   
   console.log(`📊 INDB RANKED MATCHES for "${query}": ${allMatches.length} results`);
-  allMatches.slice(0, 5).forEach((match, index) => {
-    console.log(`   ${index + 1}. "${match.name}" - Score: ${match.score}`);
-  });
   
   return allMatches;
 }
 
 // ------------------------------------
-// 🔍 Unified Search Endpoint - OPTIMIZED FOR SWIPING
+// 🔍 Enhanced Search Endpoint
 // ------------------------------------
 router.get("/search", async (req, res) => {
   try {
@@ -173,63 +286,73 @@ router.get("/search", async (req, res) => {
 
     let allResults = [];
 
-    // 🔹 Step 1 — Search IFCT with MULTIPLE RESULTS
+    // 🔹 Step 1 — Search IFCT
     console.log(`🔍 STEP 1: Searching IFCT database...`);
     const ifctResults = searchIFCT(query);
 
     if (ifctResults.length > 0) {
       console.log(`✅ STEP 1 RESULT: Found ${ifctResults.length} items in IFCT`);
       
-      // Take top IFCT results
-      const topIfctResults = ifctResults.slice(0, 6).map(match => ({
-        source: "IFCT 2017 (ICMR-NIN)",
-        name: match.item.name,
-        calories: parseFloat((match.item.enerc / 4.184).toFixed(1)),
-        protein_g: parseFloat((match.item.protcnt || 0).toFixed(2)),
-        carbohydrates_total_g: parseFloat((match.item.choavldf || 0).toFixed(2)),
-        fat_total_g: parseFloat((match.item.fatce || 0).toFixed(2)),
-        fiber_g: parseFloat((match.item.fibtg || 0).toFixed(2)),
-        serving_size_g: 100,
-        serving_description: "per 100g edible portion",
-        search_score: match.score
-      }));
+      const topIfctResults = ifctResults.slice(0, 4).map(match => {
+        const enhanced = addChickenSpecificity(match.item.name, "IFCT 2017", match.item);
+        
+        return {
+          source: "IFCT 2017 (ICMR-NIN)",
+          name: enhanced.displayName,
+          displayName: enhanced.displayName,
+          cut: enhanced.cut,
+          preparation: enhanced.preparation,
+          isRaw: enhanced.isRaw,
+          isCooked: enhanced.isCooked,
+          calories: parseFloat((match.item.enerc / 4.184).toFixed(1)),
+          protein_g: parseFloat((match.item.protcnt || 0).toFixed(2)),
+          carbohydrates_total_g: parseFloat((match.item.choavldf || 0).toFixed(2)),
+          fat_total_g: parseFloat((match.item.fatce || 0).toFixed(2)),
+          fiber_g: parseFloat((match.item.fibtg || 0).toFixed(2)),
+          serving_size_g: 100,
+          serving_description: "per 100g edible portion",
+          search_score: match.score
+        };
+      });
 
       allResults = [...allResults, ...topIfctResults];
-      console.log(`✅ Added ${topIfctResults.length} IFCT results`);
-    } else {
-      console.log(`❌ STEP 1 RESULT: No match in IFCT for "${query}"`);
     }
 
-    // 🔹 Step 2 — Search INDB with MULTIPLE RESULTS
+    // 🔹 Step 2 — Search INDB
     console.log(`🔍 STEP 2: Searching INDB database...`);
     const indbResults = searchINDB(query);
 
     if (indbResults.length > 0) {
       console.log(`✅ STEP 2 RESULT: Found ${indbResults.length} items in INDB`);
       
-      // Take top INDB results (limit to avoid too many)
-      const topIndbResults = indbResults.slice(0, 4).map(match => ({
-        source: "INDB (Indian Nutrient Databank)",
-        name: match.item.food_name,
-        calories: parseNutritionValue(match.item.energy_kcal || match.item["energy (kcal)"]),
-        protein_g: parseNutritionValue(match.item.protein_g || match.item["protein (g)"]),
-        carbohydrates_total_g: parseNutritionValue(match.item.carb_g || match.item["carbohydrates (g)"]),
-        fat_total_g: parseNutritionValue(match.item.fat_g || match.item["fat (g)"]),
-        fiber_g: parseNutritionValue(match.item.fibre_g || match.item["fibre (g)"]),
-        serving_size_g: 100,
-        serving_description: "per 100g",
-        search_score: match.score
-      }));
+      const topIndbResults = indbResults.slice(0, 5).map(match => {
+        const enhanced = addChickenSpecificity(match.item.food_name, "INDB", match.item);
+        
+        return {
+          source: "INDB (Indian Nutrient Databank)",
+          name: enhanced.displayName,
+          displayName: enhanced.displayName,
+          cut: enhanced.cut,
+          preparation: enhanced.preparation,
+          isRaw: enhanced.isRaw,
+          isCooked: enhanced.isCooked,
+          calories: parseNutritionValue(match.item.energy_kcal || match.item["energy (kcal)"]),
+          protein_g: parseNutritionValue(match.item.protein_g || match.item["protein (g)"]),
+          carbohydrates_total_g: parseNutritionValue(match.item.carb_g || match.item["carbohydrates (g)"]),
+          fat_total_g: parseNutritionValue(match.item.fat_g || match.item["fat (g)"]),
+          fiber_g: parseNutritionValue(match.item.fibre_g || match.item["fibre (g)"]),
+          serving_size_g: 100,
+          serving_description: "per 100g",
+          search_score: match.score
+        };
+      });
 
       allResults = [...allResults, ...topIndbResults];
-      console.log(`✅ Added ${topIndbResults.length} INDB results`);
-    } else {
-      console.log(`❌ STEP 2 RESULT: No match in INDB for "${query}"`);
     }
 
     // 🔹 Step 3 — Global fallback (ONLY if no Indian database matches)
     if (allResults.length === 0) {
-      console.log(`🔍 STEP 3: No results in Indian databases, trying CalorieNinjas...`);
+      console.log(`🔍 STEP 3: Trying CalorieNinjas fallback...`);
       try {
         const calorieNinjaKey = process.env.CALORIE_NINJA_API_KEY;
         
@@ -245,11 +368,10 @@ router.get("/search", async (req, res) => {
         );
 
         if (response.data.items?.length > 0) {
-         
-          
           const calorieNinjasResults = response.data.items.slice(0, 3).map(item => ({
             source: "CalorieNinjas (Global Fallback)",
             name: item.name,
+            displayName: item.name,
             calories: item.calories,
             protein_g: item.protein_g,
             carbohydrates_total_g: item.carbohydrates_total_g,
@@ -265,9 +387,6 @@ router.get("/search", async (req, res) => {
           }));
 
           allResults = [...allResults, ...calorieNinjasResults];
-          console.log(`Added ${calorieNinjasResults.length} CalorieNinjas results`);
-        } else {
-          console.log(`STEP 3 RESULT: No results in CalorieNinjas for "${query}"`);
         }
       } catch (err) {
         console.error("STEP 3 ERROR: CalorieNinjas API failed:", err.message);
@@ -276,29 +395,31 @@ router.get("/search", async (req, res) => {
 
     // Final result processing
     if (allResults.length > 0) {
-      // Remove duplicates based on name (case insensitive)
+      // Remove duplicates based on display name
       const uniqueResults = allResults.filter((result, index, self) =>
         index === self.findIndex(r => 
-          r.name.toLowerCase() === result.name.toLowerCase()
+          r.displayName.toLowerCase() === result.displayName.toLowerCase()
         )
       );
 
-      // Sort by search score (highest first)
-      uniqueResults.sort((a, b) => (b.search_score || 0) - (a.search_score || 0));
+      // Smart grouping for diverse results
+      const diversifiedResults = groupAndDiversifyResults(uniqueResults, query);
+
+      // Sort by search score
+      diversifiedResults.sort((a, b) => (b.search_score || 0) - (a.search_score || 0));
 
       // Remove search_score from final response
-      const finalResults = uniqueResults.map(({ search_score, ...rest }) => rest);
+      const finalResults = diversifiedResults.map(({ search_score, ...rest }) => rest);
 
-      console.log(`🏁 FINAL: Returning ${finalResults.length} unique results`);
-      console.log("🏁 Results:", finalResults.map(r => `${r.name} (${r.source})`));
+      console.log(`🏁 FINAL: Returning ${finalResults.length} diverse results`);
+      console.log("🏁 Results:", finalResults.map(r => `${r.displayName} (${r.source})`));
       
-      saveSearch(req, query, finalResults[0]); // Save first result to history
+      saveSearch(req, query, finalResults[0]);
       return res.json({ items: finalResults });
     } else {
-      // ❌ Not found in any dataset
-      console.log(`💀 FINAL RESULT: No results found for "${query}" in any database`);
+      console.log(`💀 FINAL RESULT: No results found for "${query}"`);
       return res.status(404).json({
-        error: `No results found for "${query}" in IFCT, INDB, or CalorieNinjas.`,
+        error: `No results found for "${query}" in our databases.`,
       });
     }
   } catch (error) {
@@ -306,7 +427,6 @@ router.get("/search", async (req, res) => {
     res.status(500).json({ error: "Server error while searching datasets." });
   }
 });
-
 // ------------------------------------
 // HISTORY ENDPOINTS (FIXED VERSION)
 // ------------------------------------

@@ -1,8 +1,6 @@
-
 import axios from "axios";
 
 export const fetchFoodData = async (foodName) => {
-  // ✅ Local development
   const url = `https://foodanalyser.onrender.com/api/food/search?q=${encodeURIComponent(
     foodName.trim()
   )}`;
@@ -19,9 +17,7 @@ export const fetchFoodData = async (foodName) => {
 
     const response = await axios.get(url, { headers });
 
-    
-
-    // ✅ Handle ANY response format
+    // ✅ Handle response format
     let foodItems = [];
     
     if (response.data.items && Array.isArray(response.data.items) && response.data.items.length > 0) {
@@ -29,12 +25,6 @@ export const fetchFoodData = async (foodName) => {
     }
     else if (response.data && typeof response.data === 'object' && response.data.name) {
       foodItems = [response.data];
-    }
-    else if (response.data.direct) {
-      foodItems = [response.data.direct];
-    }
-    else if (response.data.withSource) {
-      foodItems = [response.data.withSource];
     }
     else {
       throw new Error(`No results found for "${foodName}" in our databases.`);
@@ -44,10 +34,11 @@ export const fetchFoodData = async (foodName) => {
       throw new Error(`No results found for "${foodName}" in our databases.`);
     }
 
-    // ✅ Map all items (no source detection needed - backend handles it)
+    // ✅ Map all items with enhanced information
     const mappedItems = foodItems.map(foodItem => {
       return {
         name: foodItem.name || "Unknown Food",
+        displayName: foodItem.displayName || foodItem.name || "Unknown Food",
         calories: parseNutritionValue(foodItem.calories),
         protein_g: parseNutritionValue(foodItem.protein_g),
         carbohydrates_total_g: parseNutritionValue(foodItem.carbs_g || foodItem.carbohydrates_total_g),
@@ -59,12 +50,15 @@ export const fetchFoodData = async (foodName) => {
         cholesterol_mg: parseNutritionValue(foodItem.cholesterol_mg),
         serving_size_g: foodItem.serving_size_g || 100,
         serving_description: foodItem.serving_description || "per 100g",
-        source: foodItem.source || "Unknown Source", // Trust backend source
+        source: foodItem.source || "Unknown Source",
+        // 🆕 Enhanced fields for differentiation
+        cut: foodItem.cut || null,
+        preparation: foodItem.preparation || null,
+        isRaw: foodItem.isRaw || false,
+        isCooked: foodItem.isCooked || false,
       };
     });
 
-   
-    
     return mappedItems;
     
   } catch (error) {

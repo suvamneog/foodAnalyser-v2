@@ -4,7 +4,7 @@
 
 import { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../components/ui/card";
-import { Sparkles, Info, LogIn, Database, Scale, ChevronLeft, ChevronRight, AlertCircle } from "lucide-react";
+import { Sparkles, Info, LogIn, Database, Scale, ChevronLeft, ChevronRight, AlertCircle, Beef, Carrot, ChefHat, Drumstick } from "lucide-react";
 import { CardBody, CardContainer, CardItem } from "../components/ui/3D-card";
 import { useAuth } from "../utils/AuthContext";
 import { Link } from "react-router-dom";
@@ -58,6 +58,73 @@ function analyzeFood(food) {
   return { pros, cons }
 }
 
+// 🆕 Enhanced food type detection with badges
+function getFoodTypeBadge(food) {
+  if (!food) return { type: 'generic', label: 'Food', color: 'bg-gray-500', icon: Beef };
+  
+  const name = (food.displayName || food.name || '').toLowerCase();
+  const source = food.source || '';
+  
+  // Raw ingredients from IFCT
+  if (food.isRaw || name.includes('raw') || (source.includes('IFCT') && !name.includes('curry') && !name.includes('masala'))) {
+    return { type: 'raw', label: 'Raw Ingredient', color: 'bg-green-500', icon: Carrot };
+  }
+  
+  // Chicken-specific badges
+  if (name.includes('chicken')) {
+    if (name.includes('breast')) return { type: 'breast', label: 'Chicken Breast', color: 'bg-blue-500', icon: Drumstick };
+    if (name.includes('thigh')) return { type: 'thigh', label: 'Chicken Thigh', color: 'bg-purple-500', icon: Drumstick };
+    if (name.includes('leg') || name.includes('drumstick')) return { type: 'leg', label: 'Chicken Leg', color: 'bg-indigo-500', icon: Drumstick };
+    if (name.includes('wing')) return { type: 'wing', label: 'Chicken Wings', color: 'bg-pink-500', icon: Drumstick };
+    if (name.includes('mince') || name.includes('keema')) return { type: 'mince', label: 'Chicken Mince', color: 'bg-orange-500', icon: ChefHat };
+  }
+  
+  // Preparation styles
+  if (name.includes('curry') || name.includes('masala') || name.includes('gravy')) {
+    return { type: 'curry', label: 'Curry Dish', color: 'bg-orange-500', icon: ChefHat };
+  }
+  if (name.includes('fried')) {
+    return { type: 'fried', label: 'Fried', color: 'bg-red-500', icon: ChefHat };
+  }
+  if (name.includes('grilled') || name.includes('roast') || name.includes('tandoori')) {
+    return { type: 'grilled', label: 'Grilled', color: 'bg-yellow-500', icon: ChefHat };
+  }
+  if (name.includes('biryani') || name.includes('pulao')) {
+    return { type: 'biryani', label: 'Biryani', color: 'bg-purple-500', icon: ChefHat };
+  }
+  
+  // Cooked dishes from INDB
+  if (food.isCooked || source.includes('INDB')) {
+    return { type: 'cooked', label: 'Prepared Dish', color: 'bg-blue-500', icon: ChefHat };
+  }
+  
+  return { type: 'generic', label: 'Food Item', color: 'bg-gray-500', icon: Beef };
+}
+
+// 🆕 Get preparation style for display
+function getPreparationStyle(food) {
+  if (!food) return null;
+  
+  const name = (food.displayName || food.name || '').toLowerCase();
+  
+  if (name.includes('curry')) return 'Curry';
+  if (name.includes('masala')) return 'Masala';
+  if (name.includes('biryani')) return 'Biryani';
+  if (name.includes('tandoori')) return 'Tandoori';
+  if (name.includes('fried')) return 'Fried';
+  if (name.includes('grilled') || name.includes('roast')) return 'Grilled';
+  if (name.includes('steam')) return 'Steamed';
+  if (name.includes('boil')) return 'Boiled';
+  
+  return null;
+}
+
+// 🆕 Calculate protein density for comparison
+function calculateProteinDensity(protein_g, calories) {
+  if (!calories || calories === 0) return 0;
+  return (protein_g / calories) * 100;
+}
+
 // Helper function to get source color
 function getSourceColor(source) {
   if (source?.includes('IFCT')) return 'text-blue-400';
@@ -74,11 +141,24 @@ function formatNumber(value) {
   return Number.isInteger(num) ? num.toString() : num.toFixed(2);
 }
 
-// Helper function to clean query by removing gram information
-function cleanQuery(query) {
-  if (!query) return "";
-  // Remove patterns like "50g ", "100g " from the beginning or anywhere
-  return query.replace(/(\d+\s*g\s*)/gi, '').trim();
+// 🆕 Get health indicators based on nutrition values
+function getHealthIndicators(food) {
+  if (!food) return [];
+  
+  const indicators = [];
+  const protein = food.protein_g || 0;
+  const fiber = food.fiber_g || 0;
+  const sugar = food.sugar_g || 0;
+  const saturatedFat = food.fat_saturated_g || 0;
+  const sodium = food.sodium_mg || 0;
+  
+  if (protein > 15) indicators.push({ type: 'high-protein', label: 'High Protein', color: 'text-green-400' });
+  if (fiber > 5) indicators.push({ type: 'high-fiber', label: 'High Fiber', color: 'text-green-400' });
+  if (sugar > 20) indicators.push({ type: 'high-sugar', label: 'High Sugar', color: 'text-red-400' });
+  if (saturatedFat > 5) indicators.push({ type: 'high-satfat', label: 'High Sat Fat', color: 'text-red-400' });
+  if (sodium > 500) indicators.push({ type: 'high-sodium', label: 'High Sodium', color: 'text-red-400' });
+  
+  return indicators;
 }
 
 function FoodAnalyzer({ output, loading, originalQuery, searchAttempted }) {
@@ -232,7 +312,7 @@ function FoodAnalyzer({ output, loading, originalQuery, searchAttempted }) {
                     </li>
                     <li className="flex items-start gap-2">
                       <span className="text-red-400">•</span>
-                      <span>Try using more proper names (e.g., &quot;chicken&quot; instead of &quot;chiken&quot;)</span>
+                      <span>Try using more specific names (e.g., &quot;chicken breast&quot; instead of &quot;chicken&quot;)</span>
                     </li>
                     <li className="flex items-start gap-2">
                       <span className="text-red-400">•</span>
@@ -241,7 +321,7 @@ function FoodAnalyzer({ output, loading, originalQuery, searchAttempted }) {
                   </ul>
                   
                   <div className="pt-2 text-xs text-blue-400">
-                    <p>Examples: &quot;banana&quot;, &quot;chicken breast&quot;, &quot;100g rice&quot;</p>
+                    <p>Examples: &quot;chicken breast&quot;, &quot;chicken curry&quot;, &quot;100g rice&quot;</p>
                   </div>
                 </div>
               </CardContent>
@@ -272,10 +352,16 @@ function FoodAnalyzer({ output, loading, originalQuery, searchAttempted }) {
 
   const { pros, cons } = analyzeFood(currentFood);
   const sourceColor = getSourceColor(currentFood.source);
+  const badge = getFoodTypeBadge(currentFood);
+  const BadgeIcon = badge.icon;
+  const preparationStyle = getPreparationStyle(currentFood);
+  const healthIndicators = getHealthIndicators(currentFood);
   
   // Extract gram amount from ORIGINAL QUERY (not food name)
   const searchedGrams = extractGramAmount(originalQuery);
-  const displayName = cleanQuery(originalQuery) || currentFood.name || "Unknown Food";
+  
+  // Use displayName from the food data (provided by the enhanced API)
+  const displayName = currentFood.displayName || currentFood.name || "Unknown Food";
   
   // Calculate multiplier for nutrition values if searched grams are different from serving size
   const servingSize = currentFood.serving_size_g || 100;
@@ -292,8 +378,11 @@ function FoodAnalyzer({ output, loading, originalQuery, searchAttempted }) {
   const adjustedSodium = (currentFood.sodium_mg || 0) * multiplier;
   const adjustedCholesterol = (currentFood.cholesterol_mg || 0) * multiplier;
 
+  // 🆕 Calculate protein density
+  const proteinDensity = calculateProteinDensity(adjustedProtein, adjustedCalories);
+
   return (
-    <div className={`flex flex-col justify-center items-center w-full gap-4 transition-opacity duration-500 ease-in-out ${
+    <div className={`flex flex-col justify-start w-full transition-opacity duration-500 ease-in-out pb-10 ${
       isVisible ? 'opacity-100' : 'opacity-0'
     }`}>
       
@@ -325,7 +414,7 @@ function FoodAnalyzer({ output, loading, originalQuery, searchAttempted }) {
       {/* Swipe Instructions */}
       {output.length > 1 && (
         <div className="text-xs text-gray-500 text-center mb-2">
-          💡 Swipe or use arrows to browse results
+          💡 Swipe or use arrows to browse different preparations
         </div>
       )}
 
@@ -339,12 +428,70 @@ function FoodAnalyzer({ output, loading, originalQuery, searchAttempted }) {
         style={{ cursor: output.length > 1 ? 'grab' : 'default' }}
       >
         <CardContainer className="w-full">
-          <CardBody className="bg-[#0C0C0C]/90 rounded-xl p-1 sm:p-2 md:p-3 border border-white/[0.05]">
+          <CardBody className="bg-[#0C0C0C]/90 rounded-xl p-1 sm:p-2 md:p-3 border border-white/[0.05] min-h-[420px] sm:min-h-[450px] md:min-h-[480px]">
             <CardItem>
               <CardHeader className="p-2 sm:p-3">
+                {/* 🆕 Food Type Badge */}
+                <div className="flex justify-center mb-3">
+                  <span className={`inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-medium ${badge.color} text-white`}>
+                    <BadgeIcon className="w-3 h-3" />
+                    {badge.label}
+                  </span>
+                </div>
+
                 <CardTitle className="text-base sm:text-lg md:text-xl text-white text-center">
                   {displayName}
                 </CardTitle>
+
+                {/* 🆕 Food Specifics Row */}
+                <div className="flex flex-wrap justify-center gap-2 mb-3">
+                  {/* Cut Type */}
+                  {currentFood.cut && (
+                    <span className="px-2 py-1 bg-blue-500/20 text-blue-300 rounded text-xs border border-blue-500/30">
+                      🍗 {currentFood.cut}
+                    </span>
+                  )}
+                  
+                  {/* Preparation Style */}
+                  {preparationStyle && (
+                    <span className="px-2 py-1 bg-orange-500/20 text-orange-300 rounded text-xs border border-orange-500/30">
+                      👨‍🍳 {preparationStyle}
+                    </span>
+                  )}
+                  
+                  {/* Protein Density */}
+                  {proteinDensity > 0 && (
+                    <span className="px-2 py-1 bg-green-500/20 text-green-300 rounded text-xs border border-green-500/30">
+                       {proteinDensity.toFixed(1)}g/100kcal
+                    </span>
+                  )}
+                  
+                  {/* Raw/Cooked Indicator */}
+                  {currentFood.isRaw && (
+                    <span className="px-2 py-1 bg-gray-500/20 text-gray-300 rounded text-xs border border-gray-500/30">
+                      ⚪ Raw
+                    </span>
+                  )}
+                  {currentFood.isCooked && (
+                    <span className="px-2 py-1 bg-yellow-500/20 text-yellow-300 rounded text-xs border border-yellow-500/30">
+                      🟡 Cooked
+                    </span>
+                  )}
+                </div>
+
+                {/* 🆕 Health Indicators */}
+                {healthIndicators.length > 0 && (
+                  <div className="flex flex-wrap justify-center gap-1 mb-3">
+                    {healthIndicators.map((indicator, index) => (
+                      <span 
+                        key={index}
+                        className={`px-2 py-1 rounded text-xs border ${indicator.color} border-current/30`}
+                      >
+                        {indicator.label}
+                      </span>
+                    ))}
+                  </div>
+                )}
                 
                 {/* Searched Gram Information */}
                 {searchedGrams && (
@@ -368,7 +515,7 @@ function FoodAnalyzer({ output, loading, originalQuery, searchAttempted }) {
                 </CardDescription>
 
                 {/* Serving Size Information */}
-                <CardDescription className="text-xs sm:text-sm flex items-center justify-center gap-1 mt-1">
+                <CardDescription className="ext-xs sm:text-sm flex items-center justify-center gap-1 mt-1">
                   <Scale className="w-3 h-3" />
                   <span className="text-gray-400">Base Serving: </span>
                   <span className="text-gray-300">
@@ -506,7 +653,7 @@ function FoodAnalyzer({ output, loading, originalQuery, searchAttempted }) {
 
       {/* Dot Indicators */}
       {output.length > 1 && (
-        <div className="flex justify-center gap-2 mt-4">
+        <div className="flex justify-center gap-2 mt-1">
           {output.map((_, index) => (
             <button
               key={index}
