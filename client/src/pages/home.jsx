@@ -78,18 +78,62 @@ function Home({ foodName, setFoodName, output, setOutput, loading, setLoading, s
         />
       </a>
 
-      {/* Guide Modal */}
       {isGuideOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 p-3 sm:p-4">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
           <motion.div
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.2 }}
-            className="bg-neutral-800 rounded-lg p-4 sm:p-6 max-w-2xl w-full mx-auto text-xs sm:text-sm md:text-base text-neutral-300 max-h-[90vh] overflow-y-auto"
+            className="bg-neutral-800 rounded-lg p-6 max-w-2xl w-full mx-4 text-sm sm:text-base text-neutral-300"
           >
-            <h3 className="text-base sm:text-lg md:text-xl font-semibold text-white mb-3 sm:mb-4">
+            <h3 className="text-lg sm:text-xl font-semibold text-white mb-4">
               How to Use the Food Analyser 
             </h3>
+            <div className="space-y-4">
+              <div>
+                <p className="font-medium text-white">1. Search for a Food Item</p>
+                <p className="ml-4">
+                  Type the name of a food or drink in the search bar. For example:
+                </p>
+                <ul className="ml-8 list-disc">
+                  <li><code>apple</code></li>
+                  <li><code>chicken breast</code></li>
+                  <li><code>pasta</code></li>
+                </ul>
+              </div>
+
+              <div>
+                <p className="font-medium text-white">2. Add Quantities (Optional)</p>
+                <p className="ml-4">
+                  You can specify a quantity for more accurate results. For example:
+                </p>
+                <ul className="ml-8 list-disc">
+                  <li><code>3 tomatoes</code> - for 3 tomatoes</li>
+                  <li><code>1lb beef brisket</code> - for 1 pound of beef</li>
+                  <li><code>200g pasta</code> - for 200 grams of pasta</li>
+                  <li><code>1.5kg watermelon</code> - for 1.5 kilograms of watermelon</li>
+                </ul>
+                <p className="ml-4 mt-2 text-neutral-400">
+                  If no quantity is specified, the default is <strong>100 grams</strong>.
+                </p>
+              </div>
+
+              <div>
+                <p className="font-medium text-white">3. Get Nutritional Info</p>
+                <p className="ml-4">
+                  Press <kbd>Enter</kbd> or click the search button to see the nutritional
+                  information, including calories, protein, carbs, and fats.
+                </p>
+              </div>
+
+              <div>
+                <p className="font-medium text-white">4. Try Different Foods</p>
+                <p className="ml-4">
+                  Compare nutritional values by searching for different foods or quantities!
+                </p>
+              </div>
+            </div>
+
 
             <button
               onClick={() => setIsGuideOpen(false)}
