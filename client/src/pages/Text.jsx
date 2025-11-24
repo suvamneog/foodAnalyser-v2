@@ -382,13 +382,13 @@ function FoodAnalyzer({ output, loading, originalQuery, searchAttempted }) {
   const proteinDensity = calculateProteinDensity(adjustedProtein, adjustedCalories);
 
   return (
-    <div className={`flex flex-col justify-start w-full transition-opacity duration-500 ease-in-out pb-10 ${
+   <div className={`flex flex-col justify-center items-center w-full gap-4 transition-opacity duration-500 ease-in-out ${
       isVisible ? 'opacity-100' : 'opacity-0'
     }`}>
       
       {/* Navigation Controls */}
       {output.length > 1 && (
-        <div className="flex items-center justify-center gap-4 mb-2">
+        <div className="flex items-center justify-center gap-4">
           <button
             onClick={handlePrevious}
             className="p-2 rounded-full bg-gray-800 hover:bg-gray-700 transition-colors"
@@ -413,7 +413,7 @@ function FoodAnalyzer({ output, loading, originalQuery, searchAttempted }) {
 
       {/* Swipe Instructions */}
       {output.length > 1 && (
-        <div className="text-xs text-gray-500 text-center mb-2">
+        <div className="text-xs text-gray-500 text-center">
           💡 Swipe or use arrows to browse different preparations
         </div>
       )}
@@ -428,112 +428,112 @@ function FoodAnalyzer({ output, loading, originalQuery, searchAttempted }) {
         style={{ cursor: output.length > 1 ? 'grab' : 'default' }}
       >
         <CardContainer className="w-full">
-          <CardBody className="bg-[#0C0C0C]/90 rounded-xl p-1 sm:p-2 md:p-3 border border-white/[0.05] min-h-[420px] sm:min-h-[450px] md:min-h-[480px]">
-            <CardItem>
-              <CardHeader className="p-2 sm:p-3">
-                {/* 🆕 Food Type Badge */}
-                <div className="flex justify-center mb-3">
-                  <span className={`inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-medium ${badge.color} text-white`}>
-                    <BadgeIcon className="w-3 h-3" />
-                    {badge.label}
-                  </span>
-                </div>
+          <CardBody className="bg-[#0C0C0C]/90 rounded-xl p-1 sm:p-2 md:p-3 border border-white/[0.05]">
+          <CardItem>
+  <CardHeader className="p-2 sm:p-3">
+    {/* 🆕 Food Type Badge */}
+    <div className="flex justify-center mb-2 sm:mb-3">
+      <span className={`inline-flex items-center gap-1 sm:gap-2 px-2 sm:px-3 py-1 rounded-full text-xs font-medium ${badge.color} text-white`}>
+        <BadgeIcon className="w-3 h-3" />
+        {badge.label}
+      </span>
+    </div>
 
-                <CardTitle className="text-base sm:text-lg md:text-xl text-white text-center">
-                  {displayName}
-                </CardTitle>
+    <CardTitle className="text-sm sm:text-base md:text-xl text-white text-center break-words px-1">
+      {displayName}
+    </CardTitle>
 
-                {/* 🆕 Food Specifics Row */}
-                <div className="flex flex-wrap justify-center gap-2 mb-3">
-                  {/* Cut Type */}
-                  {currentFood.cut && (
-                    <span className="px-2 py-1 bg-blue-500/20 text-blue-300 rounded text-xs border border-blue-500/30">
-                      🍗 {currentFood.cut}
-                    </span>
-                  )}
-                  
-                  {/* Preparation Style */}
-                  {preparationStyle && (
-                    <span className="px-2 py-1 bg-orange-500/20 text-orange-300 rounded text-xs border border-orange-500/30">
-                      👨‍🍳 {preparationStyle}
-                    </span>
-                  )}
-                  
-                  {/* Protein Density */}
-                  {proteinDensity > 0 && (
-                    <span className="px-2 py-1 bg-green-500/20 text-green-300 rounded text-xs border border-green-500/30">
-                       {proteinDensity.toFixed(1)}g/100kcal
-                    </span>
-                  )}
-                  
-                  {/* Raw/Cooked Indicator */}
-                  {currentFood.isRaw && (
-                    <span className="px-2 py-1 bg-gray-500/20 text-gray-300 rounded text-xs border border-gray-500/30">
-                      ⚪ Raw
-                    </span>
-                  )}
-                  {currentFood.isCooked && (
-                    <span className="px-2 py-1 bg-yellow-500/20 text-yellow-300 rounded text-xs border border-yellow-500/30">
-                      🟡 Cooked
-                    </span>
-                  )}
-                </div>
+    {/* 🆕 Food Specifics Row */}
+    <div className="flex flex-wrap justify-center gap-1 sm:gap-2 mb-2 sm:mb-3">
+      {/* Cut Type */}
+      {currentFood.cut && (
+        <span className="px-1.5 sm:px-2 py-0.5 sm:py-1 bg-blue-500/20 text-blue-300 rounded text-xs border border-blue-500/30">
+          🍗 {currentFood.cut}
+        </span>
+      )}
+      
+      {/* Preparation Style */}
+      {preparationStyle && (
+        <span className="px-1.5 sm:px-2 py-0.5 sm:py-1 bg-orange-500/20 text-orange-300 rounded text-xs border border-orange-500/30">
+          👨‍🍳 {preparationStyle}
+        </span>
+      )}
+      
+      {/* Protein Density */}
+      {proteinDensity > 0 && (
+        <span className="px-1.5 sm:px-2 py-0.5 sm:py-1 bg-green-500/20 text-green-300 rounded text-xs border border-green-500/30">
+          {proteinDensity.toFixed(1)}g/100kcal
+        </span>
+      )}
+      
+      {/* Raw/Cooked Indicator */}
+      {currentFood.isRaw && (
+        <span className="px-1.5 sm:px-2 py-0.5 sm:py-1 bg-gray-500/20 text-gray-300 rounded text-xs border border-gray-500/30">
+          ⚪ Raw
+        </span>
+      )}
+      {currentFood.isCooked && (
+        <span className="px-1.5 sm:px-2 py-0.5 sm:py-1 bg-yellow-500/20 text-yellow-300 rounded text-xs border border-yellow-500/30">
+          🟡 Cooked
+        </span>
+      )}
+    </div>
 
-                {/* 🆕 Health Indicators */}
-                {healthIndicators.length > 0 && (
-                  <div className="flex flex-wrap justify-center gap-1 mb-3">
-                    {healthIndicators.map((indicator, index) => (
-                      <span 
-                        key={index}
-                        className={`px-2 py-1 rounded text-xs border ${indicator.color} border-current/30`}
-                      >
-                        {indicator.label}
-                      </span>
-                    ))}
-                  </div>
-                )}
-                
-                {/* Searched Gram Information */}
-                {searchedGrams && (
-                  <CardDescription className="text-xs sm:text-sm text-yellow-400 text-center mt-1">
-                    Showing nutrition for: <strong>{searchedGrams}g</strong>
-                    {servingSize !== searchedGrams && (
-                      <span className="text-gray-400 ml-1">
-                        (adjusted from {servingSize}g base)
-                      </span>
-                    )}
-                  </CardDescription>
-                )}
-                
-                {/* Source Information */}
-                <CardDescription className="text-xs sm:text-sm flex items-center justify-center gap-1 mt-1">
-                  <Database className="w-3 h-3" />
-                  <span className="text-gray-400">Source: </span>
-                  <span className={sourceColor}>
-                    {currentFood.source || "Unknown"}
-                  </span>
-                </CardDescription>
+    {/* 🆕 Health Indicators */}
+    {healthIndicators.length > 0 && (
+      <div className="flex flex-wrap justify-center gap-1 mb-2 sm:mb-3">
+        {healthIndicators.map((indicator, index) => (
+          <span 
+            key={index}
+            className={`px-1.5 sm:px-2 py-0.5 sm:py-1 rounded text-xs border ${indicator.color} border-current/30`}
+          >
+            {indicator.label}
+          </span>
+        ))}
+      </div>
+    )}
+    
+    {/* Searched Gram Information */}
+    {searchedGrams && (
+      <CardDescription className="text-xs text-yellow-400 text-center mt-1 break-words px-1">
+        Showing nutrition for: <strong>{searchedGrams}g</strong>
+        {servingSize !== searchedGrams && (
+          <span className="text-gray-400 ml-1 text-xs">
+            (adjusted from {servingSize}g base)
+          </span>
+        )}
+      </CardDescription>
+    )}
+    
+    {/* Source Information */}
+    <CardDescription className="text-xs flex items-center justify-center gap-1 mt-1 flex-wrap">
+      <Database className="w-3 h-3" />
+      <span className="text-gray-400">Source: </span>
+      <span className={sourceColor}>
+        {currentFood.source || "Unknown"}
+      </span>
+    </CardDescription>
 
-                {/* Serving Size Information */}
-                <CardDescription className="ext-xs sm:text-sm flex items-center justify-center gap-1 mt-1">
-                  <Scale className="w-3 h-3" />
-                  <span className="text-gray-400">Base Serving: </span>
-                  <span className="text-gray-300">
-                    {servingSize}g {currentFood.serving_description && `(${currentFood.serving_description})`}
-                  </span>
-                </CardDescription>
+    {/* Serving Size Information */}
+    <CardDescription className="text-xs flex items-center justify-center gap-1 mt-1 flex-wrap">
+      <Scale className="w-3 h-3" />
+      <span className="text-gray-400">Base Serving: </span>
+      <span className="text-gray-300">
+        {servingSize}g {currentFood.serving_description && `(${currentFood.serving_description})`}
+      </span>
+    </CardDescription>
 
-                {/* Login Prompt */}
-                {!isAuthenticated && (
-                  <CardDescription className="mt-1 sm:mt-2 text-blue-400 flex items-center justify-center gap-1 sm:gap-2 text-xs">
-                    <LogIn className="w-3 h-3" />
-                    <Link to="/login" className="underline text-red-400 hover:text-blue-300">
-                      Log in to save history
-                    </Link>
-                  </CardDescription>
-                )}
-              </CardHeader>
-            </CardItem>
+    {/* Login Prompt */}
+    {!isAuthenticated && (
+      <CardDescription className="mt-1 sm:mt-2 text-blue-400 flex items-center justify-center gap-1 sm:gap-2 text-xs">
+        <LogIn className="w-3 h-3" />
+        <Link to="/login" className="underline text-red-400 hover:text-blue-300 text-xs">
+          Log in to save history
+        </Link>
+      </CardDescription>
+    )}
+  </CardHeader>
+</CardItem>
 
             <CardItem>
               <CardContent className="px-2 py-1 sm:p-3">
