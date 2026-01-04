@@ -114,10 +114,10 @@ This is not a CRUD project — it is a nutrition intelligence system.
 ![Image Recognition](./screenshots/Imagerecognition.png)
 
 ### 📦 Barcode Scanning & Product Analysis
-![Barcode Scanner](./screenshots/Barcodescan.png)
+![Barcode Scanner](./screenshots/BarcodeScan.png)
 
 ### 🧮 Health & Diet Calculator
-![Calculator](./screenshots/Caloriescal.png)
+![Calculator](./screenshots/CaloriesCal.png)
 
 ### 🧾 Meal Logging & Nutrition History
 ![Meal Logging](./screenshots/Logmeal.png)
