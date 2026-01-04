@@ -227,3 +227,6 @@ This system has been extended into academic research and accepted at:
 B.Tech CSE
 Full-Stack & AI Systems Developer
 Research contributor (IEEE CCPIS 2025)
+
+© 2026 Suvam Neog. All rights reserved.
+This project is shared for educational and portfolio purposes.
