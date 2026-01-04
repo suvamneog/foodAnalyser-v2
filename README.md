@@ -1,13 +1,23 @@
-FoodAnalyser x Fit
+FoodAnalyser × Fit
+![React](https://img.shields.io/badge/Frontend-React-61DAFB?logo=react&logoColor=white)
+![Node.js](https://img.shields.io/badge/Backend-Node.js-339933?logo=node.js&logoColor=white)
+![MongoDB](https://img.shields.io/badge/Database-MongoDB-47A248?logo=mongodb&logoColor=white)
+![Tailwind CSS](https://img.shields.io/badge/UI-Tailwind_CSS-38B2AC?logo=tailwind-css&logoColor=white)
+![JWT](https://img.shields.io/badge/Auth-JWT-orange?logo=jsonwebtokens)
+![AI](https://img.shields.io/badge/AI-Computer_Vision-blueviolet)
+![Deployment](https://img.shields.io/badge/Deployed-Vercel_&_Render-success)
+![Status](https://img.shields.io/badge/Status-Production_Ready-brightgreen)
+![Conference](https://img.shields.io/badge/IEEE-CCPIS_2025-blue)
 
 Indian Food Nutrition Intelligence & Health Scoring System
 
 FoodAnalyser is a full-stack nutrition intelligence platform built specifically for Indian dietary patterns, combining official Indian nutrition datasets (IFCT 2017 & INDB) with AI-based food recognition, barcode analysis, and personalized health scoring.
 
-Unlike generic calorie apps that rely on Western datasets, FoodAnalyser delivers authentic, verified Indian nutrition analysis with real-world usability.
+Unlike generic calorie apps that rely on Western datasets, FoodAnalyser delivers authentic, verified Indian nutrition analysis with real-world usability
 
+Designed for: Indian consumers, fitness enthusiasts, dieticians, health-tech startups, and nutrition research.
 
-Why FoodAnalyser Is Different?
+Why FoodAnalyser Is Different
 
 1. Built on IFCT 2017 (ICMR–NIN) — India’s official food composition table
 2. Uses INDB (Indian Nutrient Databank) for cooked & traditional recipes
@@ -160,8 +170,6 @@ npm install
 npm run dev
 
 
-⸻
-
 📄 Research & Publication
 
 This system has been extended into academic research and accepted at:
@@ -182,3 +190,4 @@ IEEE CCPIS 2025
 Suvam Neog
 B.Tech CSE
 Full-Stack & AI Systems Developer
+Research contributor (IEEE CCPIS 2025)
