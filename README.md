@@ -105,7 +105,7 @@ This is not a CRUD project — it is a nutrition intelligence system.
 ## 📸 Screenshots
 
 ### 🏠 Home & Food Search
-![Home](./screenshots/Home.png)
+![Home](./screenshots/Homepage.png)
 
 ### 🔍 Indian Food Nutrition Search
 ![Food Search](./screenshots/Foodsearch.png)
