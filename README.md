@@ -48,7 +48,7 @@ This is not a CRUD project — it is a nutrition intelligence system.
 - Serving-based nutrition
 - Beverage & regional food coverage
 
-### 🌍 External (Fallback Only)
+###  External (Fallback Only)
 - OpenFoodFacts (packaged foods)
 - CalorieNinjas (only when Indian data unavailable)
 
@@ -69,26 +69,26 @@ This is not a CRUD project — it is a nutrition intelligence system.
 - Glycemic impact estimation
 - Health score + healthier Indian alternatives
 
-### 📦 Barcode Scanning (Packaged Foods)
+###  Barcode Scanning (Packaged Foods)
 - Barcode decoding using ZXing + Sharp
 - Product fetch via OpenFoodFacts
 - Nutrition normalization
 - Indian food equivalent mapping
 - Health score computation
 
-### 🧮 Health & Diet Calculator
+###  Health & Diet Calculator
 - BMR (Mifflin-St Jeor Equation)
 - TDEE calculation
 - Activity-based calorie goals
 - Protein intake estimation
 
-### 🧾 Meal Logging & Nutrition Tracking
+###  Meal Logging & Nutrition Tracking
 - Secure JWT-based logging
 - Per-meal macro aggregation
 - Daily nutrition totals
 - History filtering (date, calories, meal type)
 
-### 👤 Authentication & Security
+###  Authentication & Security
 - Email/password login
 - JWT authentication middleware
 - Google & GitHub OAuth support
@@ -127,7 +127,7 @@ This is not a CRUD project — it is a nutrition intelligence system.
 
 ---
 
-## 🏗️ System Architecture
+##  System Architecture
 
 ```
 Frontend (React + Tailwind)
@@ -171,7 +171,7 @@ Frontend (React + Tailwind)
 
 ---
 
-## 🌐 Deployment
+##  Deployment
 
 - **Frontend:** Vercel
 - **Backend:** Render
@@ -183,7 +183,7 @@ Environment switching handled automatically.
 
 ---
 
-## ⚙️ Local Setup
+##  Local Setup
 
 ### Backend
 ```bash
@@ -212,7 +212,7 @@ This system has been extended into academic research and accepted at:
 
 ---
 
-## 🔮 Future Roadmap
+##  Future Roadmap
 - Portion size estimation from images
 - Personalized AI diet planning
 - Multilingual Indian food recognition
@@ -221,7 +221,7 @@ This system has been extended into academic research and accepted at:
 
 ---
 
-## 👨‍💻 Author
+##  Author
 
 **Suvam Neog**
 B.Tech CSE
