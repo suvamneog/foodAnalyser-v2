@@ -51,6 +51,7 @@ import {
   HERO_COLLAGE,
   CREDIBILITY_STATS,
   POPULAR_SEARCHES,
+  matchRegionQuery,
 } from "../data/discoveryData";
 import { fadeUpProps, IOS_EASE, MOTION } from "../utils/motion";
 
@@ -269,6 +270,8 @@ function Home({
   const [stickySearch, setStickySearch] = useState(false);
   const [showTop, setShowTop] = useState(false);
   const [regionalPreset, setRegionalPreset] = useState(null);
+  /** After results appear, search stays hidden until the user swipes results. */
+  const [revealSearchAfterSwipe, setRevealSearchAfterSwipe] = useState(false);
   const resultsRef = useRef(null);
   const heroSearchRef = useRef(null);
   const shouldScrollRef = useRef(false);
@@ -276,6 +279,9 @@ function Home({
   const fadeUp = useFadeUp(reduceMotion);
   const location = useLocation();
   const navigate = useNavigate();
+
+  const hasResultCards = !loading && Array.isArray(output) && output.length > 0;
+  const showSearchBar = !hasResultCards || revealSearchAfterSwipe;
 
   const featured = useMemo(
     () => FEATURED_DISHES[Math.floor(Math.random() * FEATURED_DISHES.length)],
@@ -302,6 +308,7 @@ function Home({
       setOriginalQuery(payload.query);
       setFoodName("");
       setSearchAttempted(true);
+      setRevealSearchAfterSwipe(false);
       setRegionalPreset(payload.regionalPreset || null);
       shouldScrollRef.current = true;
       navigate(location.pathname, { replace: true, state: {} });
@@ -329,8 +336,16 @@ function Home({
   const runSearch = async (query) => {
     const trimmed = query.trim();
     if (!trimmed || loading) return;
+
+    const regionHit = matchRegionQuery(trimmed);
+    if (regionHit) {
+      navigate(`/cuisine/${regionHit.slug}`);
+      return;
+    }
+
     shouldScrollRef.current = true;
     setRegionalPreset(null);
+    setRevealSearchAfterSwipe(false);
     setFoodName(trimmed);
     setLoading(true);
     setSearchAttempted(true);
@@ -363,6 +378,7 @@ function Home({
     if (match?.source && match?.code) {
       shouldScrollRef.current = true;
       setRegionalPreset(null);
+      setRevealSearchAfterSwipe(false);
       setFoodName(friendly);
       setLoading(true);
       setSearchAttempted(true);
@@ -393,7 +409,7 @@ function Home({
 
   return (
     <div className="min-h-screen w-full pt-14 sm:pt-16">
-      {stickySearch && (
+      {stickySearch && showSearchBar && (
         <motion.div
           initial={{ y: -72, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
@@ -412,6 +428,7 @@ function Home({
               onSearchStart={() => {
                 shouldScrollRef.current = true;
                 setRegionalPreset(null);
+                setRevealSearchAfterSwipe(false);
               }}
               compact
               inputId="food-input-sticky"
@@ -520,10 +537,17 @@ function Home({
           <motion.div
             ref={heroSearchRef}
             initial={reduceMotion ? false : { opacity: 0, y: 16 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7, delay: 0.22, ease: IOS_EASE }}
-            className="mt-11 w-full max-w-2xl sm:mt-12"
+            animate={{ opacity: showSearchBar ? 1 : 0, y: showSearchBar ? 0 : -8 }}
+            transition={{ duration: 0.45, delay: showSearchBar ? 0.08 : 0, ease: IOS_EASE }}
+            className={`mt-11 w-full max-w-2xl sm:mt-12 ${
+              showSearchBar
+                ? "pointer-events-auto relative"
+                : "pointer-events-none absolute h-0 overflow-hidden opacity-0"
+            }`}
+            aria-hidden={!showSearchBar}
           >
+            {showSearchBar && (
+              <>
             <PlaceholdersAndVanishInputDemo
               foodName={foodName}
               setFoodName={setFoodName}
@@ -535,6 +559,7 @@ function Home({
               onSearchStart={() => {
                 shouldScrollRef.current = true;
                 setRegionalPreset(null);
+                setRevealSearchAfterSwipe(false);
               }}
             />
             <div
@@ -553,6 +578,8 @@ function Home({
                 </button>
               ))}
             </div>
+              </>
+            )}
           </motion.div>
 
           <motion.div
@@ -637,6 +664,7 @@ function Home({
               searchAttempted={searchAttempted}
               regionalPreset={regionalPreset}
               onSuggestionClick={runSearch}
+              onResultSwipe={() => setRevealSearchAfterSwipe(true)}
             />
           </div>
         )}

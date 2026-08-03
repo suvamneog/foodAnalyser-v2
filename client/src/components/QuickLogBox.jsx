@@ -137,17 +137,27 @@ export default function QuickLogBox({ onLogged }) {
                 >
                   <span className="min-w-0 truncate text-white/80">
                     {r.matchedName || r.name}
-                    <span className="text-white/40"> · {Math.round(r.grams || 0)} g</span>
+                    <span className="text-white/40">
+                      {" "}
+                      · {Math.round(r.grams || 0)} g
+                      {r.assumedPortion ? ` (assumed ${r.assumedPortion})` : ""}
+                    </span>
                   </span>
-                  <span className="text-white/60">
+                  <span
+                    className={
+                      (r.calories || 0) < 1 ? "text-yellow-300/80" : "text-white/60"
+                    }
+                  >
                     {Math.round(r.calories || 0)} kcal
                   </span>
                 </li>
               ))}
             </ul>
-            {preview.rows.some((r) => r.source === "unresolved") && (
+            {preview.rows.some(
+              (r) => r.source === "unresolved" || r.source === "skipped" || (r.calories || 0) < 1
+            ) && (
               <p className="mt-2 text-[10px] text-yellow-300/80">
-                Some items had no match — they’ll be skipped. Add grams (e.g. "50g X") to help.
+                Some items need a clearer portion — try &quot;1 katori dal&quot; or &quot;dal 1 katori&quot;.
               </p>
             )}
           </motion.div>

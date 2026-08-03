@@ -5,6 +5,7 @@ import { motion, useReducedMotion } from "framer-motion";
 import {
   REGIONS,
   getRegionBySlug,
+  foodItemFromDish,
 } from "../data/discoveryData";
 import { fetchFoodData, fetchFoodById } from "../utils/fetchFoodData";
 import { IOS_EASE, MOTION } from "../utils/motion";
@@ -25,13 +26,37 @@ export default function CuisinePage() {
     try {
       let data;
       if (dish?.match?.source && dish?.match?.code) {
-        data = await fetchFoodById({
-          source: dish.match.source,
-          code: dish.match.code,
-          label: dish.name || trimmed,
-        });
-      } else {
-        data = await fetchFoodData(trimmed);
+        try {
+          data = await fetchFoodById({
+            source: dish.match.source,
+            code: dish.match.code,
+            label: dish.name || trimmed,
+          });
+        } catch {
+          data = null;
+        }
+      }
+      if (!data || (Array.isArray(data) && data.length === 0)) {
+        try {
+          data = await fetchFoodData(trimmed);
+        } catch {
+          data = null;
+        }
+      }
+      // Last resort: on-device macros from discovery catalog
+      if ((!data || (Array.isArray(data) && data.length === 0)) && dish) {
+        const local = foodItemFromDish(
+          { ...dish, region: region?.state },
+          dish.name || trimmed
+        );
+        if (local && (local.calories != null || local.protein_g != null)) {
+          data = [local];
+        }
+      }
+      if (!data || (Array.isArray(data) && data.length === 0)) {
+        throw new Error(
+          "Nutrition for this dish isn’t on the live API yet. Try again after the server updates, or search a similar IFCT/INDB dish."
+        );
       }
       navigate("/", {
         state: {

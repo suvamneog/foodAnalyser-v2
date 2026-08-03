@@ -1,8 +1,9 @@
 /* eslint-disable react/prop-types */
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { PlaceholdersAndVanishInput } from "../components/ui/placeholders-and-vanish-input";
 import { fetchFoodData } from "../utils/fetchFoodData";
-import { SEARCH_PLACEHOLDERS } from "../data/discoveryData";
+import { SEARCH_PLACEHOLDERS, matchRegionQuery } from "../data/discoveryData";
 import { pushRecentSearch } from "../utils/recentSearches";
 
 function PlaceholdersAndVanishInputDemo({
@@ -18,6 +19,7 @@ function PlaceholdersAndVanishInputDemo({
   inputId = "food-input",
 }) {
   const [error, setError] = useState(null);
+  const navigate = useNavigate();
 
   const updateVal = (e) => {
     setFoodName(e.target.value);
@@ -36,6 +38,13 @@ function PlaceholdersAndVanishInputDemo({
 
     if (trimmedFoodName.length < 2) {
       setError("Please enter at least 2 characters to search.");
+      return;
+    }
+
+    // "Assam" / "Punjab" etc. are regions — open cuisine page, not food search
+    const regionHit = matchRegionQuery(trimmedFoodName);
+    if (regionHit) {
+      navigate(`/cuisine/${regionHit.slug}`);
       return;
     }
 

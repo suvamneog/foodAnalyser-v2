@@ -184,12 +184,66 @@ export const REGIONS = [
     match: { source: "ASSAM", code: "ASM016" },
     foods: 32,
     dishes: [
-      { name: "Masor Tenga", query: "masor tenga", match: { source: "ASSAM", code: "ASM016" } },
-      { name: "Aloo Pitika", query: "aloo pitika", match: { source: "ASSAM", code: "ASM008" } },
-      { name: "Khorisa", query: "khorisa", match: { source: "ASSAM", code: "ASM028" } },
-      { name: "Lai Xaak", query: "lai xaak", match: { source: "ASSAM", code: "ASM007" } },
-      { name: "Narikol Pitha", query: "narikol pitha", match: { source: "ASSAM", code: "ASM031" } },
-      { name: "Assamese Thali", query: "assamese thali", match: { source: "ASSAM", code: "ASM030" } },
+      {
+        name: "Masor Tenga",
+        query: "masor tenga",
+        match: { source: "ASSAM", code: "ASM016" },
+        calories: 78,
+        protein: 2,
+        carbs: 11.5,
+        fat: 2.7,
+        fiber: 0.2,
+      },
+      {
+        name: "Aloo Pitika",
+        query: "aloo pitika",
+        match: { source: "ASSAM", code: "ASM008" },
+        calories: 81,
+        protein: 3.3,
+        carbs: 14,
+        fat: 1.3,
+        fiber: 0.5,
+      },
+      {
+        name: "Khorisa",
+        query: "khorisa",
+        match: { source: "ASSAM", code: "ASM028" },
+        calories: 182,
+        protein: 3,
+        carbs: 18.4,
+        fat: 10.7,
+        fiber: 6.5,
+      },
+      {
+        name: "Lai Xaak",
+        query: "lai xaak",
+        match: { source: "ASSAM", code: "ASM007" },
+        calories: 92,
+        protein: 1.6,
+        carbs: 9,
+        fat: 5.5,
+        fiber: 2,
+      },
+      {
+        name: "Narikol Pitha",
+        query: "narikol pitha",
+        match: { source: "ASSAM", code: "ASM031" },
+        calories: 379,
+        protein: null,
+        carbs: 69.5,
+        fat: null,
+        fiber: null,
+      },
+      {
+        name: "Assamese Thali",
+        query: "assamese thali",
+        match: { source: "ASSAM", code: "ASM030" },
+        calories: 149,
+        protein: 5,
+        carbs: 10.5,
+        fat: 9.7,
+        fiber: 5.6,
+      },
     ],
     image:
       "/foods/fish-curry.jpg",
@@ -381,6 +435,99 @@ export const REGIONS = [
 
 export const getRegionBySlug = (slug) =>
   REGIONS.find((r) => r.slug === String(slug || "").toLowerCase());
+
+/** Match a search query to a regional cuisine page (e.g. "Assam" → /cuisine/assam). */
+export function matchRegionQuery(query) {
+  const q = String(query || "")
+    .trim()
+    .toLowerCase()
+    .replace(/\s+cuisine$/i, "")
+    .replace(/\s+food$/i, "")
+    .replace(/\s+dishes$/i, "");
+  if (!q) return null;
+  return (
+    REGIONS.find(
+      (r) =>
+        r.slug === q ||
+        r.state.toLowerCase() === q ||
+        r.state.toLowerCase().replace(/\s+/g, "-") === q ||
+        r.state.toLowerCase().includes(q) ||
+        q.includes(r.state.toLowerCase())
+    ) || null
+  );
+}
+
+/** Find a discovery dish by exact IFCT/INDB/ASSAM code. */
+export function findDishByMatch(source, code) {
+  const src = String(source || "").toUpperCase();
+  const c = String(code || "").toUpperCase();
+  if (!src || !c) return null;
+  for (const region of REGIONS) {
+    for (const dish of region.dishes || []) {
+      if (
+        String(dish.match?.source || "").toUpperCase() === src &&
+        String(dish.match?.code || "").toUpperCase() === c
+      ) {
+        return { ...dish, region: region.state, regionSlug: region.slug };
+      }
+    }
+  }
+  for (const dish of [...TRENDING_DISHES, ...FEATURED_DISHES]) {
+    if (
+      String(dish.match?.source || "").toUpperCase() === src &&
+      String(dish.match?.code || "").toUpperCase() === c
+    ) {
+      return dish;
+    }
+  }
+  return null;
+}
+
+/** Build a TextAnalyzer-shaped item from a discovery dish (offline / API-down fallback). */
+export function foodItemFromDish(dish, label) {
+  if (!dish) return null;
+  const src = String(dish.match?.source || dish.source || "Local").toUpperCase();
+  const regionLabel =
+    src === "ASSAM"
+      ? "Assam regional data"
+      : src === "MANIPUR"
+      ? "Manipur regional data"
+      : src === "MEGHALAYA"
+      ? "Meghalaya regional data"
+      : src === "NAGALAND"
+      ? "Nagaland regional data"
+      : src === "INDB"
+      ? "INDB (Indian Nutrient Databank)"
+      : src === "IFCT"
+      ? "IFCT 2017 (ICMR-NIN)"
+      : "Regional estimate";
+
+  return {
+    name: dish.name,
+    displayName: label || dish.name,
+    requestedName: label || dish.name,
+    food_code: dish.match?.code || null,
+    calories: dish.calories ?? null,
+    protein_g: dish.protein ?? null,
+    carbohydrates_total_g: dish.carbs ?? null,
+    fat_total_g: dish.fat ?? null,
+    fiber_g: dish.fiber ?? null,
+    sugar_g: null,
+    fat_saturated_g: null,
+    sodium_mg: null,
+    cholesterol_mg: null,
+    serving_size_g: 100,
+    serving_description: "per 100g",
+    source: regionLabel,
+    sourceShort: src,
+    notes:
+      dish.note ||
+      "Shown from on-device regional catalog (API exact lookup unavailable).",
+    region: dish.region || null,
+    isCooked: true,
+    isRaw: false,
+  };
+}
 
 export const HERO_COLLAGE = [
   {

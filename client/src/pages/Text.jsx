@@ -19,7 +19,7 @@ import {
   REGIONAL_VARIANTS,
 } from '../data/regionalVariants';
 import { fetchSuggest } from '../utils/searchSuggest';
-import { POPULAR_SEARCHES } from '../data/discoveryData';
+import { POPULAR_SEARCHES, matchRegionQuery } from '../data/discoveryData';
 
 // Helper function to extract gram amount from query
 function extractGramAmount(query) {
@@ -178,7 +178,7 @@ function getHealthIndicators(food) {
   return indicators;
 }
 
-function FoodAnalyzer({ output, loading, originalQuery, searchAttempted, regionalPreset = null, onSuggestionClick }) {
+function FoodAnalyzer({ output, loading, originalQuery, searchAttempted, regionalPreset = null, onSuggestionClick, onResultSwipe }) {
   const { isAuthenticated } = useAuth();
   const [isVisible, setIsVisible] = useState(false);
   const [showLoading, setShowLoading] = useState(false);
@@ -188,6 +188,10 @@ function FoodAnalyzer({ output, loading, originalQuery, searchAttempted, regiona
   const [customize, setCustomize] = useState(() => defaultCustomizeState(100));
   const [selectedRegionId, setSelectedRegionId] = useState("all");
   const [selectedVariantId, setSelectedVariantId] = useState(null);
+
+  const notifySwipe = () => {
+    onResultSwipe?.();
+  };
 
   useEffect(() => {
     let loadingTimer;
@@ -314,7 +318,8 @@ function FoodAnalyzer({ output, loading, originalQuery, searchAttempted, regiona
 
   const handleNext = () => {
     if (output && output.length > 0) {
-      setCurrentIndex((prevIndex) => 
+      notifySwipe();
+      setCurrentIndex((prevIndex) =>
         prevIndex === output.length - 1 ? 0 : prevIndex + 1
       );
     }
@@ -322,7 +327,8 @@ function FoodAnalyzer({ output, loading, originalQuery, searchAttempted, regiona
 
   const handlePrevious = () => {
     if (output && output.length > 0) {
-      setCurrentIndex((prevIndex) => 
+      notifySwipe();
+      setCurrentIndex((prevIndex) =>
         prevIndex === 0 ? output.length - 1 : prevIndex - 1
       );
     }
@@ -393,40 +399,6 @@ function FoodAnalyzer({ output, loading, originalQuery, searchAttempted, regiona
    <div className={`flex flex-col justify-center items-center w-full gap-4 transition-opacity duration-500 ease-in-out ${
       isVisible ? 'opacity-100' : 'opacity-0'
     }`}>
-      
-      {/* Navigation Controls */}
-      {output.length > 1 && (
-        <div className="flex items-center justify-center gap-3">
-          <button
-            onClick={handlePrevious}
-            className="grid h-9 w-9 place-items-center rounded-full border border-white/15 bg-white/[0.05] shadow-[inset_0_1px_0_rgba(255,255,255,0.08),0_2px_0_rgba(0,0,0,0.35)] transition hover:-translate-y-0.5 hover:border-saffron-400/40"
-            aria-label="Previous result"
-          >
-            <ChevronLeft className="h-4 w-4 text-white" />
-          </button>
-          
-          <div className="fa-chip-chunky text-[11px] text-white/70">
-            <span className="fa-num text-saffron-200">{currentIndex + 1}</span>
-            <span className="text-white/40">/</span>
-            <span>{output.length}</span>
-          </div>
-          
-          <button
-            onClick={handleNext}
-            className="grid h-9 w-9 place-items-center rounded-full border border-white/15 bg-white/[0.05] shadow-[inset_0_1px_0_rgba(255,255,255,0.08),0_2px_0_rgba(0,0,0,0.35)] transition hover:-translate-y-0.5 hover:border-saffron-400/40"
-            aria-label="Next result"
-          >
-            <ChevronRight className="h-4 w-4 text-white" />
-          </button>
-        </div>
-      )}
-
-      {/* Swipe Instructions */}
-      {output.length > 1 && (
-        <div className="text-center text-[11px] text-white/40">
-          Swipe or use arrows to browse different preparations
-        </div>
-      )}
 
       <RegionChips
         query={originalQuery}
@@ -460,8 +432,52 @@ function FoodAnalyzer({ output, loading, originalQuery, searchAttempted, regiona
         style={{ cursor: output.length > 1 ? 'grab' : 'default' }}
       >
         <div className="fa-sticker relative w-full overflow-hidden border-white/12 bg-ink-900/90 p-2 sm:p-3 md:p-4">
+          {/* In-card result swipe controls */}
+          {output.length > 1 ? (
+            <div className="absolute right-2 top-2 z-20 flex items-center gap-1 sm:right-3 sm:top-3 sm:gap-1.5">
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handlePrevious();
+                }}
+                className="grid h-8 w-8 place-items-center rounded-full border border-white/15 bg-black/45 text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.08)] backdrop-blur-md transition hover:border-saffron-400/45 hover:bg-black/60"
+                aria-label="Previous result"
+              >
+                <ChevronLeft className="h-3.5 w-3.5" />
+              </button>
+              <div className="min-w-[2.75rem] rounded-full border border-white/12 bg-black/45 px-2 py-1 text-center text-[10px] font-semibold tabular-nums text-white/80 backdrop-blur-md">
+                <span className="text-saffron-200">{currentIndex + 1}</span>
+                <span className="text-white/35">/</span>
+                <span>{output.length}</span>
+              </div>
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleNext();
+                }}
+                className="grid h-8 w-8 place-items-center rounded-full border border-white/15 bg-black/45 text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.08)] backdrop-blur-md transition hover:border-saffron-400/45 hover:bg-black/60"
+                aria-label="Next result"
+              >
+                <ChevronRight className="h-3.5 w-3.5" />
+              </button>
+            </div>
+          ) : (
+            <button
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation();
+                notifySwipe();
+              }}
+              className="absolute right-2 top-2 z-20 rounded-full border border-white/15 bg-black/45 px-2.5 py-1.5 text-[10px] font-semibold uppercase tracking-[0.14em] text-white/75 shadow-[inset_0_1px_0_rgba(255,255,255,0.08)] backdrop-blur-md transition hover:border-saffron-400/45 hover:text-saffron-200 sm:right-3 sm:top-3"
+            >
+              New search
+            </button>
+          )}
+
           <CardItem>
-  <CardHeader className="p-2 sm:p-3">
+  <CardHeader className="p-2 pt-10 sm:p-3 sm:pt-11">
     {/* Food Type Badge */}
     <div className="mb-2 flex justify-center sm:mb-3">
       <span className={`fa-chip-chunky text-[11px] ${badge.color.includes('green') || badge.color.includes('emerald') ? 'fa-sticker-leaf' : badge.color.includes('orange') || badge.color.includes('yellow') || badge.color.includes('red') ? 'fa-sticker-ember' : badge.color.includes('purple') ? 'fa-sticker-plum' : badge.color.includes('blue') ? 'fa-sticker-sky' : 'fa-sticker-saffron'}`}>
@@ -777,7 +793,10 @@ function FoodAnalyzer({ output, loading, originalQuery, searchAttempted, regiona
           {output.map((_, index) => (
             <button
               key={index}
-              onClick={() => setCurrentIndex(index)}
+              onClick={() => {
+                if (index !== currentIndex) notifySwipe();
+                setCurrentIndex(index);
+              }}
               className={`h-2.5 rounded-full transition-all ${
                 index === currentIndex 
                   ? 'w-6 bg-saffron-400 shadow-[0_0_8px_rgba(232,168,74,0.55)]' 
@@ -795,12 +814,14 @@ function FoodAnalyzer({ output, loading, originalQuery, searchAttempted, regiona
 function NoResultsCard({ query, onPick }) {
   const [suggestions, setSuggestions] = useState([]);
   const [loadingSug, setLoadingSug] = useState(false);
+  const regionHit = matchRegionQuery(query);
 
   useEffect(() => {
     let cancelled = false;
     const q = String(query || "").trim();
-    if (!q) {
+    if (!q || regionHit) {
       setSuggestions([]);
+      setLoadingSug(false);
       return;
     }
     setLoadingSug(true);
@@ -813,7 +834,7 @@ function NoResultsCard({ query, onPick }) {
     return () => {
       cancelled = true;
     };
-  }, [query]);
+  }, [query, regionHit]);
 
   const trigger = (term) => {
     if (typeof onPick === "function") onPick(term);
@@ -825,6 +846,31 @@ function NoResultsCard({ query, onPick }) {
       }
     }
   };
+
+  if (regionHit) {
+    return (
+      <div className="mx-auto w-full max-w-xl">
+        <div className="fa-sticker fa-sticker-saffron relative p-5 sm:p-6">
+          <p className="text-[10px] font-semibold uppercase tracking-[0.24em] text-amber-200/80">
+            Regional cuisine
+          </p>
+          <h3 className="mt-1 font-display text-xl font-extrabold text-white">
+            &ldquo;{query}&rdquo; is a region, not a single dish
+          </h3>
+          <p className="mt-2 text-sm text-white/55">
+            Open the {regionHit.state} cuisine page to browse dishes with IFCT, INDB, or
+            regional nutrition.
+          </p>
+          <Link
+            to={`/cuisine/${regionHit.slug}`}
+            className="fa-btn fa-btn-primary mt-5 inline-flex"
+          >
+            Explore {regionHit.state} cuisine
+          </Link>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="mx-auto w-full max-w-xl">

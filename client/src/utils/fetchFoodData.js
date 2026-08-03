@@ -1,5 +1,6 @@
 import axios from "axios";
 import { API_ENDPOINTS } from "./apiConfig";
+import { findDishByMatch, foodItemFromDish } from "../data/discoveryData";
 
 function authHeaders() {
   const headers = { "Content-Type": "application/json" };
@@ -115,6 +116,12 @@ export const fetchFoodById = async ({ source, code, label }) => {
     }
     return mapFoodItems(foodItems);
   } catch (error) {
+    // Production API may be missing /by-id — use on-device discovery catalog.
+    const localDish = findDishByMatch(source, code);
+    const localItem = foodItemFromDish(localDish, label);
+    if (localItem && (localItem.calories != null || localItem.protein_g != null)) {
+      return [localItem];
+    }
     attachAxiosMeta(error);
   }
 };
