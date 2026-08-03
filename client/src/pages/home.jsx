@@ -28,6 +28,8 @@ import {
   Apple,
   MapPin,
   ChevronUp,
+  ChevronLeft,
+  ChevronRight,
   Github,
   Lightbulb,
   GitCompareArrows,
@@ -118,6 +120,137 @@ function scoreTone(score) {
   if (score >= 55)
     return "bg-gradient-to-b from-saffron-400/30 to-saffron-600/20 text-saffron-200 border-saffron-400/50 shadow-[inset_0_1px_0_rgba(255,255,255,0.15),0_2px_6px_rgba(0,0,0,0.35)]";
   return "bg-gradient-to-b from-ember-400/30 to-ember-600/20 text-ember-300 border-ember-500/50 shadow-[inset_0_1px_0_rgba(255,255,255,0.15),0_2px_6px_rgba(0,0,0,0.35)]";
+}
+
+/**
+ * Horizontal card rail that actually scrolls on desktop + mobile:
+ * drag to scroll, wheel → horizontal, chevron buttons, visible thin scrollbar.
+ */
+function HorizontalRail({ children, className = "", ariaLabel = "Scrollable cards" }) {
+  const ref = useRef(null);
+  const drag = useRef({ active: false, startX: 0, startScroll: 0, moved: false, suppressClick: false });
+  const [canLeft, setCanLeft] = useState(false);
+  const [canRight, setCanRight] = useState(false);
+
+  const updateEdges = () => {
+    const el = ref.current;
+    if (!el) return;
+    const max = el.scrollWidth - el.clientWidth;
+    setCanLeft(el.scrollLeft > 4);
+    setCanRight(el.scrollLeft < max - 4);
+  };
+
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    updateEdges();
+    el.addEventListener("scroll", updateEdges, { passive: true });
+    const ro = new ResizeObserver(updateEdges);
+    ro.observe(el);
+    window.addEventListener("resize", updateEdges);
+
+    const onWheel = (e) => {
+      if (el.scrollWidth <= el.clientWidth) return;
+      // Prefer horizontal scroll for this rail; map vertical wheel to X
+      if (Math.abs(e.deltaY) >= Math.abs(e.deltaX)) {
+        el.scrollLeft += e.deltaY;
+        e.preventDefault();
+      }
+    };
+    el.addEventListener("wheel", onWheel, { passive: false });
+
+    return () => {
+      el.removeEventListener("scroll", updateEdges);
+      el.removeEventListener("wheel", onWheel);
+      ro.disconnect();
+      window.removeEventListener("resize", updateEdges);
+    };
+  }, []);
+
+  const scrollByAmount = (dir) => {
+    const el = ref.current;
+    if (!el) return;
+    el.scrollBy({ left: dir * Math.min(340, el.clientWidth * 0.8), behavior: "smooth" });
+  };
+
+  return (
+    <div className={`relative ${className}`}>
+      {canLeft && (
+        <button
+          type="button"
+          aria-label="Scroll left"
+          onClick={() => scrollByAmount(-1)}
+          className="absolute -left-1 top-1/2 z-20 hidden h-10 w-10 -translate-y-1/2 place-items-center rounded-full border border-white/15 bg-ink-900/90 text-white shadow-lg backdrop-blur sm:grid hover:border-saffron-400/50"
+        >
+          <ChevronLeft className="h-5 w-5" />
+        </button>
+      )}
+      {canRight && (
+        <button
+          type="button"
+          aria-label="Scroll right"
+          onClick={() => scrollByAmount(1)}
+          className="absolute -right-1 top-1/2 z-20 hidden h-10 w-10 -translate-y-1/2 place-items-center rounded-full border border-white/15 bg-ink-900/90 text-white shadow-lg backdrop-blur sm:grid hover:border-saffron-400/50"
+        >
+          <ChevronRight className="h-5 w-5" />
+        </button>
+      )}
+
+      <div
+        ref={ref}
+        role="list"
+        aria-label={ariaLabel}
+        className="fa-rail flex cursor-grab gap-5 overflow-x-auto overflow-y-hidden pb-4 active:cursor-grabbing"
+        style={{
+          WebkitOverflowScrolling: "touch",
+          touchAction: "pan-x",
+          overscrollBehaviorX: "contain",
+          scrollSnapType: "none",
+        }}
+        onPointerDown={(e) => {
+          if (e.pointerType === "mouse" && e.button !== 0) return;
+          // Don't start drag from interactive controls
+          if (e.target.closest("a,button,input,select,textarea,label")) return;
+          const el = ref.current;
+          if (!el) return;
+          drag.current = {
+            active: true,
+            startX: e.clientX,
+            startScroll: el.scrollLeft,
+            moved: false,
+          };
+          el.setPointerCapture?.(e.pointerId);
+        }}
+        onPointerMove={(e) => {
+          if (!drag.current.active) return;
+          const el = ref.current;
+          if (!el) return;
+          const dx = e.clientX - drag.current.startX;
+          if (Math.abs(dx) > 4) drag.current.moved = true;
+          el.scrollLeft = drag.current.startScroll - dx;
+        }}
+        onPointerUp={() => {
+          const wasMoved = drag.current.moved;
+          drag.current.active = false;
+          drag.current.moved = false;
+          if (wasMoved) drag.current.suppressClick = true;
+        }}
+        onPointerCancel={() => {
+          drag.current.active = false;
+          drag.current.moved = false;
+        }}
+        onClickCapture={(e) => {
+          if (drag.current.suppressClick) {
+            e.preventDefault();
+            e.stopPropagation();
+            drag.current.suppressClick = false;
+          }
+        }}
+      >
+        {children}
+      </div>
+    </div>
+  );
 }
 
 function SectionDivider() {
@@ -486,14 +619,13 @@ function Home({
               Compare roti, rice, dal & breakfast by region
             </Link>
           </div>
-          <div className="mt-8 flex gap-5 overflow-x-auto pb-4 hide-scrollbar snap-x snap-mandatory">
+          <HorizontalRail className="mt-8" ariaLabel="Regional cuisine cards">
             {REGIONS.map((region, i) => (
               <motion.div
                 key={region.state}
                 {...fadeUp}
                 transition={{ ...fadeUp.transition, delay: Math.min(i * 0.04, 0.28) }}
-                whileHover={reduceMotion ? undefined : { y: -8 }}
-                className="fa-card group relative h-[340px] w-[250px] shrink-0 snap-start overflow-hidden sm:h-[400px] sm:w-[300px]"
+                className="fa-card group relative h-[340px] w-[250px] shrink-0 overflow-hidden sm:h-[400px] sm:w-[300px]"
               >
                 <img
                   src={region.image}
@@ -530,7 +662,7 @@ function Home({
                 </div>
               </motion.div>
             ))}
-          </div>
+          </HorizontalRail>
         </div>
       </section>
 
@@ -545,18 +677,17 @@ function Home({
             title="Trending Across India"
             subtitle="Explore India's most searched dishes and compare nutrition at a glance."
           />
-          <div className="mt-12 flex gap-5 overflow-x-auto pb-4 hide-scrollbar snap-x snap-mandatory">
+          <HorizontalRail className="mt-12" ariaLabel="Trending dishes">
             {TRENDING_DISHES.map((dish, i) => (
               <motion.button
                 key={dish.name}
                 type="button"
                 {...fadeUp}
                 transition={{ ...fadeUp.transition, delay: Math.min(i * 0.04, 0.28) }}
-                whileHover={reduceMotion ? undefined : { y: -8 }}
                 onClick={() => runSearch(dish.name)}
                 disabled={loading}
                 aria-label={`Analyse ${dish.name}`}
-                className="fa-card group w-[260px] shrink-0 snap-start overflow-hidden text-left disabled:opacity-60 sm:w-[290px]"
+                className="fa-card group w-[260px] shrink-0 overflow-hidden text-left disabled:opacity-60 sm:w-[290px]"
               >
                 <div className="relative h-44 overflow-hidden sm:h-48">
                   <img
@@ -605,7 +736,7 @@ function Home({
                 </div>
               </motion.button>
             ))}
-          </div>
+          </HorizontalRail>
         </div>
       </section>
 

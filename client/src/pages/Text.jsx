@@ -5,7 +5,7 @@
 import { useState, useEffect } from 'react';
 import { CardContent, CardDescription, CardHeader, CardTitle } from "../components/ui/card";
 import { Sparkles, Info, LogIn, Database, Scale, ChevronLeft, ChevronRight, AlertCircle, Beef, Carrot, ChefHat, Drumstick } from "lucide-react";
-import { CardBody, CardContainer, CardItem } from "../components/ui/3D-card";
+import { CardItem } from "../components/ui/3D-card";
 import { useAuth } from "../utils/AuthContext";
 import { Link } from "react-router-dom";
 import LoadingCard from '../components/ui/loadingCard';
@@ -448,8 +448,7 @@ function FoodAnalyzer({ output, loading, originalQuery, searchAttempted, regiona
         onMouseUp={handleMouseUp}
         style={{ cursor: output.length > 1 ? 'grab' : 'default' }}
       >
-        <CardContainer className="w-full">
-          <CardBody className="fa-sticker relative overflow-hidden border-white/12 bg-ink-900/90 p-2 sm:p-3 md:p-4">
+        <div className="fa-sticker relative w-full overflow-hidden border-white/12 bg-ink-900/90 p-2 sm:p-3 md:p-4">
           <CardItem>
   <CardHeader className="p-2 sm:p-3">
     {/* Food Type Badge */}
@@ -694,8 +693,7 @@ function FoodAnalyzer({ output, loading, originalQuery, searchAttempted, regiona
                 </div>
               </CardContent>
             </CardItem>
-          </CardBody>
-        </CardContainer>
+        </div>
       </div>
 
       {/* Dot Indicators */}

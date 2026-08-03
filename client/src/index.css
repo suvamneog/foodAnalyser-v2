@@ -178,6 +178,30 @@
     display: none;
   }
 
+  /* Thin, always-usable scrollbar for card rails */
+  .fa-rail {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(232, 168, 74, 0.55) rgba(255, 255, 255, 0.06);
+  }
+
+  .fa-rail::-webkit-scrollbar {
+    height: 8px;
+  }
+
+  .fa-rail::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.06);
+    border-radius: 999px;
+  }
+
+  .fa-rail::-webkit-scrollbar-thumb {
+    background: rgba(232, 168, 74, 0.55);
+    border-radius: 999px;
+  }
+
+  .fa-rail::-webkit-scrollbar-thumb:hover {
+    background: rgba(232, 168, 74, 0.8);
+  }
+
   .glass-panel {
     background-color: rgba(255, 255, 255, 0.05);
     border: 1.5px solid rgba(255, 255, 255, 0.12);
