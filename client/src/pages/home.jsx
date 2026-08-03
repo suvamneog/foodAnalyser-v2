@@ -113,12 +113,25 @@ function scoreTone(score) {
 }
 
 /**
- * Horizontal card rail that actually scrolls on desktop + mobile:
- * drag to scroll, wheel → horizontal, chevron buttons, visible thin scrollbar.
+ * Horizontal card rail for desktop + mobile.
+ * Vertical page scroll always wins while the finger is moving the page;
+ * left/right rail scroll only engages when the page is static and the
+ * gesture is clearly horizontal (so landing on a card mid-scroll doesn't stall).
  */
 function HorizontalRail({ children, className = "", ariaLabel = "Scrollable cards" }) {
   const ref = useRef(null);
-  const drag = useRef({ active: false, startX: 0, startScroll: 0, moved: false, suppressClick: false });
+  const drag = useRef({
+    active: false,
+    axis: null, // null | "x" | "y"
+    startX: 0,
+    startY: 0,
+    startScroll: 0,
+    moved: false,
+    suppressClick: false,
+    pointerId: null,
+  });
+  const pageScrolling = useRef(false);
+  const pageScrollIdleTimer = useRef(null);
   const [canLeft, setCanLeft] = useState(false);
   const [canRight, setCanRight] = useState(false);
 
@@ -139,10 +152,32 @@ function HorizontalRail({ children, className = "", ariaLabel = "Scrollable card
     ro.observe(el);
     window.addEventListener("resize", updateEdges);
 
+    // Track page scroll — while the page is moving, block rail hijacking
+    const onPageScroll = () => {
+      pageScrolling.current = true;
+      // Cancel any in-progress rail drag so vertical scroll can continue
+      if (drag.current.active) {
+        drag.current.active = false;
+        drag.current.axis = null;
+        drag.current.moved = false;
+      }
+      clearTimeout(pageScrollIdleTimer.current);
+      pageScrollIdleTimer.current = setTimeout(() => {
+        pageScrolling.current = false;
+      }, 160);
+    };
+    window.addEventListener("scroll", onPageScroll, { passive: true, capture: true });
+
+    // Only treat sideways / shift-wheel as horizontal — never steal vertical wheel
     const onWheel = (e) => {
       if (el.scrollWidth <= el.clientWidth) return;
-      // Prefer horizontal scroll for this rail; map vertical wheel to X
-      if (Math.abs(e.deltaY) >= Math.abs(e.deltaX)) {
+      if (pageScrolling.current) return;
+      const mostlyHorizontal = Math.abs(e.deltaX) > Math.abs(e.deltaY);
+      if (mostlyHorizontal) {
+        el.scrollLeft += e.deltaX;
+        return;
+      }
+      if (e.shiftKey && Math.abs(e.deltaY) > 0) {
         el.scrollLeft += e.deltaY;
         e.preventDefault();
       }
@@ -154,8 +189,19 @@ function HorizontalRail({ children, className = "", ariaLabel = "Scrollable card
       el.removeEventListener("wheel", onWheel);
       ro.disconnect();
       window.removeEventListener("resize", updateEdges);
+      window.removeEventListener("scroll", onPageScroll, { capture: true });
+      clearTimeout(pageScrollIdleTimer.current);
     };
   }, []);
+
+  const endDrag = (suppress = false) => {
+    const wasMoved = drag.current.moved;
+    drag.current.active = false;
+    drag.current.axis = null;
+    drag.current.moved = false;
+    drag.current.pointerId = null;
+    if (suppress && wasMoved) drag.current.suppressClick = true;
+  };
 
   const scrollByAmount = (dir) => {
     const el = ref.current;
@@ -193,42 +239,65 @@ function HorizontalRail({ children, className = "", ariaLabel = "Scrollable card
         className="fa-rail flex cursor-grab gap-5 overflow-x-auto overflow-y-hidden pb-4 active:cursor-grabbing"
         style={{
           WebkitOverflowScrolling: "touch",
-          touchAction: "pan-x",
+          // Allow vertical page scroll through the rail; lock X only after intent
+          touchAction: "pan-y",
           overscrollBehaviorX: "contain",
           scrollSnapType: "none",
         }}
         onPointerDown={(e) => {
           if (e.pointerType === "mouse" && e.button !== 0) return;
-          // Don't start drag from interactive controls
           if (e.target.closest("a,button,input,select,textarea,label")) return;
+          // While the page is scrolling, never capture — let vertical continue
+          if (pageScrolling.current) return;
           const el = ref.current;
           if (!el) return;
           drag.current = {
             active: true,
+            axis: null,
             startX: e.clientX,
+            startY: e.clientY,
             startScroll: el.scrollLeft,
             moved: false,
+            suppressClick: false,
+            pointerId: e.pointerId,
           };
-          el.setPointerCapture?.(e.pointerId);
         }}
         onPointerMove={(e) => {
           if (!drag.current.active) return;
+          if (pageScrolling.current) {
+            endDrag(false);
+            return;
+          }
           const el = ref.current;
           if (!el) return;
+
           const dx = e.clientX - drag.current.startX;
+          const dy = e.clientY - drag.current.startY;
+
+          // Decide axis once the finger has moved enough
+          if (!drag.current.axis) {
+            if (Math.abs(dx) < 10 && Math.abs(dy) < 10) return;
+            drag.current.axis = Math.abs(dx) > Math.abs(dy) * 1.15 ? "x" : "y";
+            if (drag.current.axis === "y") {
+              // Vertical intent — release and let the page scroll
+              endDrag(false);
+              return;
+            }
+            // Horizontal intent — capture so the rail owns the gesture
+            try {
+              el.setPointerCapture?.(e.pointerId);
+            } catch {
+              /* ignore */
+            }
+          }
+
+          if (drag.current.axis !== "x") return;
           if (Math.abs(dx) > 4) drag.current.moved = true;
           el.scrollLeft = drag.current.startScroll - dx;
+          e.preventDefault();
         }}
-        onPointerUp={() => {
-          const wasMoved = drag.current.moved;
-          drag.current.active = false;
-          drag.current.moved = false;
-          if (wasMoved) drag.current.suppressClick = true;
-        }}
-        onPointerCancel={() => {
-          drag.current.active = false;
-          drag.current.moved = false;
-        }}
+        onPointerUp={() => endDrag(true)}
+        onPointerCancel={() => endDrag(false)}
         onClickCapture={(e) => {
           if (drag.current.suppressClick) {
             e.preventDefault();
@@ -270,18 +339,42 @@ function Home({
   const [stickySearch, setStickySearch] = useState(false);
   const [showTop, setShowTop] = useState(false);
   const [regionalPreset, setRegionalPreset] = useState(null);
-  /** After results appear, search stays hidden until the user swipes results. */
-  const [revealSearchAfterSwipe, setRevealSearchAfterSwipe] = useState(false);
+  /**
+   * After result cards appear, hide search until the user scrolls or swipes.
+   * Before any successful results, search stays visible.
+   */
+  const [revealSearch, setRevealSearch] = useState(false);
   const resultsRef = useRef(null);
   const heroSearchRef = useRef(null);
   const shouldScrollRef = useRef(false);
+  const scrollRevealLockedRef = useRef(false);
+  const hasResultCardsRef = useRef(false);
+  const revealSearchRef = useRef(false);
   const reduceMotion = useReducedMotion();
   const fadeUp = useFadeUp(reduceMotion);
   const location = useLocation();
   const navigate = useNavigate();
 
   const hasResultCards = !loading && Array.isArray(output) && output.length > 0;
-  const showSearchBar = !hasResultCards || revealSearchAfterSwipe;
+  const showSearchBar = !hasResultCards || revealSearch;
+
+  useEffect(() => {
+    hasResultCardsRef.current = hasResultCards;
+  }, [hasResultCards]);
+
+  useEffect(() => {
+    revealSearchRef.current = revealSearch;
+  }, [revealSearch]);
+
+  // Lock scroll-reveal briefly when results first land (ignore auto scrollIntoView)
+  useEffect(() => {
+    if (!hasResultCards) return;
+    scrollRevealLockedRef.current = true;
+    const t = setTimeout(() => {
+      scrollRevealLockedRef.current = false;
+    }, 900);
+    return () => clearTimeout(t);
+  }, [hasResultCards, originalQuery]);
 
   const featured = useMemo(
     () => FEATURED_DISHES[Math.floor(Math.random() * FEATURED_DISHES.length)],
@@ -308,7 +401,7 @@ function Home({
       setOriginalQuery(payload.query);
       setFoodName("");
       setSearchAttempted(true);
-      setRevealSearchAfterSwipe(false);
+      setRevealSearch(false);
       setRegionalPreset(payload.regionalPreset || null);
       shouldScrollRef.current = true;
       navigate(location.pathname, { replace: true, state: {} });
@@ -321,6 +414,15 @@ function Home({
       const marker = heroSearchRef.current;
       if (marker) setStickySearch(marker.getBoundingClientRect().bottom < 64);
       setShowTop(window.scrollY > 600);
+
+      // After results: any user scroll re-shows the search bar
+      if (
+        hasResultCardsRef.current &&
+        !revealSearchRef.current &&
+        !scrollRevealLockedRef.current
+      ) {
+        setRevealSearch(true);
+      }
     };
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
@@ -329,7 +431,12 @@ function Home({
   useEffect(() => {
     if (!loading && searchAttempted && shouldScrollRef.current) {
       shouldScrollRef.current = false;
+      scrollRevealLockedRef.current = true;
       resultsRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+      const t = setTimeout(() => {
+        scrollRevealLockedRef.current = false;
+      }, 900);
+      return () => clearTimeout(t);
     }
   }, [loading, searchAttempted, output]);
 
@@ -345,7 +452,7 @@ function Home({
 
     shouldScrollRef.current = true;
     setRegionalPreset(null);
-    setRevealSearchAfterSwipe(false);
+    setRevealSearch(false);
     setFoodName(trimmed);
     setLoading(true);
     setSearchAttempted(true);
@@ -378,7 +485,7 @@ function Home({
     if (match?.source && match?.code) {
       shouldScrollRef.current = true;
       setRegionalPreset(null);
-      setRevealSearchAfterSwipe(false);
+      setRevealSearch(false);
       setFoodName(friendly);
       setLoading(true);
       setSearchAttempted(true);
@@ -428,7 +535,7 @@ function Home({
               onSearchStart={() => {
                 shouldScrollRef.current = true;
                 setRegionalPreset(null);
-                setRevealSearchAfterSwipe(false);
+                setRevealSearch(false);
               }}
               compact
               inputId="food-input-sticky"
@@ -559,7 +666,7 @@ function Home({
               onSearchStart={() => {
                 shouldScrollRef.current = true;
                 setRegionalPreset(null);
-                setRevealSearchAfterSwipe(false);
+                setRevealSearch(false);
               }}
             />
             <div
@@ -664,7 +771,7 @@ function Home({
               searchAttempted={searchAttempted}
               regionalPreset={regionalPreset}
               onSuggestionClick={runSearch}
-              onResultSwipe={() => setRevealSearchAfterSwipe(true)}
+              onResultSwipe={() => setRevealSearch(true)}
             />
           </div>
         )}
