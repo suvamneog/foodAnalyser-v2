@@ -1,17 +1,64 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { Menu, X } from "lucide-react"
+import { Menu, X, Flame } from "lucide-react"
 import { Link, useNavigate } from "react-router-dom"
 import { useAuth } from "../utils/AuthContext"
+import { levelFromXp, loadProgress, streakStatus } from "../utils/progression"
+import { computeHealthScore } from "../utils/healthScore"
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false)
+  const [progress, setProgress] = useState(() => loadProgress())
+  const [scrolled, setScrolled] = useState(false)
   const { isAuthenticated, logout } = useAuth()
   const navigate = useNavigate()
 
   useEffect(() => {
-    if (isAuthenticated === false && !["/", "/calculator", "/signup", "/scan", "/image", "/about", "/review"].includes(window.location.pathname)) {
+    const refresh = () => setProgress(loadProgress())
+    refresh()
+    window.addEventListener("focus", refresh)
+    window.addEventListener("storage", refresh)
+    const t = setInterval(refresh, 15000)
+    return () => {
+      window.removeEventListener("focus", refresh)
+      window.removeEventListener("storage", refresh)
+      clearInterval(t)
+    }
+  }, [])
+
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 8)
+    onScroll()
+    window.addEventListener("scroll", onScroll, { passive: true })
+    return () => window.removeEventListener("scroll", onScroll)
+  }, [])
+
+  const streak = streakStatus(progress)
+  const lvl = levelFromXp(progress.xp)
+  const health = computeHealthScore()
+
+  useEffect(() => {
+    const path = window.location.pathname
+    const publicPaths = [
+      "/",
+      "/calculator",
+      "/signup",
+      "/login",
+      "/scan",
+      "/image",
+      "/about",
+      "/review",
+      "/plan",
+      "/tracker",
+      "/recipe",
+      "/profile",
+    ]
+    const isPublic =
+      publicPaths.includes(path) ||
+      path.startsWith("/cuisine/") ||
+      path.startsWith("/compare")
+    if (isAuthenticated === false && !isPublic) {
       navigate("/login")
     }
   }, [isAuthenticated, navigate])
@@ -35,200 +82,198 @@ const Navbar = () => {
     setIsOpen(false)
   }
 
-  const AuthenticatedLinks = () => (
-    <>
-      <Link
-        to="/logmeals"
-        className="cursor-target text-gray-600 hover:text-gray-900 px-2 py-2 text-sm font-medium transition-colors whitespace-nowrap"
-      >
-        Log Meals
-      </Link>
-      <Link 
-        to="/history" 
-        className="cursor-target text-gray-600 hover:text-gray-900 px-2 py-2 text-sm font-medium transition-colors whitespace-nowrap"
-      >
-        History
-      </Link>
-      <Link
-        to="/addfoods"
-        className="cursor-target text-gray-600 hover:text-gray-900 px-2 py-2 text-sm font-medium transition-colors whitespace-nowrap"
-      >
-        Add Food
-      </Link>
-    </>
-  )
+  const streakChipClasses =
+    streak.status === "active"
+      ? "fa-sticker-ember text-ember-200"
+      : streak.status === "at-risk"
+      ? "fa-sticker-saffron text-saffron-100"
+      : ""
+
+  const healthChipClasses =
+    health.total >= 75
+      ? "fa-sticker-leaf text-mint-200"
+      : health.total >= 50
+      ? "fa-sticker-saffron text-saffron-100"
+      : ""
 
   return (
-    <nav className="bg-white shadow-sm fixed w-full top-0 z-50">
-      <div className="max-w-7xl mx-auto px-3 sm:px-4 lg:px-8">
-        <div className="flex justify-between h-14 sm:h-16">
-          {/* Logo Section */}
-          <div className="flex-shrink-0 flex items-center">
-            <button 
-              onClick={handleLogoClick} 
-              className="cursor-target text-lg sm:text-xl font-semibold text-gray-900 whitespace-nowrap"
+    <nav
+      className={`fixed top-0 z-50 w-full transition-all duration-300 ${
+        scrolled
+          ? "border-b border-white/8 bg-ink-950/85 backdrop-blur-xl shadow-[0_8px_24px_rgba(0,0,0,0.35)]"
+          : "border-b border-transparent bg-ink-950/50 backdrop-blur-md"
+      }`}
+    >
+      <div className="mx-auto max-w-7xl px-3 sm:px-4 lg:px-8">
+        <div className="flex h-14 items-center justify-between sm:h-16">
+          {/* Logo */}
+          <div className="flex flex-shrink-0 items-center">
+            <button
+              onClick={handleLogoClick}
+              className="cursor-target whitespace-nowrap font-display text-lg font-extrabold tracking-tight text-white sm:text-xl"
             >
-              Food Analyser <span className="text-gray-400">×</span>
-              <span className="text-gray-900"> fit</span>
+              Food<span className="text-saffron-300">Analyser</span>
+              <span className="mx-1 text-white/25">×</span>
+              <span className="text-leaf-400">fit</span>
             </button>
           </div>
-          
-          {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center space-x-4 lg:space-x-6">
-            <Link
-              to="/about"
-              className="cursor-target text-gray-600 hover:text-gray-900 px-2 py-2 text-sm font-medium transition-colors whitespace-nowrap"
-            >
-              About
-            </Link>
-            <Link
-              to="/review"
-              className="cursor-target text-gray-600 hover:text-gray-900 px-2 py-2 text-sm font-medium transition-colors whitespace-nowrap"
-            >
-              Review
-            </Link>
-            <Link
-              to="/calculator"
-              className="cursor-target text-gray-600 hover:text-gray-900 px-2 py-2 text-sm font-medium transition-colors whitespace-nowrap"
-            >
-              Calories Calculator
-            </Link>
-            <Link
-              to="/scan"
-              className="cursor-target text-gray-600 hover:text-gray-900 px-2 py-2 text-sm font-medium transition-colors whitespace-nowrap"
-            >
-              Scan
-            </Link>
-            <Link
-              to="/image"
-              className="cursor-target text-gray-600 hover:text-gray-900 px-2 py-2 text-sm font-medium transition-colors whitespace-nowrap"
-            >
-              Image
-            </Link>
-            {isAuthenticated && <AuthenticatedLinks />}
-            <div className="flex items-center space-x-2 lg:space-x-4">
-              {!isAuthenticated ? (
-                <>
-                  <Link
-                    to="/signup"
-                    className="cursor-target text-gray-600 hover:text-gray-900 px-2 py-2 text-sm font-medium transition-colors whitespace-nowrap"
-                  >
-                    Sign up
-                  </Link>
-                  <Link
-                    to="/login"
-                    className="cursor-target bg-gray-900 text-white px-3 py-2 rounded-md text-sm font-medium hover:bg-gray-800 transition-colors whitespace-nowrap"
-                  >
-                    Login
-                  </Link>
-                </>
-              ) : (
-                <button
-                  onClick={handleLogout}
-                  className="cursor-target bg-gray-900 text-white px-3 py-2 rounded-md text-sm font-medium hover:bg-gray-800 transition-colors whitespace-nowrap"
-                >
-                  Logout
-                </button>
-              )}
-            </div>
+
+          {/* Desktop links */}
+          <div className="hidden items-center gap-1 md:flex lg:gap-2">
+            {[
+              ["/about", "About"],
+              ["/plan", "Diet Plan"],
+              ["/tracker", "Tracker"],
+              ["/calculator", "Calculator"],
+              ["/scan", "Scan"],
+              ["/image", "Image"],
+            ].map(([to, label]) => (
+              <Link
+                key={to}
+                to={to}
+                className="cursor-target rounded-full px-3 py-1.5 text-sm font-medium text-white/65 transition hover:bg-white/[0.06] hover:text-white"
+              >
+                {label}
+              </Link>
+            ))}
           </div>
 
-          {/* Mobile Menu Button */}
-          <div className="md:hidden flex items-center">
+          {/* Right — progression chips + auth */}
+          <div className="hidden items-center gap-2 md:flex">
+            <Link
+              to="/profile"
+              className={`fa-chip-chunky ${streakChipClasses}`}
+              title={`${streak.current}-day streak · Level ${lvl.level}`}
+            >
+              <Flame
+                className={`h-3.5 w-3.5 ${
+                  streak.status === "active" ? "fa-flame-pulse text-ember-300" : ""
+                }`}
+              />
+              <span className="fa-num text-sm">{streak.current}</span>
+              <span className="text-[10px] font-semibold uppercase tracking-wider text-white/60">
+                d · Lv.{lvl.level}
+              </span>
+            </Link>
+            <Link
+              to="/profile"
+              className={`fa-chip-chunky ${healthChipClasses}`}
+              title={`Health Score ${health.total}/100 — ${health.band.label}`}
+            >
+              <span className="fa-num text-sm">{health.total}</span>
+              <span className="text-[10px] font-semibold uppercase tracking-wider text-white/60">
+                / 100
+              </span>
+            </Link>
+
+            {!isAuthenticated ? (
+              <>
+                <Link
+                  to="/signup"
+                  className="cursor-target rounded-full px-3 py-1.5 text-sm font-medium text-white/70 transition hover:text-white"
+                >
+                  Sign up
+                </Link>
+                <Link to="/login" className="fa-btn-chunky !py-1.5 !px-4 text-sm">
+                  Login
+                </Link>
+              </>
+            ) : (
+              <button
+                onClick={handleLogout}
+                className="cursor-target rounded-full border border-white/15 bg-white/[0.04] px-3 py-1.5 text-sm font-medium text-white/70 transition hover:border-white/25 hover:bg-white/[0.08] hover:text-white"
+              >
+                Logout
+              </button>
+            )}
+          </div>
+
+          {/* Mobile menu button */}
+          <div className="flex items-center gap-2 md:hidden">
+            <Link
+              to="/profile"
+              className={`fa-chip-chunky ${streakChipClasses} !py-1 !px-2`}
+              title={`${streak.current}-day streak · Level ${lvl.level}`}
+            >
+              <Flame
+                className={`h-3 w-3 ${
+                  streak.status === "active" ? "fa-flame-pulse text-ember-300" : ""
+                }`}
+              />
+              <span className="fa-num text-xs">{streak.current}</span>
+            </Link>
             <button
               onClick={() => setIsOpen(!isOpen)}
-              className="inline-flex items-center justify-center p-2 rounded-md text-gray-600 hover:text-gray-900 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-gray-500 transition-all duration-300"
+              className="inline-flex items-center justify-center rounded-lg border border-white/10 bg-white/[0.05] p-2 text-white/80 transition hover:bg-white/[0.1]"
               aria-label="Toggle menu"
             >
-              {isOpen ? <X className="block h-5 w-5 sm:h-6 sm:w-6" /> : <Menu className="block h-5 w-5 sm:h-6 sm:w-6" />}
+              {isOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
             </button>
           </div>
         </div>
       </div>
 
-      {/* Mobile Menu - Slides from top to bottom */}
-      <div className={`md:hidden fixed top-14 sm:top-16 left-0 right-0 bg-white shadow-lg z-40 transform transition-all duration-300 ease-in-out ${
-        isOpen ? 'translate-y-0 opacity-100' : '-translate-y-4 opacity-0 pointer-events-none'
-      }`}>
-        <div className="px-3 py-3 space-y-1 border-t border-gray-200 max-h-[80vh] overflow-y-auto">
-          {/* Common Links */}
-          <button
-            onClick={() => handleNavigation("/about")}
-            className="block w-full text-left px-3 py-3 rounded-md text-sm sm:text-base font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-50 transition-colors"
-          >
-            About
-          </button>
-          <button
-            onClick={() => handleNavigation("/review")}
-            className="block w-full text-left px-3 py-3 rounded-md text-sm sm:text-base font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-50 transition-colors"
-          >
-            Review
-          </button>
-          <button
-            onClick={() => handleNavigation("/calculator")}
-            className="block w-full text-left px-3 py-3 rounded-md text-sm sm:text-base font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-50 transition-colors"
-          >
-            Calories Calculator
-          </button>
-          <button
-            onClick={() => handleNavigation("/scan")}
-            className="block w-full text-left px-3 py-3 rounded-md text-sm sm:text-base font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-50 transition-colors"
-          >
-            Scan
-          </button>
-          <button
-            onClick={() => handleNavigation("/image")}
-            className="block w-full text-left px-3 py-3 rounded-md text-sm sm:text-base font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-50 transition-colors"
-          >
-            Image
-          </button>
+      {/* Mobile menu */}
+      <div
+        className={`fixed inset-x-0 top-14 z-40 transform border-b border-white/10 bg-ink-950/95 backdrop-blur-xl transition-all duration-300 sm:top-16 md:hidden ${
+          isOpen ? "translate-y-0 opacity-100" : "-translate-y-4 pointer-events-none opacity-0"
+        }`}
+      >
+        <div className="max-h-[80vh] space-y-1 overflow-y-auto px-3 py-3">
+          {/* Progression pills row */}
+          <div className="mb-3 flex flex-wrap gap-2">
+            <Link to="/profile" onClick={() => setIsOpen(false)} className={`fa-chip-chunky ${streakChipClasses}`}>
+              <Flame className={`h-3.5 w-3.5 ${streak.status === "active" ? "fa-flame-pulse text-ember-300" : ""}`} />
+              <span className="fa-num text-sm">{streak.current}</span>
+              <span className="text-[10px] uppercase tracking-wider text-white/60">day streak</span>
+            </Link>
+            <Link to="/profile" onClick={() => setIsOpen(false)} className={`fa-chip-chunky ${healthChipClasses}`}>
+              <span className="fa-num text-sm">{health.total}</span>
+              <span className="text-[10px] uppercase tracking-wider text-white/60">score</span>
+            </Link>
+            <Link to="/profile" onClick={() => setIsOpen(false)} className="fa-chip-chunky fa-sticker-saffron">
+              <span className="fa-num text-sm">Lv.{lvl.level}</span>
+            </Link>
+          </div>
 
-          {/* Authenticated Links */}
-          {isAuthenticated && (
-            <>
-              <button
-                onClick={() => handleNavigation("/logmeals")}
-                className="block w-full text-left px-3 py-3 rounded-md text-sm sm:text-base font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-50 transition-colors"
-              >
-                Log Meals
-              </button>
-              <button
-                onClick={() => handleNavigation("/history")}
-                className="block w-full text-left px-3 py-3 rounded-md text-sm sm:text-base font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-50 transition-colors"
-              >
-                History
-              </button>
-              <button
-                onClick={() => handleNavigation("/addfoods")}
-                className="block w-full text-left px-3 py-3 rounded-md text-sm sm:text-base font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-50 transition-colors"
-              >
-                Add Food
-              </button>
-            </>
-          )}
+          {[
+            ["/about", "About"],
+            ["/review", "Review"],
+            ["/plan", "Diet Plan"],
+            ["/tracker", "Daily Tracker"],
+            ["/recipe", "Recipe Analyzer"],
+            ["/calculator", "Calorie Calculator"],
+            ["/scan", "Barcode Scan"],
+            ["/image", "Image Recognition"],
+            ["/profile", "Profile"],
+          ].map(([to, label]) => (
+            <button
+              key={to}
+              onClick={() => handleNavigation(to)}
+              className="block w-full rounded-lg px-3 py-2.5 text-left text-sm font-medium text-white/80 transition hover:bg-white/[0.05] hover:text-white"
+            >
+              {label}
+            </button>
+          ))}
 
-          {/* Auth Buttons */}
-          <div className="pt-3 space-y-2 border-t border-gray-200 mt-3">
+          <div className="mt-3 space-y-2 border-t border-white/10 pt-3">
             {!isAuthenticated ? (
               <>
                 <button
                   onClick={() => handleNavigation("/signup")}
-                  className="block w-full text-center px-3 py-3 rounded-md text-sm sm:text-base font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-50 transition-colors border border-gray-200"
+                  className="block w-full rounded-lg border border-white/10 px-3 py-2.5 text-center text-sm font-medium text-white/80 transition hover:bg-white/[0.05]"
                 >
                   Sign up
                 </button>
                 <button
                   onClick={() => handleNavigation("/login")}
-                  className="block w-full text-center bg-gray-900 text-white px-4 py-3 rounded-md text-sm sm:text-base font-medium hover:bg-gray-800 transition-colors"
+                  className="fa-btn-chunky w-full"
                 >
                   Login
                 </button>
               </>
             ) : (
-              <button
-                onClick={handleLogout}
-                className="block w-full text-center bg-gray-900 text-white px-4 py-3 rounded-md text-sm sm:text-base font-medium hover:bg-gray-800 transition-colors"
-              >
+              <button onClick={handleLogout} className="fa-btn-chunky w-full">
                 Logout
               </button>
             )}
@@ -236,10 +281,10 @@ const Navbar = () => {
         </div>
       </div>
 
-      {/* Mobile Menu Overlay */}
-      <div 
-        className={`md:hidden fixed inset-0 bg-black bg-opacity-50 z-30 transition-opacity duration-300 ${
-          isOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'
+      {/* Overlay */}
+      <div
+        className={`fixed inset-0 z-30 bg-black/60 transition-opacity duration-300 md:hidden ${
+          isOpen ? "opacity-100" : "pointer-events-none opacity-0"
         }`}
         onClick={() => setIsOpen(false)}
       />

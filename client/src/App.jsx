@@ -2,6 +2,7 @@ import { useState } from "react"
 import { Routes, Route } from "react-router-dom"
 import { AuthProvider } from "./utils/AuthContext"
 import { ReviewsProvider } from "./utils/ReviewsContext"
+import { ToastProvider } from "./components/ui/toast"
 import ShootingStarsAndStarsBackgroundDemo from "./pages/background"
 import AddFood from "./pages/addFood"
 import LogMeals from "./pages/logMeals"
@@ -16,6 +17,12 @@ import FoodScanner from "./pages/FoodImageRecognition"
 import NavBar from "./pages/navBar"
 import About from "./pages/About"
 import Review from "./pages/review"
+import CuisinePage from "./pages/CuisinePage"
+import CompareStaples from "./pages/CompareStaples"
+import DietPlan from "./pages/DietPlan"
+import DailyTracker from "./pages/DailyTracker"
+import RecipeAnalyzer from "./pages/RecipeAnalyzer"
+import Profile from "./pages/Profile"
 
 function App() {
   const [foodName, setFoodName] = useState("");
@@ -25,6 +32,7 @@ function App() {
 
   return (
     <AuthProvider>
+      <ToastProvider>
       <ReviewsProvider>
         <NavBar />
         <Routes>
@@ -65,8 +73,16 @@ function App() {
           <Route path="/addfoods" element={<AddFood />} />
           <Route path="/about" element={<About />} />
           <Route path="/review" element={<Review />} />
+          <Route path="/cuisine/:slug" element={<CuisinePage />} />
+          <Route path="/compare" element={<CompareStaples />} />
+          <Route path="/compare/:familyId" element={<CompareStaples />} />
+          <Route path="/plan" element={<DietPlan />} />
+          <Route path="/tracker" element={<DailyTracker />} />
+          <Route path="/recipe" element={<RecipeAnalyzer />} />
+          <Route path="/profile" element={<Profile />} />
         </Routes>
       </ReviewsProvider>
+      </ToastProvider>
     </AuthProvider>
   );
 }

@@ -4,24 +4,24 @@ import { ShootingStars } from "../components/ui/shooting-stars";
 import { StarsBackground } from "../components/ui/stars-background";
 import Home from "./home";
 
-function ShootingStarsAndStarsBackgroundDemo({ 
-  foodName, 
-  setFoodName, 
-  output, 
-  setOutput, 
-  loading, 
-  setLoading, 
+function ShootingStarsAndStarsBackgroundDemo({
+  foodName,
+  setFoodName,
+  output,
+  setOutput,
+  loading,
+  setLoading,
   setOriginalQuery,
   originalQuery,
-  children 
+  children,
 }) {
   return (
-    <div className="h-screen w-screen flex flex-col items-center justify-center relative bg-neutral-900">
-      <div className="absolute inset-0 pointer-events-none">
+    <div className="relative min-h-screen w-full overflow-x-hidden bg-ink-950">
+      <div className="pointer-events-none absolute inset-0 opacity-50">
         <ShootingStars />
         <StarsBackground />
       </div>
-      <div className="relative z-10 w-full flex flex-col items-center">
+      <div className="relative z-10 w-full">
         {children || (
           <Home
             foodName={foodName}

@@ -9,7 +9,8 @@ import { cn } from "../../utils/cn";
 export function PlaceholdersAndVanishInput({
   placeholders,
   onChange,
-  onSubmit
+  onSubmit,
+  id = "food-input",
 }) {
   const [currentPlaceholder, setCurrentPlaceholder] = useState(0);
 
@@ -181,19 +182,24 @@ const handleSubmit = (e) => {
   vanishAndSubmit(); // Start animation after API call
 };
   return (
-    (<form
+    <form
       className={cn(
-        "w-full relative max-w-xl mx-auto bg-white dark:bg-zinc-800 h-12 rounded-full overflow-hidden shadow-[0px_2px_3px_-1px_rgba(0,0,0,0.1),_0px_1px_0px_0px_rgba(25,28,33,0.02),_0px_0px_0px_1px_rgba(25,28,33,0.08)] transition duration-200",
-        value && "bg-gray-50"
+        "w-full relative max-w-2xl mx-auto h-[4.5rem] rounded-full overflow-hidden border-[1.5px] border-white/14 bg-white/[0.08] shadow-[0_16px_48px_rgba(0,0,0,0.4),inset_0_1px_0_rgba(255,255,255,0.06)] backdrop-blur-2xl transition duration-300 focus-within:border-saffron-400/50 focus-within:bg-white/[0.11] focus-within:shadow-[0_0_0_1px_rgba(232,168,74,0.4),0_0_0_8px_rgba(232,168,74,0.08),0_20px_50px_rgba(0,0,0,0.45)]",
+        value && "bg-white/[0.1] border-saffron-400/35"
       )}
-      onSubmit={handleSubmit}>
+      onSubmit={handleSubmit}
+      role="search"
+      aria-label="Search Indian foods"
+    >
       <canvas
         className={cn(
-          "absolute pointer-events-none  text-base transform scale-50 top-[20%] left-2 sm:left-8 origin-top-left filter invert dark:invert-0 pr-20",
+          "absolute pointer-events-none text-base transform scale-50 top-[20%] left-2 sm:left-8 origin-top-left filter invert-0 pr-20",
           !animating ? "opacity-0" : "opacity-100"
         )}
-        ref={canvasRef} />
+        ref={canvasRef}
+      />
       <input
+        id={id}
         onChange={(e) => {
           if (!animating) {
             setValue(e.target.value);
@@ -205,13 +211,18 @@ const handleSubmit = (e) => {
         value={value}
         type="text"
         className={cn(
-          "w-full relative text-sm sm:text-base z-50 border-none dark:text-white bg-transparent text-black h-full rounded-full focus:outline-none focus:ring-0 pl-4 sm:pl-10 pr-20",
-          animating && "text-transparent dark:text-transparent"
-        )} />
+          "w-full relative text-[15px] sm:text-[17px] z-50 border-none text-white bg-transparent h-full rounded-full focus:outline-none focus:ring-0 pl-6 sm:pl-14 pr-24 tracking-[-0.015em]",
+          animating && "text-transparent"
+        )}
+        aria-label="Food search"
+        autoComplete="off"
+      />
       <button
         disabled={!value}
         type="submit"
-        className="absolute right-2 top-1/2 z-50 -translate-y-1/2 h-8 w-8 rounded-full disabled:bg-gray-100 bg-black dark:bg-zinc-900 dark:disabled:bg-zinc-800 transition duration-200 flex items-center justify-center">
+        aria-label="Search"
+        className="absolute right-3 top-1/2 z-50 -translate-y-1/2 h-12 w-12 rounded-full disabled:bg-white/5 bg-gradient-to-br from-saffron-300 to-saffron-500 disabled:text-white/30 text-ink-950 transition duration-200 flex items-center justify-center hover:brightness-105 active:scale-95 shadow-[0_4px_18px_rgba(212,137,42,0.4)]"
+      >
         <motion.svg
           xmlns="http://www.w3.org/2000/svg"
           width="24"
@@ -222,7 +233,10 @@ const handleSubmit = (e) => {
           strokeWidth="2"
           strokeLinecap="round"
           strokeLinejoin="round"
-          className="text-gray-300 h-4 w-4">
+          className="h-4 w-4"
+          animate={value ? { x: [0, 2, 0] } : { x: 0 }}
+          transition={{ duration: 1.4, repeat: value ? Infinity : 0, ease: "easeInOut" }}
+        >
           <path stroke="none" d="M0 0h24v24H0z" fill="none" />
           <motion.path
             d="M5 12l14 0"
@@ -236,13 +250,13 @@ const handleSubmit = (e) => {
             transition={{
               duration: 0.3,
               ease: "linear",
-            }} />
+            }}
+          />
           <path d="M13 18l6 -6" />
           <path d="M13 6l6 6" />
         </motion.svg>
       </button>
-      <div
-        className="absolute inset-0 flex items-center rounded-full pointer-events-none">
+      <div className="absolute inset-0 flex items-center rounded-full pointer-events-none">
         <AnimatePresence mode="wait">
           {!value && (
             <motion.p
@@ -263,12 +277,13 @@ const handleSubmit = (e) => {
                 duration: 0.3,
                 ease: "linear",
               }}
-              className="dark:text-zinc-500 text-sm sm:text-base font-normal text-neutral-500 pl-4 sm:pl-12 text-left w-[calc(100%-2rem)] truncate">
+              className="text-[15px] sm:text-[17px] font-normal text-white/35 pl-6 sm:pl-14 text-left w-[calc(100%-2rem)] truncate tracking-[-0.015em]"
+            >
               {placeholders[currentPlaceholder]}
             </motion.p>
           )}
         </AnimatePresence>
       </div>
-    </form>)
+    </form>
   );
 }

@@ -1,22 +1,19 @@
 /* eslint-disable react/prop-types */
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { Label } from "../components/ui/label";
-import { Input } from "../components/ui/input";
-import { useNavigate } from "react-router-dom";
-import { ShootingStars } from "../components/ui/shooting-stars";
-import { StarsBackground } from "../components/ui/stars-background";
-import { cn } from "../utils/cn";
+import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { useAuth } from "../utils/AuthContext";
 import { useToast } from "../components/ui/toast";
+import { API_ENDPOINTS } from "../utils/apiConfig";
 import {
   IconBrandGithub,
   IconBrandGoogle,
   IconEye,
   IconEyeOff,
-  IconAlertCircle
+  IconAlertCircle,
 } from "@tabler/icons-react";
+import { User, Mail, Lock } from "lucide-react";
 
 function SignupFormDemo() {
   const [showPassword, setShowPassword] = useState(false);
@@ -24,7 +21,7 @@ function SignupFormDemo() {
   const [errors, setErrors] = useState({});
   const navigate = useNavigate();
   const { toast } = useToast();
-  const { handleSocialLogin } = useAuth();
+  const { login, handleSocialLogin } = useAuth();
   const [user, setUser] = useState({ name: "", email: "", password: "" });
 
   const validateForm = () => {
@@ -40,7 +37,7 @@ function SignupFormDemo() {
     } else if (user.password.length < 6) {
       newErrors.password = "Password must be at least 6 characters";
     }
-    
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -49,34 +46,51 @@ function SignupFormDemo() {
     const { name, value } = e.target;
     setUser({ ...user, [name]: value });
     if (errors[name]) {
-      setErrors({...errors, [name]: null});
+      setErrors({ ...errors, [name]: null });
     }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     if (!validateForm()) return;
-    
+
     setIsLoading(true);
     try {
-      await axios.post("https://foodanalyser.onrender.com/api/auth/signup", user);
-      toast({
-        title: "Account created!",
-        description: "Please log in with your credentials",
-        variant: "success",
+      const response = await axios.post(API_ENDPOINTS.AUTH_SIGNUP, {
+        name: user.name.trim(),
+        email: user.email.trim(),
+        password: user.password,
       });
-      navigate("/login");
+
+      if (response.data.token) {
+        login(response.data.token);
+        toast({
+          title: "Account created!",
+          description: "You're signed in",
+          variant: "success",
+        });
+        navigate("/");
+      } else {
+        toast({
+          title: "Account created!",
+          description: "Please log in with your credentials",
+          variant: "success",
+        });
+        navigate("/login");
+      }
     } catch (error) {
       console.error("Signup error:", error);
+      const message =
+        error.response?.data?.message || "Something went wrong. Please try again.";
       if (error.response?.status === 400) {
-        setErrors({...errors, email: "Email already exists"});
+        setErrors({ ...errors, email: message });
       } else if (error.response?.data?.errors) {
         setErrors(error.response.data.errors);
       } else {
         toast({
           title: "Registration failed",
-          description: error.response?.data?.message || "Something went wrong. Please try again.",
+          description: message,
           variant: "destructive",
         });
       }
@@ -95,192 +109,182 @@ function SignupFormDemo() {
         variant: "success",
       });
     } catch (error) {
-      toast({
-        title: "Authentication failed",
-        description: `Could not sign up with ${provider}. Please try again.`,
-        variant: "destructive",
-      });
-      console.log(error);
+      if (error?.message !== "Authentication cancelled") {
+        toast({
+          title: "Authentication failed",
+          description:
+            error?.message || `Could not sign up with ${provider}. Please try again.`,
+          variant: "destructive",
+        });
+      }
     } finally {
       setIsLoading(false);
     }
   };
 
   return (
-    <div className="h-screen w-screen flex flex-col items-center justify-center relative bg-neutral-900">
-      <div className="absolute inset-0 pointer-events-none">
-        <StarsBackground />
-        <ShootingStars />
-      </div>
+    <div className="relative flex min-h-screen w-full items-center justify-center bg-ink-950 px-4 py-20">
+      <div
+        className="pointer-events-none absolute inset-0"
+        aria-hidden="true"
+        style={{
+          backgroundImage:
+            "radial-gradient(ellipse 70% 50% at 80% 8%, rgba(212,137,42,0.16), transparent 55%), radial-gradient(ellipse 50% 40% at 15% 25%, rgba(79,154,98,0.1), transparent 50%), radial-gradient(ellipse 40% 30% at 50% 100%, rgba(255,106,46,0.05), transparent 55%)",
+        }}
+      />
 
       <motion.div
-        initial={{ opacity: 0, scale: 0.9 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={{ duration: 0.5, ease: "easeOut" }}
-        className="w-[90%] sm:w-[80%] md:w-[60%] lg:w-[40%] max-w-md mx-auto rounded-2xl p-4 sm:p-6 md:p-8 shadow-lg bg-white dark:bg-black relative z-10"
+        initial={{ opacity: 0, y: 12 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
+        className="fa-sticker fa-dots relative z-10 w-full max-w-md p-6 sm:p-8"
       >
-        <h2 className="font-bold text-lg sm:text-xl text-neutral-800 dark:text-neutral-200">
-          Welcome to Food Analyser x fit
-        </h2>
-        <p className="text-neutral-600 text-xs sm:text-sm max-w-sm mt-2 dark:text-neutral-300">
-          Sign up here
-        </p>
+        <div className="relative mb-7 text-center">
+          <p className="font-display text-[10px] font-semibold uppercase tracking-[0.28em] text-saffron-300/90">
+            FoodAnalyser × fit
+          </p>
+          <h1 className="mt-2 font-display text-3xl font-extrabold tracking-tight text-white">
+            Create your account
+          </h1>
+          <p className="mt-2 text-sm text-white/50">
+            Track Indian meals, earn streaks, and sync your diet plan.
+          </p>
+        </div>
 
-        <form className="my-6 sm:my-8" onSubmit={handleSubmit}>
-          <motion.div
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: 0.3, duration: 0.4 }}
-            className="flex flex-col md:flex-row space-y-2 md:space-y-0 md:space-x-2 mb-4"
+        <form className="relative space-y-4" onSubmit={handleSubmit}>
+          <Field
+            label="Your name"
+            icon={<User className="h-4 w-4" />}
+            error={errors.name}
           >
-            <LabelInputContainer>
-              <Label htmlFor="name" className="text-sm">Your name</Label>
-              <Input 
-                id="name" 
-                className={`text-white text-sm ${errors.name ? "border-red-500 focus:ring-red-500" : ""}`} 
-                placeholder="Tyler" 
-                type="text" 
-                value={user.name} 
-                onChange={handleChange} 
-                name="name"
-                disabled={isLoading}
-              />
-              {errors.name && (
-                <p className="text-red-500 text-xs mt-1 flex items-center">
-                  <IconAlertCircle className="h-3 w-3 mr-1" />
-                  {errors.name}
-                </p>
-              )}
-            </LabelInputContainer>
-          </motion.div>
-
-          <motion.div
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: 0.5, duration: 0.4 }}
-            className="mb-4"
-          >
-            <LabelInputContainer>
-              <Label htmlFor="email" className="text-sm">Email Address</Label>
-              <Input 
-                id="email" 
-                className={`text-white text-sm ${errors.email ? "border-red-500 focus:ring-red-500" : ""}`} 
-                placeholder="youremail@gmail.com" 
-                type="email" 
-                value={user.email} 
-                onChange={handleChange} 
-                name="email"
-                disabled={isLoading}
-              />
-              {errors.email && (
-                <p className="text-red-500 text-xs mt-1 flex items-center">
-                  <IconAlertCircle className="h-3 w-3 mr-1" />
-                  {errors.email}
-                </p>
-              )}
-            </LabelInputContainer>
-          </motion.div>
-
-          <motion.div
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: 0.7, duration: 0.4 }}
-            className="mb-4"
-          >
-            <LabelInputContainer>
-              <Label htmlFor="password" className="text-sm">Password</Label>
-              <div className="relative">
-                <Input
-                  id="password"
-                  className={`text-white text-sm pr-10 ${errors.password ? "border-red-500 focus:ring-red-500" : ""}`}
-                  placeholder="••••••••"
-                  type={showPassword ? "text" : "password"}
-                  value={user.password}
-                  onChange={handleChange}
-                  name="password"
-                  disabled={isLoading}
-                />
-                <button
-                  type="button"
-                  className="absolute inset-y-0 right-2 flex items-center text-white"
-                  onClick={() => setShowPassword((prev) => !prev)}
-                  tabIndex="-1"
-                >
-                  {showPassword ? <IconEyeOff className="h-4 w-4" /> : <IconEye className="h-4 w-4" />}
-                </button>
-              </div>
-              {errors.password && (
-                <p className="text-red-500 text-xs mt-1 flex items-center">
-                  <IconAlertCircle className="h-3 w-3 mr-1" />
-                  {errors.password}
-                </p>
-              )}
-            </LabelInputContainer>
-          </motion.div>
-
-          <motion.button
-            whileHover={{ scale: isLoading ? 1 : 1.05 }}
-            whileTap={{ scale: isLoading ? 1 : 0.95 }}
-            className={`bg-gradient-to-br from-black to-neutral-600 dark:from-zinc-900 dark:to-zinc-900 block w-full text-white rounded-md h-9 sm:h-10 font-medium shadow-md text-sm ${isLoading ? 'opacity-70 cursor-not-allowed' : ''}`}
-            type="submit"
-            disabled={isLoading}
-          >
-            {isLoading ? 
-              <span className="flex items-center justify-center">
-                <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                </svg>
-                Processing...
-              </span> : 
-              "Sign up →"
-            }
-          </motion.button>
-
-          <div className="bg-gradient-to-r from-transparent via-neutral-300 dark:via-neutral-700 to-transparent my-6 sm:my-8 h-[1px] w-full" />
-
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.9, duration: 0.5 }}
-            className="flex flex-col space-y-3"
-          >
-            <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              className="flex space-x-2 items-center justify-start px-4 w-full text-black rounded-md h-9 sm:h-10 font-medium shadow-md bg-gray-50 dark:bg-zinc-900"
-              type="button"
-              onClick={() => handleSocialSignup('github')}
+            <input
+              id="name"
+              name="name"
+              type="text"
+              placeholder="e.g. Priya Sharma"
+              className={`fa-input !pl-10 ${errors.name ? "!border-red-400/60" : ""}`}
+              value={user.name}
+              onChange={handleChange}
               disabled={isLoading}
-            >
-              <IconBrandGithub className="h-4 w-4 text-neutral-800 dark:text-neutral-300" />
-              <span className="text-neutral-700 dark:text-neutral-300 text-xs sm:text-sm">
-                Continue with GitHub
-              </span>
-            </motion.button>
+            />
+          </Field>
 
-            <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              className="flex space-x-2 items-center justify-start px-4 w-full text-black rounded-md h-9 sm:h-10 font-medium shadow-md bg-gray-50 dark:bg-zinc-900"
-              type="button"
-              onClick={() => handleSocialSignup('google')}
+          <Field
+            label="Email"
+            icon={<Mail className="h-4 w-4" />}
+            error={errors.email}
+          >
+            <input
+              id="email"
+              name="email"
+              type="email"
+              placeholder="you@email.com"
+              className={`fa-input !pl-10 ${errors.email ? "!border-red-400/60" : ""}`}
+              value={user.email}
+              onChange={handleChange}
               disabled={isLoading}
+            />
+          </Field>
+
+          <Field
+            label="Password"
+            icon={<Lock className="h-4 w-4" />}
+            error={errors.password}
+          >
+            <input
+              id="password"
+              name="password"
+              type={showPassword ? "text" : "password"}
+              placeholder="At least 6 characters"
+              className={`fa-input !pl-10 !pr-10 ${errors.password ? "!border-red-400/60" : ""}`}
+              value={user.password}
+              onChange={handleChange}
+              disabled={isLoading}
+            />
+            <button
+              type="button"
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-white/40 hover:text-white/70"
+              onClick={() => setShowPassword((prev) => !prev)}
+              tabIndex={-1}
+              aria-label={showPassword ? "Hide password" : "Show password"}
             >
-              <IconBrandGoogle className="h-4 w-4 text-neutral-800 dark:text-neutral-300" />
-              <span className="text-neutral-700 dark:text-neutral-300 text-xs sm:text-sm">
-                Continue with Google
-              </span>
-            </motion.button>
-          </motion.div>
+              {showPassword ? (
+                <IconEyeOff className="h-4 w-4" />
+              ) : (
+                <IconEye className="h-4 w-4" />
+              )}
+            </button>
+          </Field>
+
+          <button type="submit" className="fa-btn-chunky w-full" disabled={isLoading}>
+            {isLoading ? "Creating account…" : "Sign up →"}
+          </button>
+
+          <div className="relative my-2">
+            <div className="absolute inset-0 flex items-center">
+              <div className="w-full border-t border-white/10" />
+            </div>
+            <div className="relative flex justify-center text-[11px]">
+              <span className="bg-ink-900 px-2 text-white/40">or continue with</span>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-2 gap-2">
+            <button
+              type="button"
+              onClick={() => handleSocialSignup("github")}
+              disabled={isLoading}
+              className="inline-flex items-center justify-center gap-2 rounded-full border border-white/12 bg-white/[0.04] px-3 py-2.5 text-sm font-semibold text-white/75 shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] transition hover:border-white/25 hover:text-white disabled:opacity-50"
+            >
+              <IconBrandGithub className="h-4 w-4" />
+              GitHub
+            </button>
+            <button
+              type="button"
+              onClick={() => handleSocialSignup("google")}
+              disabled={isLoading}
+              className="inline-flex items-center justify-center gap-2 rounded-full border border-white/12 bg-white/[0.04] px-3 py-2.5 text-sm font-semibold text-white/75 shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] transition hover:border-white/25 hover:text-white disabled:opacity-50"
+            >
+              <IconBrandGoogle className="h-4 w-4" />
+              Google
+            </button>
+          </div>
+
+          <p className="pt-1 text-center text-sm text-white/45">
+            Already have an account?{" "}
+            <Link
+              to="/login"
+              className="font-semibold text-saffron-300 underline decoration-saffron-400/40 underline-offset-2 hover:text-saffron-200"
+            >
+              Sign in
+            </Link>
+          </p>
         </form>
       </motion.div>
     </div>
   );
 }
 
-const LabelInputContainer = ({ children, className }) => {
-  return <div className={cn("flex flex-col space-y-2 w-full", className)}>{children}</div>;
-};
+function Field({ label, icon, error, children }) {
+  return (
+    <div>
+      <label className="mb-1.5 block text-[11px] font-semibold uppercase tracking-[0.16em] text-white/45">
+        {label}
+      </label>
+      <div className="relative">
+        <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-white/35">
+          {icon}
+        </span>
+        {children}
+      </div>
+      {error && (
+        <p className="mt-1.5 flex items-center gap-1 text-xs text-red-300">
+          <IconAlertCircle className="h-3.5 w-3.5" />
+          {error}
+        </p>
+      )}
+    </div>
+  );
+}
 
 export default SignupFormDemo;

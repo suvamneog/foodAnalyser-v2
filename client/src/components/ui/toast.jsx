@@ -33,42 +33,30 @@ const Toaster = ({ ...props }) => {
   );
 };
 
+import { toast as sonnerToast } from "sonner";
+
 // ToastProvider component to manage toast state and provide context
 export function ToastProvider({ children }) {
-  const [toasts, setToasts] = React.useState([]);
+  const toast = React.useCallback(({ title, description, variant = "default" }) => {
+    const message = title || description || "";
+    const opts = description && title ? { description } : undefined;
 
-  // Function to add a new toast
-  const toast = React.useCallback(
-    ({ variant = "default", ...props }) => {
-      const id = Math.random().toString(36).substring(2, 9); // Generate a unique ID for the toast
-
-      setToasts((prevToasts) => [
-        ...prevToasts,
-        { id, variant, ...props },
-      ]);
-
-      // Automatically dismiss the toast after 5 seconds
-      setTimeout(() => {
-        dismissToast(id);
-      }, 5000);
-
-      return id; // Return the toast ID for manual dismissal
-    },
-    []
-  );
-
-  // Function to dismiss a toast by ID
-  const dismissToast = React.useCallback(
-    (id) => {
-      setToasts((prevToasts) => prevToasts.filter((toast) => toast.id !== id));
-    },
-    []
-  );
+    if (variant === "destructive" || variant === "error") {
+      return sonnerToast.error(message, opts);
+    }
+    if (variant === "success") {
+      return sonnerToast.success(message, opts);
+    }
+    if (variant === "warning") {
+      return sonnerToast.warning(message, opts);
+    }
+    return sonnerToast(message, opts);
+  }, []);
 
   return (
-    <ToastContext.Provider value={{ toast, dismissToast, toasts }}>
+    <ToastContext.Provider value={{ toast, dismissToast: sonnerToast.dismiss }}>
       {children}
-      <Toaster />
+      <Toaster richColors position="top-center" />
     </ToastContext.Provider>
   );
 }

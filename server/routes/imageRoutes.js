@@ -3,348 +3,483 @@ const OpenAI = require('openai');
 const sharp = require('sharp');
 const path = require('path');
 const fs = require('fs');
+const { lookupGlycemicIndex, classifyGi } = require('../utils/verifiedGi');
+
 const router = express.Router();
 
-// In-memory cache for IFCT data and analysis results
 const cache = {
   ifctData: null,
   ifctIndex: new Map(),
-  analysisResults: new Map(),
-  foodAlternatives: new Map()
 };
 
-// Cache TTL (1 hour)
-const CACHE_TTL = 60 * 60 * 1000;
-
-// Load IFCT 2017 dataset with indexing
 const loadIFCTData = async () => {
-  if (cache.ifctData) {
-    console.log("✅ IFCT data already loaded from cache");
-    return;
-  }
+  if (cache.ifctData) return;
 
   try {
-    const filePath = path.resolve(__dirname, "../data/ifct_dataset.json");
-    console.log("📄 Loading IFCT data for image analysis...");
+    const filePath = path.resolve(__dirname, '../data/ifct_dataset.json');
     const data = await fs.promises.readFile(filePath, 'utf8');
     cache.ifctData = JSON.parse(data);
-    
-    // Build search index for faster lookups
-    cache.ifctData.forEach(item => {
+
+    cache.ifctData.forEach((item) => {
       if (item.name) {
         const keywords = item.name.toLowerCase().split(/[\s-,]+/);
-        keywords.forEach(keyword => {
+        keywords.forEach((keyword) => {
           if (keyword.length > 2) {
-            if (!cache.ifctIndex.has(keyword)) {
-              cache.ifctIndex.set(keyword, []);
-            }
+            if (!cache.ifctIndex.has(keyword)) cache.ifctIndex.set(keyword, []);
             cache.ifctIndex.get(keyword).push(item);
           }
         });
       }
     });
-    
-    console.log(`✅ IFCT dataset loaded and indexed (${cache.ifctData.length} foods, ${cache.ifctIndex.size} keywords)`);
+
+    console.log(
+      `✅ IFCT dataset loaded for image analysis (${cache.ifctData.length} foods)`
+    );
   } catch (error) {
     console.error('❌ Error loading IFCT dataset for image analysis:', error);
     cache.ifctData = [];
   }
 };
 
-// Pre-load data on startup
 loadIFCTData();
 
-// Initialize OpenAI with timeout
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-  timeout: 30000,
-  maxRetries: 2
-});
+let openai = null;
+const getOpenAI = () => {
+  if (!process.env.OPENAI_API_KEY) return null;
+  if (!openai) {
+    openai = new OpenAI({
+      apiKey: process.env.OPENAI_API_KEY,
+      timeout: 45000,
+      maxRetries: 2,
+    });
+  }
+  return openai;
+};
 
-// Helper function to calculate health score
+const ALIASES = {
+  'butter chicken': ['chicken curry', 'chicken'],
+  'masala dosa': ['dosa'],
+  'plain dosa': ['dosa'],
+  biryani: ['rice', 'chicken'],
+  'chicken biryani': ['biryani', 'rice'],
+  'rajma chawal': ['rajma', 'kidney bean', 'rice'],
+  'chole bhature': ['chole', 'chickpea'],
+  'pav bhaji': ['vegetable'],
+  'paneer butter masala': ['paneer'],
+  'fish curry': ['fish'],
+  'dal baati': ['dal'],
+  'rogan josh': ['mutton', 'lamb'],
+  khichdi: ['rice', 'dal'],
+};
+
+const round1 = (n) => Math.round((Number(n) || 0) * 10) / 10;
+
+const nutritionFromIfct = (item, portionGrams = 100) => {
+  const factor = (Number(portionGrams) || 100) / 100;
+  return {
+    calories: Math.round(((item.enerc ? item.enerc / 4.184 : 0) * factor)),
+    protein: round1((item.protcnt || 0) * factor),
+    carbs: round1((item.choavldf || 0) * factor),
+    fats: round1((item.fatce || 0) * factor),
+    fiber: round1((item.fibtg || 0) * factor),
+  };
+};
+
+const scaleNutrition = (per100, portionGrams = 100) => {
+  const factor = (Number(portionGrams) || 100) / 100;
+  return {
+    calories: Math.round((per100.calories || 0) * factor),
+    protein: round1((per100.protein || 0) * factor),
+    carbs: round1((per100.carbs || 0) * factor),
+    fats: round1((per100.fats || 0) * factor),
+    fiber: round1((per100.fiber || 0) * factor),
+  };
+};
+
 const calculateHealthScore = (nutrition, gi) => {
   const { calories, protein, fats } = nutrition;
-  
-  let score = 100;
-  
-  if (calories > 500) score -= Math.min(30, (calories - 500) / 20);
-  
-  if (gi > 70) score -= 25;
-  else if (gi > 55) score -= 12;
-  else if (gi < 35) score += 10;
-  
-  const fatRatio = (fats * 9) / calories;
-  if (fatRatio > 0.3) score -= Math.min(25, (fatRatio - 0.3) * 100);
-  
-  const proteinRatio = (protein * 4) / calories;
-  if (proteinRatio > 0.15) score += Math.min(15, (proteinRatio - 0.15) * 100);
-  
+  if (!calories || calories <= 0) return null;
+
+  let score = 70;
+
+  // Per-portion heuristics — softer than old absolute thresholds
+  if (calories > 600) score -= 15;
+  else if (calories > 400) score -= 8;
+  else if (calories < 150) score += 5;
+
+  if (gi != null) {
+    if (gi > 70) score -= 15;
+    else if (gi > 55) score -= 6;
+    else score += 8;
+  }
+
+  const fatKcal = fats * 9;
+  const proteinKcal = protein * 4;
+  if (fatKcal / calories > 0.4) score -= 12;
+  if (proteinKcal / calories > 0.2) score += 10;
+
   return Math.min(100, Math.max(0, Math.round(score)));
 };
 
-// Optimized IFCT search
+/**
+ * Fuzzy IFCT search with explicit match score (0–100).
+ */
 const searchIFCTFood = (foodName) => {
-  if (!cache.ifctData || cache.ifctData.length === 0) return null;
-  
+  if (!cache.ifctData?.length) return { item: null, matchScore: 0, matchType: 'none' };
+
   const query = foodName.toLowerCase().trim();
-  if (query.length < 2) return null;
+  if (query.length < 2) return { item: null, matchScore: 0, matchType: 'none' };
 
-  // Exact match
-  const exactMatch = cache.ifctData.find(item => 
-    item.name?.toLowerCase() === query
+  const exactMatch = cache.ifctData.find(
+    (item) => item.name?.toLowerCase() === query
   );
-  if (exactMatch) return exactMatch;
+  if (exactMatch) {
+    return { item: exactMatch, matchScore: 98, matchType: 'exact' };
+  }
 
-  // Index-based search
-  const queryWords = query.split(/[\s-,]+/).filter(word => word.length > 2);
+  const startsWith = cache.ifctData.find((item) =>
+    item.name?.toLowerCase().startsWith(query)
+  );
+  if (startsWith) {
+    return { item: startsWith, matchScore: 90, matchType: 'prefix' };
+  }
+
+  const queryWords = query.split(/[\s-,]+/).filter((w) => w.length > 2);
   let bestMatch = null;
   let bestScore = 0;
 
   for (const item of cache.ifctData) {
     let score = 0;
     const itemName = item.name?.toLowerCase() || '';
-    
-    queryWords.forEach(word => {
+
+    if (itemName.includes(query)) score += 12;
+    queryWords.forEach((word) => {
       if (itemName.includes(word)) score += 3;
-      if (itemName === word) score += 10;
       if (itemName.startsWith(word)) score += 2;
     });
-
     if (item.scie?.toLowerCase().includes(query)) score += 2;
 
     if (score > bestScore) {
       bestScore = score;
       bestMatch = item;
     }
-
-    if (bestScore >= 8) break;
   }
 
-  return bestScore > 2 ? bestMatch : null;
+  if (bestScore >= 8) {
+    return {
+      item: bestMatch,
+      matchScore: Math.min(88, 40 + bestScore * 5),
+      matchType: 'fuzzy',
+    };
+  }
+
+  // Alias fallback
+  for (const [alias, targets] of Object.entries(ALIASES)) {
+    if (query.includes(alias) || alias.includes(query)) {
+      for (const target of targets) {
+        const alt = searchIFCTFood(target);
+        if (alt.item) {
+          return {
+            item: alt.item,
+            matchScore: Math.max(35, alt.matchScore - 25),
+            matchType: 'alias',
+          };
+        }
+      }
+    }
+  }
+
+  return { item: null, matchScore: 0, matchType: 'none' };
 };
 
-// Image optimization
 const optimizeImage = async (imageBuffer) => {
   try {
     return await sharp(imageBuffer)
-      .resize(800, 800, { 
-        fit: 'inside',
-        withoutEnlargement: true 
-      })
-      .jpeg({ 
-        quality: 80,
-        mozjpeg: true 
-      })
+      .resize(900, 900, { fit: 'inside', withoutEnlargement: true })
+      .jpeg({ quality: 82, mozjpeg: true })
       .toBuffer();
-  } catch (error) {
-    console.warn('Image optimization failed, using original');
+  } catch {
     return imageBuffer;
   }
 };
 
-// Process image with OpenAI Vision
-const identifyFoodWithVision = async (base64Image) => {
-  const visionResponse = await openai.chat.completions.create({
-    model: "gpt-4-turbo",
-    messages: [
-      {
-        role: "user",
-        content: [
-          { 
-            type: "text", 
-            text: "Identify the SINGLE main food item in this image. If it's Indian food, provide the specific Indian name. Respond with ONLY the food name in English, nothing else." 
-          },
-          {
-            type: "image_url",
-            image_url: {
-              url: `data:image/jpeg;base64,${base64Image}`
-            }
-          }
-        ]
-      }
-    ],
-    max_tokens: 30
-  });
-
-  return visionResponse.choices[0].message.content.trim().replace(/[."]/g, '');
+const parseVisionJson = (raw) => {
+  const cleaned = (raw || '')
+    .replace(/```json/gi, '')
+    .replace(/```/g, '')
+    .trim();
+  try {
+    return JSON.parse(cleaned);
+  } catch {
+    // Fallback: treat as plain food name
+    return {
+      foodName: cleaned.replace(/[."]/g, '').slice(0, 80),
+      identificationConfidence: 55,
+      portionGrams: 100,
+      portionLabel: 'Assumed 100 g (vision JSON parse failed)',
+      visibleComponents: [],
+    };
+  }
 };
 
-// Memory storage for multer
+/**
+ * Vision: identify food + estimate edible portion mass.
+ */
+const analyzeFoodWithVision = async (base64Image) => {
+  const client = getOpenAI();
+  if (!client) {
+    throw new Error('OPENAI_API_KEY is not configured');
+  }
+
+  const visionResponse = await client.chat.completions.create({
+    model: 'gpt-4o',
+    messages: [
+      {
+        role: 'user',
+        content: [
+          {
+            type: 'text',
+            text: `You analyze Indian and common foods in photos for nutrition lookup.
+Return ONLY valid JSON (no markdown) with this shape:
+{
+  "foodName": "specific English dish name preferred for Indian foods",
+  "identificationConfidence": 0-100,
+  "portionGrams": estimated edible grams visible (not plate/bowl),
+  "portionLabel": "short human label e.g. 1 medium dosa (~120g)",
+  "visibleComponents": ["optional side items"]
+}
+Rules:
+- identificationConfidence must reflect real uncertainty (blur, occluded, mixed plate).
+- portionGrams must be a realistic edible mass (typical single servings 40–450g).
+- If multiple foods, name the dominant item and list others in visibleComponents.
+- Prefer specific names: "Masala Dosa" not "Indian food".`,
+          },
+          {
+            type: 'image_url',
+            image_url: { url: `data:image/jpeg;base64,${base64Image}` },
+          },
+        ],
+      },
+    ],
+    max_tokens: 220,
+    temperature: 0.2,
+  });
+
+  const parsed = parseVisionJson(visionResponse.choices[0].message.content);
+  const foodName = String(parsed.foodName || 'Unknown food').trim().slice(0, 100);
+  const identificationConfidence = Math.min(
+    99,
+    Math.max(1, Math.round(Number(parsed.identificationConfidence) || 50))
+  );
+  let portionGrams = Math.round(Number(parsed.portionGrams) || 100);
+  portionGrams = Math.min(800, Math.max(20, portionGrams));
+
+  return {
+    foodName,
+    identificationConfidence,
+    portionGrams,
+    portionLabel:
+      String(parsed.portionLabel || `${portionGrams} g estimated`).slice(0, 120),
+    visibleComponents: Array.isArray(parsed.visibleComponents)
+      ? parsed.visibleComponents.slice(0, 5).map(String)
+      : [],
+  };
+};
+
+const combineConfidence = (visionConf, matchScore, hasIfct) => {
+  if (!hasIfct) {
+    return {
+      overall: Math.round(visionConf * 0.55),
+      identification: visionConf,
+      nutritionMatch: 0,
+      label: 'Low–Medium',
+      explanation:
+        'Food identified from the image, but no strong IFCT 2017 match — nutrition is estimated.',
+    };
+  }
+
+  // Nutrition reliability needs both ID + database match
+  const overall = Math.round(visionConf * 0.45 + matchScore * 0.55);
+  let label = 'Medium';
+  if (overall >= 80) label = 'High';
+  else if (overall < 55) label = 'Low';
+
+  return {
+    overall,
+    identification: visionConf,
+    nutritionMatch: matchScore,
+    label,
+    explanation:
+      matchScore >= 85
+        ? 'Strong IFCT name match; values scaled to the estimated portion.'
+        : matchScore >= 55
+          ? 'Partial IFCT match; treat macros as approximate for this dish.'
+          : 'Weak IFCT match; prefer verifying with a text search of the dish name.',
+  };
+};
+
 const storage = {
-  _handleFile: function (req, file, cb) {
+  _handleFile(req, file, cb) {
     const chunks = [];
-    file.stream.on('data', (chunk) => {
-      chunks.push(chunk);
-    });
+    file.stream.on('data', (chunk) => chunks.push(chunk));
     file.stream.on('end', () => {
       const buffer = Buffer.concat(chunks);
-      cb(null, {
-        buffer: buffer,
-        size: buffer.length
-      });
+      cb(null, { buffer, size: buffer.length });
     });
     file.stream.on('error', cb);
   },
-  _removeFile: function (req, file, cb) {
+  _removeFile(req, file, cb) {
     delete file.buffer;
     cb(null);
-  }
+  },
 };
 
 const upload = require('multer')({ storage });
 
-// API endpoint for food image analysis
 router.post('/analyzefood', upload.single('foodImage'), async (req, res) => {
   if (!req.file) {
     return res.status(400).json({ error: 'No image file provided' });
   }
 
   const startTime = Date.now();
-  
+
   try {
-    console.log('🖼️ Optimizing image...');
+    if (!process.env.OPENAI_API_KEY) {
+      return res.status(503).json({
+        error: 'Image analysis is unavailable (missing OPENAI_API_KEY)',
+      });
+    }
+
     const optimizedImage = await optimizeImage(req.file.buffer);
     const base64Image = optimizedImage.toString('base64');
 
-    console.log('🔍 Identifying food from image...');
-    const foodName = await identifyFoodWithVision(base64Image);
-    console.log('✅ Identified food:', foodName);
+    const vision = await analyzeFoodWithVision(base64Image);
+    const { item: foodMatch, matchScore, matchType } = searchIFCTFood(
+      vision.foodName
+    );
 
-    // Check cache
-    const cacheKey = `analysis-${Buffer.from(foodName).toString('base64')}`;
-    const cachedResult = cache.analysisResults.get(cacheKey);
-    if (cachedResult && (Date.now() - cachedResult.timestamp) < CACHE_TTL) {
-      console.log('⚡ Serving from cache');
-      return res.json(cachedResult.data);
-    }
+    const portionGrams = vision.portionGrams;
+    const giLookup = lookupGlycemicIndex(vision.foodName);
 
-    // Search IFCT database
-    console.log('🔍 Searching IFCT database...');
-    const foodMatch = searchIFCTFood(foodName);
-
-    let nutritionInfo, giValue;
+    let nutritionInfo;
+    let nutritionBasis;
+    let source;
+    let scientificName = '';
+    let ifctName = null;
 
     if (foodMatch) {
-      console.log('✅ Found in IFCT database:', foodMatch.name);
-      
-      nutritionInfo = {
-        calories: foodMatch.enerc ? Math.round(foodMatch.enerc / 4.184) : 0,
-        protein: Math.round(foodMatch.protcnt || 0),
-        carbs: Math.round(foodMatch.choavldf || 0),
-        fats: Math.round(foodMatch.fatce || 0),
-        fiber: Math.round(foodMatch.fibtg || 0)
-      };
-
-      // Smart GI estimation
-      if (foodMatch.choavldf > 60) giValue = 75;
-      else if (foodMatch.fibtg > 6) giValue = 45;
-      else if (foodMatch.fatce > 15) giValue = 55;
-      else giValue = 60;
-      
+      nutritionInfo = nutritionFromIfct(foodMatch, portionGrams);
+      nutritionBasis = 'IFCT 2017 per 100 g, scaled to estimated portion';
+      source = 'IFCT 2017';
+      scientificName = foodMatch.scie || '';
+      ifctName = foodMatch.name;
     } else {
-      console.log('⚠️ Using estimated nutrition data');
-      const commonFoods = {
-        'roti': { calories: 120, protein: 3, carbs: 20, fats: 2, gi: 65 },
-        'rice': { calories: 130, protein: 2, carbs: 28, fats: 0, gi: 73 },
-        'dal': { calories: 100, protein: 6, carbs: 15, fats: 1, gi: 45 },
-        'chicken': { calories: 165, protein: 31, carbs: 0, fats: 3, gi: 0 },
-        'samosa': { calories: 250, protein: 4, carbs: 30, fats: 12, gi: 65 },
-        'idli': { calories: 60, protein: 2, carbs: 12, fats: 0, gi: 70 },
-        'dosa': { calories: 150, protein: 4, carbs: 25, fats: 4, gi: 68 }
+      // Conservative common Indian per-100g estimates — clearly labelled
+      const estimatedPer100 = {
+        roti: { calories: 297, protein: 9, carbs: 46, fats: 7, fiber: 4 },
+        rice: { calories: 130, protein: 2.7, carbs: 28, fats: 0.3, fiber: 0.4 },
+        dal: { calories: 116, protein: 7, carbs: 16, fats: 1.5, fiber: 4 },
+        idli: { calories: 110, protein: 3.5, carbs: 22, fats: 0.5, fiber: 1 },
+        dosa: { calories: 170, protein: 4, carbs: 28, fats: 5, fiber: 1 },
+        samosa: { calories: 260, protein: 5, carbs: 28, fats: 14, fiber: 2 },
+        chicken: { calories: 165, protein: 31, carbs: 0, fats: 3.6, fiber: 0 },
       };
-
-      const lowerFoodName = foodName.toLowerCase();
-      const match = Object.keys(commonFoods).find(key => lowerFoodName.includes(key));
-      
-      if (match) {
-        nutritionInfo = commonFoods[match];
-        giValue = nutritionInfo.gi;
-        delete nutritionInfo.gi;
-      } else {
-        nutritionInfo = { calories: 200, protein: 5, carbs: 25, fats: 10 };
-        giValue = 60;
-      }
+      const lower = vision.foodName.toLowerCase();
+      const key = Object.keys(estimatedPer100).find((k) => lower.includes(k));
+      const per100 = key
+        ? estimatedPer100[key]
+        : { calories: 180, protein: 6, carbs: 22, fats: 7, fiber: 2 };
+      nutritionInfo = scaleNutrition(per100, portionGrams);
+      nutritionBasis = key
+        ? `Estimated per-100g profile for "${key}", scaled to portion (not IFCT)`
+        : 'Generic estimate only — no IFCT match; verify with text search';
+      source = 'Estimated';
     }
 
-    // Get alternatives
-    console.log('💡 Getting healthier alternatives...');
-    let alternatives = [];
+    const confidence = combineConfidence(
+      vision.identificationConfidence,
+      matchScore,
+      Boolean(foodMatch)
+    );
 
-    if (foodMatch) {
-      const similarFoods = cache.ifctData
-        .filter(item => {
+    // Healthier alternatives from same IFCT group with lower energy density
+    let alternatives = [];
+    if (foodMatch?.grup) {
+      const matchCal = foodMatch.enerc ? foodMatch.enerc / 4.184 : 0;
+      alternatives = cache.ifctData
+        .filter((item) => {
           if (!item.grup || item.grup !== foodMatch.grup) return false;
           if (item.name === foodMatch.name) return false;
-          
-          const itemCalories = item.enerc ? (item.enerc / 4.184) : Infinity;
-          const matchCalories = foodMatch.enerc ? (foodMatch.enerc / 4.184) : 0;
-          
-          return itemCalories < matchCalories * 0.9;
+          const cals = item.enerc ? item.enerc / 4.184 : Infinity;
+          return cals < matchCal * 0.9;
         })
-        .slice(0, 3);
-
-      alternatives = similarFoods.map(item => ({
-        name: item.name,
-        calories: item.enerc ? Math.round(item.enerc / 4.184) : 0,
-        gi: (item.fibtg > 7 ? 40 : item.fibtg > 4 ? 50 : 60),
-        reason: `Healthier alternative with lower calories`
-      }));
-    }
-
-    // Fallback to GPT
-    if (alternatives.length === 0) {
-      try {
-        const prompt = `Suggest 2 healthier Indian food alternatives to ${foodName}. Respond ONLY with JSON: [{"name":"","calories":0,"gi":0,"reason":""}]`;
-
-        const completion = await openai.chat.completions.create({
-          model: "gpt-4-turbo",
-          messages: [{ role: "user", content: prompt }],
-          max_tokens: 150,
+        .slice(0, 3)
+        .map((item) => {
+          const altGi = lookupGlycemicIndex(item.name);
+          return {
+            name: item.name,
+            calories: item.enerc ? Math.round(item.enerc / 4.184) : 0,
+            gi: altGi.gi,
+            giStatus: altGi.status,
+            reason: 'Lower energy density in the same IFCT food group (per 100 g)',
+            source: 'IFCT 2017',
+          };
         });
-
-        const cleanedResponse = completion.choices[0].message.content.replace(/```json/g, '').replace(/```/g, '').trim();
-        alternatives = JSON.parse(cleanedResponse);
-      } catch (e) {
-        console.error('Error getting alternatives:', e);
-        alternatives = [];
-      }
     }
 
-    const healthScore = calculateHealthScore(nutritionInfo, giValue);
-    
+    const healthScore = calculateHealthScore(nutritionInfo, giLookup.gi);
+
     const result = {
-      foodName,
-      confidence: 95.0,
+      foodName: vision.foodName,
+      ifctName,
+      scientificName,
+      confidence: confidence.overall,
+      confidenceDetail: confidence,
+      portion: {
+        grams: portionGrams,
+        label: vision.portionLabel,
+        basis: 'Vision estimate of edible portion',
+      },
+      visibleComponents: vision.visibleComponents,
       nutrition: nutritionInfo,
-      gi: giValue,
+      nutritionBasis,
+      nutritionPer100g: foodMatch
+        ? nutritionFromIfct(foodMatch, 100)
+        : null,
+      gi: giLookup.gi,
+      giClass: classifyGi(giLookup.gi),
+      giStatus: giLookup.status,
+      giLabel: giLookup.label,
+      giNote: giLookup.note,
+      giCitation: giLookup.citation,
       healthScore,
-      alternatives: alternatives.slice(0, 3),
-      source: foodMatch ? "IFCT 2017" : "Estimated",
-      scientificName: foodMatch?.scie || "",
-      processingTime: Date.now() - startTime
+      healthScoreNote:
+        healthScore == null
+          ? 'Health score omitted when calories are unavailable.'
+          : 'Heuristic score for comparison only — not a clinical rating.',
+      alternatives,
+      source,
+      matchType,
+      matchScore,
+      disclaimer:
+        'Portion size and dish recipes vary. IFCT values are laboratory composition data; GI values are from published tables and may not match your exact preparation.',
+      processingTime: Date.now() - startTime,
     };
 
-    // Cache the result
-    cache.analysisResults.set(cacheKey, {
-      data: result,
-      timestamp: Date.now()
-    });
+    console.log(
+      `✅ Image analysis: ${result.foodName} | IFCT=${source} | GI=${giLookup.status}:${giLookup.gi} | conf=${confidence.overall} | ${result.processingTime}ms`
+    );
 
-    console.log(`✅ Analysis completed in ${result.processingTime}ms`);
-    
     res.json(result);
-    
   } catch (error) {
     console.error('❌ Error analyzing food image:', error);
-    
-    res.status(500).json({ 
-      error: 'Failed to analyze food image', 
-      details: error.message
+    res.status(500).json({
+      error: 'Failed to analyze food image',
+      details: error.message,
     });
   }
 });
 
-// Quick health score endpoint
 router.post('/quick-score', upload.single('foodImage'), async (req, res) => {
   if (!req.file) {
     return res.status(400).json({ error: 'No image file provided' });
@@ -355,47 +490,44 @@ router.post('/quick-score', upload.single('foodImage'), async (req, res) => {
   try {
     const optimizedImage = await optimizeImage(req.file.buffer);
     const base64Image = optimizedImage.toString('base64');
+    const vision = await analyzeFoodWithVision(base64Image);
+    const { item: foodMatch, matchScore } = searchIFCTFood(vision.foodName);
+    const giLookup = lookupGlycemicIndex(vision.foodName);
 
-    const foodName = await identifyFoodWithVision(base64Image);
-    
-    const foodMatch = searchIFCTFood(foodName);
-    let nutritionInfo, giValue;
+    const nutrition = foodMatch
+      ? nutritionFromIfct(foodMatch, vision.portionGrams)
+      : scaleNutrition(
+          { calories: 180, protein: 6, carbs: 22, fats: 7, fiber: 2 },
+          vision.portionGrams
+        );
 
-    if (foodMatch) {
-      nutritionInfo = {
-        calories: foodMatch.enerc ? Math.round(foodMatch.enerc / 4.184) : 0,
-        protein: Math.round(foodMatch.protcnt || 0),
-        carbs: Math.round(foodMatch.choavldf || 0),
-        fats: Math.round(foodMatch.fatce || 0)
-      };
-      giValue = foodMatch.fibtg > 6 ? 45 : 60;
-    } else {
-      nutritionInfo = { calories: 200, protein: 5, carbs: 25, fats: 10 };
-      giValue = 60;
-    }
-
-    const healthScore = calculateHealthScore(nutritionInfo, giValue);
+    const confidence = combineConfidence(
+      vision.identificationConfidence,
+      matchScore,
+      Boolean(foodMatch)
+    );
 
     res.json({
-      foodName,
-      healthScore,
-      calories: nutritionInfo.calories,
+      foodName: vision.foodName,
+      healthScore: calculateHealthScore(nutrition, giLookup.gi),
+      calories: nutrition.calories,
+      portionGrams: vision.portionGrams,
+      confidence: confidence.overall,
+      source: foodMatch ? 'IFCT 2017' : 'Estimated',
+      gi: giLookup.gi,
+      giStatus: giLookup.status,
       quick: true,
-      processingTime: Date.now() - startTime
+      processingTime: Date.now() - startTime,
     });
-
   } catch (error) {
     console.error('❌ Quick analysis failed:', error);
     res.status(500).json({ error: 'Quick analysis failed' });
   }
 });
 
-// Cache info endpoint
 router.get('/cache-info', (req, res) => {
   res.json({
     ifctData: cache.ifctData ? cache.ifctData.length : 0,
-    analysisCache: cache.analysisResults.size,
-    alternativesCache: cache.foodAlternatives.size
   });
 });
 

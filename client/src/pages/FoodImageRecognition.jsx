@@ -3,9 +3,38 @@ import { Camera, Upload, X, Check, AlertTriangle, Zap } from 'lucide-react';
 import { ShootingStars } from "../components/ui/shooting-stars";
 import { StarsBackground } from "../components/ui/stars-background";
 import { motion, AnimatePresence } from "framer-motion";
+import { API_ENDPOINTS } from "../utils/apiConfig";
+import PortionCustomizer, { computeCustomNutrition } from "../components/PortionCustomizer";
+import { defaultCustomizeState } from "../utils/portionCustomize";
+import { recordImageAnalyzed } from "../utils/progression";
+import TrustBadge from "../components/TrustBadge";
+import AddToTrackerButton from "../components/AddToTrackerButton";
 
-// API base URL - matches your server configuration
-const API_BASE_URL = 'https://foodanalyser.onrender.com/api';
+const mapImageResultToFood = (results) => {
+  if (!results?.nutrition) return null;
+  // Prefer per-100g IFCT values when present so portion scaling stays accurate
+  if (results.nutritionPer100g) {
+    return {
+      serving_size_g: 100,
+      calories: results.nutritionPer100g.calories,
+      protein_g: results.nutritionPer100g.protein,
+      carbohydrates_total_g: results.nutritionPer100g.carbs,
+      fat_total_g: results.nutritionPer100g.fats,
+      fiber_g: results.nutritionPer100g.fiber,
+      source: results.source,
+    };
+  }
+  const grams = results.portion?.grams || 100;
+  return {
+    serving_size_g: grams,
+    calories: results.nutrition.calories,
+    protein_g: results.nutrition.protein,
+    carbohydrates_total_g: results.nutrition.carbs,
+    fat_total_g: results.nutrition.fats,
+    fiber_g: results.nutrition.fiber,
+    source: results.source,
+  };
+};
 
 const FoodScanner = () => {
   const [image, setImage] = useState(null);
@@ -17,6 +46,7 @@ const FoodScanner = () => {
   const [showCamera, setShowCamera] = useState(false);
   const [analysisCount, setAnalysisCount] = useState(0);
   const [processingTime, setProcessingTime] = useState(0);
+  const [customize, setCustomize] = useState(() => defaultCustomizeState(100));
   
   const fileInputRef = useRef(null);
   const videoRef = useRef(null);
@@ -221,9 +251,9 @@ const FoodScanner = () => {
     const startTime = performance.now();
 
     try {
-      const endpoint = quickMode ? '/image/quick-score' : '/image/analyzefood';
+      const endpoint = quickMode ? API_ENDPOINTS.IMAGE_QUICK : API_ENDPOINTS.IMAGE_ANALYZE;
       
-      const response = await fetch(`${API_BASE_URL}${endpoint}`, {
+      const response = await fetch(endpoint, {
         method: 'POST',
         body: formData,
         signal: abortControllerRef.current.signal
@@ -238,6 +268,12 @@ const FoodScanner = () => {
       
       setProcessingTime(performance.now() - startTime);
       setResults(data);
+      recordImageAnalyzed();
+      const portionG = data.portion?.grams || 100;
+      setCustomize({
+        ...defaultCustomizeState(100, portionG),
+        open: true,
+      });
 
       const today = new Date().toISOString().split('T')[0];
       const newCount = analysisCount + 1;
@@ -455,61 +491,152 @@ const FoodScanner = () => {
                 exit={{ opacity: 0, height: 0 }}
                 className="mt-6 border-t border-zinc-700 pt-4 space-y-4"
               >
-                <div className="flex items-start justify-between">
+                <div className="flex items-start justify-between gap-3">
                   <div>
                     <h3 className="text-xl font-semibold">{results.foodName}</h3>
-                    {results.scientificName && (
-                      <p className="text-sm text-gray-400">{results.scientificName}</p>
+                    {results.ifctName && results.ifctName !== results.foodName && (
+                      <p className="text-xs text-gray-400 mt-0.5">IFCT match: {results.ifctName}</p>
                     )}
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <div className={`text-2xl font-bold ${getHealthScoreColor(results.healthScore)}`}>
-                      {results.healthScore}
+                    {results.scientificName && (
+                      <p className="text-sm text-gray-400 italic">{results.scientificName}</p>
+                    )}
+                    <p className="text-xs text-gray-500 mt-1">
+                      Source: {results.source || 'Unknown'}
+                      {results.confidence != null && (
+                        <> · Confidence {results.confidence}% ({results.confidenceDetail?.label || 'n/a'})</>
+                      )}
+                    </p>
+                    <div className="mt-2 flex flex-wrap gap-1.5">
+                      <TrustBadge
+                        source={results.source}
+                        kind="macros"
+                        portionAdjusted
+                        nutritionBasis={results.nutritionBasis}
+                        compact
+                      />
+                      <TrustBadge kind="vision-portion" compact />
+                      <TrustBadge
+                        kind="gi"
+                        giStatus={results.giStatus}
+                        giCitation={results.giCitation}
+                        giNote={results.giNote}
+                        compact
+                      />
                     </div>
-                    {getHealthScoreIcon(results.healthScore)}
                   </div>
+                  {results.healthScore != null && (
+                    <div className="flex items-center gap-2">
+                      <div className={`text-2xl font-bold ${getHealthScoreColor(results.healthScore)}`}>
+                        {results.healthScore}
+                      </div>
+                      {getHealthScoreIcon(results.healthScore)}
+                    </div>
+                  )}
                 </div>
 
-                {!isQuickMode && (
+                {results.portion && (
+                  <div className="rounded-lg border border-zinc-700 bg-zinc-800/60 px-3 py-2 text-sm">
+                    <span className="text-gray-400">Vision estimate: </span>
+                    <span className="font-medium">{results.portion.label}</span>
+                    <span className="text-gray-500"> ({results.portion.grams} g) — adjust below</span>
+                  </div>
+                )}
+
+                {!isQuickMode && results.nutrition && (() => {
+                  const food = mapImageResultToFood(results);
+                  const plate = food ? computeCustomNutrition(food, customize) : null;
+                  if (!plate) return null;
+                  return (
                   <>
+                    <PortionCustomizer
+                      food={food}
+                      state={customize}
+                      onChange={setCustomize}
+                      compact
+                    />
+
                     <div className="grid grid-cols-2 gap-3">
                       <div className="bg-zinc-800 p-3 rounded-lg">
-                        <div className="text-sm text-gray-400">Calories</div>
-                        <div className="text-lg font-semibold">{results.nutrition.calories} kcal</div>
+                        <div className="text-sm text-gray-400">Your plate</div>
+                        <div className="text-lg font-semibold">{Math.round(plate.calories)} kcal</div>
+                        {plate.oilCalories > 0 && (
+                          <div className="text-[10px] text-amber-300/80 mt-0.5">
+                            +{Math.round(plate.oilCalories)} from fat
+                          </div>
+                        )}
                       </div>
                       <div className="bg-zinc-800 p-3 rounded-lg">
                         <div className="text-sm text-gray-400">Protein</div>
-                        <div className="text-lg font-semibold">{results.nutrition.protein}g</div>
+                        <div className="text-lg font-semibold">{plate.protein_g.toFixed(1)}g</div>
                       </div>
                       <div className="bg-zinc-800 p-3 rounded-lg">
                         <div className="text-sm text-gray-400">Carbs</div>
-                        <div className="text-lg font-semibold">{results.nutrition.carbs}g</div>
+                        <div className="text-lg font-semibold">{plate.carbohydrates_total_g.toFixed(1)}g</div>
                       </div>
                       <div className="bg-zinc-800 p-3 rounded-lg">
                         <div className="text-sm text-gray-400">Fats</div>
-                        <div className="text-lg font-semibold">{results.nutrition.fats}g</div>
+                        <div className="text-lg font-semibold">{plate.fat_total_g.toFixed(1)}g</div>
                       </div>
                     </div>
+                    {plate.oilCalories > 0 && (
+                      <TrustBadge kind="oil" compact />
+                    )}
+                    <AddToTrackerButton
+                      name={results.foodName}
+                      calories={plate.calories}
+                      protein={plate.protein_g}
+                      carbs={plate.carbohydrates_total_g}
+                      fat={plate.fat_total_g}
+                      grams={plate.portionGrams}
+                      source={results.source}
+                    />
+                    {results.nutritionBasis && (
+                      <p className="text-[11px] text-gray-500 leading-relaxed">{results.nutritionBasis}</p>
+                    )}
 
                     <div>
                       <div className="flex justify-between text-sm text-gray-400 mb-2">
                         <span>Glycemic Index</span>
-                        <span>{results.gi} ({results.gi < 55 ? 'Low' : results.gi < 70 ? 'Medium' : 'High'})</span>
+                        <span>
+                          {results.gi != null
+                            ? `${results.gi} (${results.giClass || '—'})`
+                            : 'Not available'}
+                        </span>
                       </div>
-                      <div className="w-full bg-gray-700 rounded-full h-2">
-                        <div 
-                          className={`h-2 rounded-full ${
-                            results.gi < 55 ? 'bg-green-500' : 
-                            results.gi < 70 ? 'bg-yellow-500' : 'bg-red-500'
-                          }`}
-                          style={{ width: `${Math.min(100, results.gi)}%` }}
-                        ></div>
-                      </div>
+                      {results.gi != null ? (
+                        <div className="w-full bg-gray-700 rounded-full h-2">
+                          <div 
+                            className={`h-2 rounded-full ${
+                              results.gi <= 55 ? 'bg-green-500' : 
+                              results.gi <= 69 ? 'bg-yellow-500' : 'bg-red-500'
+                            }`}
+                            style={{ width: `${Math.min(100, results.gi)}%` }}
+                          ></div>
+                        </div>
+                      ) : (
+                        <p className="text-xs text-gray-500">
+                          No published GI match for this dish in our verified table.
+                        </p>
+                      )}
+                      <p className="mt-2 text-[11px] text-gray-500 leading-relaxed">
+                        Status: <span className="text-gray-300">{results.giStatus || 'unavailable'}</span>
+                        {results.giLabel ? ` · ${results.giLabel}` : ''}
+                        {results.giNote ? ` — ${results.giNote}` : ''}
+                      </p>
+                      {results.giCitation && (
+                        <p className="mt-1 text-[10px] text-gray-600 leading-relaxed">{results.giCitation}</p>
+                      )}
                     </div>
+
+                    {results.confidenceDetail?.explanation && (
+                      <p className="text-[11px] text-gray-500 leading-relaxed">
+                        {results.confidenceDetail.explanation}
+                      </p>
+                    )}
 
                     {results.alternatives && results.alternatives.length > 0 && (
                       <div>
-                        <h4 className="font-semibold mb-3 text-green-400">Healthier Alternatives</h4>
+                        <h4 className="font-semibold mb-3 text-green-400">Lower-energy IFCT alternatives</h4>
                         <div className="space-y-2">
                           {results.alternatives.map((alt, index) => (
                             <motion.div
@@ -523,7 +650,8 @@ const FoodScanner = () => {
                               <div className="flex-1">
                                 <div className="font-medium">{alt.name}</div>
                                 <div className="text-sm text-gray-400">
-                                  {alt.calories} kcal • GI: {alt.gi}
+                                  {alt.calories} kcal / 100g
+                                  {alt.gi != null ? ` · GI: ${alt.gi}` : ' · GI: n/a'}
                                 </div>
                                 <div className="text-xs text-green-300 mt-1">{alt.reason}</div>
                               </div>
@@ -532,7 +660,27 @@ const FoodScanner = () => {
                         </div>
                       </div>
                     )}
+
+                    {results.disclaimer && (
+                      <p className="text-[10px] text-gray-600 leading-relaxed border-t border-zinc-800 pt-3">
+                        {results.disclaimer}
+                      </p>
+                    )}
                   </>
+                  );
+                })()}
+
+                {isQuickMode && (
+                  <div className="space-y-2 text-sm">
+                    <p>
+                      <span className="text-gray-400">Calories (est. portion): </span>
+                      {results.calories} kcal
+                    </p>
+                    <p className="text-xs text-gray-500">
+                      Source: {results.source} · Confidence {results.confidence}%
+                      {results.gi != null ? ` · GI ${results.gi} (${results.giStatus})` : ' · GI unavailable'}
+                    </p>
+                  </div>
                 )}
 
                 {processingTime > 0 && (

@@ -1,7 +1,8 @@
 import axios from "axios";
+import { API_ENDPOINTS } from "./apiConfig";
 
 export const fetchFoodData = async (foodName) => {
-  const url = `https://foodanalyser.onrender.com/api/food/search?q=${encodeURIComponent(
+  const url = `${API_ENDPOINTS.FOOD_SEARCH}?q=${encodeURIComponent(
     foodName.trim()
   )}`;
 
@@ -64,17 +65,26 @@ export const fetchFoodData = async (foodName) => {
   } catch (error) {
     if (axios.isAxiosError(error)) {
       const status = error.response?.status;
-      const message = error.response?.data?.error;
+      const data = error.response?.data || {};
+      const message = data.error;
+
+      const withMeta = (msg) => {
+        const e = new Error(msg);
+        if (Array.isArray(data.suggestions)) e.suggestions = data.suggestions;
+        if (Array.isArray(data.hints)) e.hints = data.hints;
+        e.status = status;
+        return e;
+      };
 
       switch (status) {
         case 400:
-          throw new Error("Please enter a food name to search.");
+          throw withMeta("Please enter a food name to search.");
         case 404:
-          throw new Error(message || `No results found for "${foodName}" in Indian food databases.`);
+          throw withMeta(message || `No results found for "${foodName}" in Indian food databases.`);
         case 500:
-          throw new Error("Food database is temporarily unavailable. Please try again later.");
+          throw withMeta("Food database is temporarily unavailable. Please try again later.");
         default:
-          throw new Error(message || "Failed to fetch food data. Please try again.");
+          throw withMeta(message || "Failed to fetch food data. Please try again.");
       }
     }
     throw error;

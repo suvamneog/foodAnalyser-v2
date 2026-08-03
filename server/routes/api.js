@@ -12,6 +12,8 @@ const axios = require("axios");
 const mongoose = require("mongoose");
 const auth = require("../middleware/authMiddleware");
 const FoodSearch = require("../models/foodSearch");
+const { expandQuery } = require("../utils/foodAliases");
+const { scoreName, rankCandidates } = require("../utils/searchRanking");
 require("dotenv").config();
 
 // 🥗 Load IFCT dataset
@@ -199,78 +201,96 @@ function groupAndDiversifyResults(results, query) {
   return finalResults.sort((a, b) => (b.search_score || 0) - (a.search_score || 0)).slice(0, 6);
 }
 
-// IMPROVED search function with RANKING
+// Ranking-backed IFCT search (typo-tolerant + Indian relevance)
 function searchIFCT(query) {
-  const lowerQuery = query.toLowerCase().trim();
-  
-  console.log(`🔍 IFCT SEARCH for: "${query}" (normalized: "${lowerQuery}")`);
-  
-  const allMatches = ifctData.map(item => {
-    if (!item.name) return null;
-    
-    const itemName = item.name.toLowerCase().trim();
-    const itemWords = itemName.split(/[\s,]+/);
-    
-    let score = 0;
-    
-    // Scoring system
-    if (itemName === lowerQuery) score += 10;
-    if (itemWords[0] === lowerQuery) score += 8;
-    if (itemWords.some(word => word === lowerQuery)) score += 5;
-    if (itemName.includes(lowerQuery)) score += 2;
-    
-    // Bonus for Indian food relevance
-    if (lowerQuery.includes('chicken') && itemName.includes('chicken')) {
-      if (itemName.includes('breast') || itemName.includes('thigh') || itemName.includes('leg')) {
-        score += 3;
-      }
-    }
-    
-    return score > 0 ? { item, score, name: item.name } : null;
-  }).filter(match => match !== null);
-
-  allMatches.sort((a, b) => b.score - a.score);
-  
-  console.log(`📊 IFCT RANKED MATCHES for "${query}": ${allMatches.length} results`);
-  
-  return allMatches;
+  const ranked = rankCandidates(query, ifctData, {
+    source: "IFCT",
+    getName: (item) => item.name,
+    limit: 40,
+    minScore: 6,
+  });
+  return ranked.map(({ item, name, score }) => ({ item, name, score }));
 }
 
-// Improved INDB search with ranking
+// Ranking-backed INDB search
 function searchINDB(query) {
-  const lowerQuery = query.toLowerCase().trim();
-  
-  console.log(`🔍 INDB SEARCH for: "${query}" (normalized: "${lowerQuery}")`);
-  
-  const allMatches = indbData.map(item => {
-    if (!item.food_name) return null;
-    
-    const itemName = item.food_name.toLowerCase().trim();
-    const itemWords = itemName.split(/[\s,]+/);
-    
-    let score = 0;
-    
-    if (itemName === lowerQuery) score += 10;
-    if (itemWords[0] === lowerQuery) score += 8;
-    if (itemWords.some(word => word === lowerQuery)) score += 5;
-    if (itemName.includes(lowerQuery)) score += 2;
-    
-    // Bonus for traditional preparations
-    if (lowerQuery.includes('chicken') && itemName.includes('chicken')) {
-      if (itemName.includes('curry') || itemName.includes('biryani') || itemName.includes('masala')) {
-        score += 3;
+  const ranked = rankCandidates(query, indbData, {
+    source: "INDB",
+    getName: (item) => item.food_name,
+    limit: 40,
+    minScore: 6,
+  });
+  return ranked.map(({ item, name, score }) => ({ item, name, score }));
+}
+
+// ------------------------------------
+// ⚡ Fast Autocomplete: /api/food/suggest?q=...
+// Name-only, in-memory, typo-tolerant. Returns up to 8 items.
+// ------------------------------------
+router.get("/suggest", (req, res) => {
+  try {
+    const raw = (req.query.q || "").toString().trim();
+    if (!raw || raw.length < 2) {
+      return res.json({ items: [] });
+    }
+
+    const limit = Math.min(parseInt(req.query.limit, 10) || 8, 15);
+    const variants = expandQuery(raw);
+
+    // Score IFCT
+    const ifctScored = new Map();
+    for (const qv of variants) {
+      for (const it of ifctData) {
+        const name = it.name;
+        if (!name) continue;
+        const s = scoreName(qv, name, { source: "IFCT" });
+        if (s < 10) continue;
+        const key = name.toLowerCase();
+        const prev = ifctScored.get(key);
+        if (!prev || s > prev.score) ifctScored.set(key, { name, score: s, source: "IFCT" });
       }
     }
-    
-    return score > 0 ? { item, score, name: item.food_name } : null;
-  }).filter(match => match !== null);
 
-  allMatches.sort((a, b) => b.score - a.score);
-  
-  console.log(`📊 INDB RANKED MATCHES for "${query}": ${allMatches.length} results`);
-  
-  return allMatches;
-}
+    // Score INDB
+    const indbScored = new Map();
+    for (const qv of variants) {
+      for (const it of indbData) {
+        const name = it.food_name;
+        if (!name) continue;
+        const s = scoreName(qv, name, { source: "INDB" });
+        if (s < 10) continue;
+        const key = name.toLowerCase();
+        const prev = indbScored.get(key);
+        if (!prev || s > prev.score) indbScored.set(key, { name, score: s, source: "INDB" });
+      }
+    }
+
+    // Merge: dedupe by lowercase name, prefer higher score, prefer INDB tie-break for cooked queries
+    const merged = new Map();
+    const push = (row) => {
+      const key = row.name.toLowerCase();
+      const prev = merged.get(key);
+      if (!prev || row.score > prev.score) merged.set(key, row);
+    };
+    for (const row of ifctScored.values()) push(row);
+    for (const row of indbScored.values()) push(row);
+
+    const items = Array.from(merged.values())
+      .sort((a, b) => b.score - a.score)
+      .slice(0, limit)
+      .map((r) => ({
+        name: r.name,
+        displayName: r.name,
+        source: r.source === "IFCT" ? "IFCT 2017 (ICMR-NIN)" : "INDB (Indian Nutrient Databank)",
+        sourceShort: r.source,
+      }));
+
+    return res.json({ items, query: raw });
+  } catch (err) {
+    console.error("❌ /suggest error:", err.message);
+    return res.status(500).json({ items: [], error: "Suggest failed" });
+  }
+});
 
 // ------------------------------------
 // 🔍 Enhanced Search Endpoint
@@ -286,9 +306,21 @@ router.get("/search", async (req, res) => {
 
     let allResults = [];
 
-    // 🔹 Step 1 — Search IFCT
+    // Expand multilingual / transliteration aliases (recall only — not a nutrition claim)
+    const queryVariants = expandQuery(query);
+    console.log(`🌐 Alias expansions: ${queryVariants.join(" | ")}`);
+
+    // 🔹 Step 1 — Search IFCT (original + alias expansions)
     console.log(`🔍 STEP 1: Searching IFCT database...`);
-    const ifctResults = searchIFCT(query);
+    const ifctByName = new Map();
+    for (const qv of queryVariants) {
+      for (const match of searchIFCT(qv)) {
+        const key = (match.name || "").toLowerCase();
+        const prev = ifctByName.get(key);
+        if (!prev || match.score > prev.score) ifctByName.set(key, match);
+      }
+    }
+    const ifctResults = Array.from(ifctByName.values()).sort((a, b) => b.score - a.score);
 
     if (ifctResults.length > 0) {
       console.log(`✅ STEP 1 RESULT: Found ${ifctResults.length} items in IFCT`);
@@ -318,9 +350,17 @@ router.get("/search", async (req, res) => {
       allResults = [...allResults, ...topIfctResults];
     }
 
-    // 🔹 Step 2 — Search INDB
+    // 🔹 Step 2 — Search INDB (original + alias expansions)
     console.log(`🔍 STEP 2: Searching INDB database...`);
-    const indbResults = searchINDB(query);
+    const indbByName = new Map();
+    for (const qv of queryVariants) {
+      for (const match of searchINDB(qv)) {
+        const key = (match.name || "").toLowerCase();
+        const prev = indbByName.get(key);
+        if (!prev || match.score > prev.score) indbByName.set(key, match);
+      }
+    }
+    const indbResults = Array.from(indbByName.values()).sort((a, b) => b.score - a.score);
 
     if (indbResults.length > 0) {
       console.log(`✅ STEP 2 RESULT: Found ${indbResults.length} items in INDB`);
@@ -418,8 +458,42 @@ router.get("/search", async (req, res) => {
       return res.json({ items: finalResults });
     } else {
       console.log(`💀 FINAL RESULT: No results found for "${query}"`);
+
+      // Try lower-bar "did you mean" suggestions — same scorer, lower minScore.
+      const guessSet = new Map();
+      for (const qv of queryVariants) {
+        for (const it of ifctData) {
+          const name = it.name;
+          if (!name) continue;
+          const s = scoreName(qv, name, { source: "IFCT" });
+          if (s < 4) continue;
+          const key = name.toLowerCase();
+          const prev = guessSet.get(key);
+          if (!prev || s > prev.score) guessSet.set(key, { name, score: s, source: "IFCT 2017 (ICMR-NIN)" });
+        }
+        for (const it of indbData) {
+          const name = it.food_name;
+          if (!name) continue;
+          const s = scoreName(qv, name, { source: "INDB" });
+          if (s < 4) continue;
+          const key = name.toLowerCase();
+          const prev = guessSet.get(key);
+          if (!prev || s > prev.score) guessSet.set(key, { name, score: s, source: "INDB (Indian Nutrient Databank)" });
+        }
+      }
+      const suggestions = Array.from(guessSet.values())
+        .sort((a, b) => b.score - a.score)
+        .slice(0, 5)
+        .map((g) => ({ name: g.name, displayName: g.name, source: g.source }));
+
       return res.status(404).json({
         error: `No results found for "${query}" in our databases.`,
+        suggestions,
+        hints: [
+          "Try the Hindi/regional name (e.g. rajma, kadhi, moong dal).",
+          "Add the dish name instead of ingredients (e.g. 'chicken curry' vs 'chicken').",
+          "Check spelling — 'panner' → 'paneer', 'chiken' → 'chicken'.",
+        ],
       });
     }
   } catch (error) {
