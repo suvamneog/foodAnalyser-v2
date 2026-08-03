@@ -114,7 +114,12 @@ export function computeCustomNutrition(food, state) {
   const portionGrams = resolvePortionGrams(state, baseServing);
   const factor = portionGrams / baseServing;
 
-  const scale = (v) => (Number(v) || 0) * factor;
+  const scale = (v) => {
+    if (v === null || v === undefined) return null;
+    const n = Number(v);
+    if (!Number.isFinite(n)) return null;
+    return n * factor;
+  };
 
   const foodCalories = scale(food?.calories);
   const foodProtein = scale(food?.protein_g);
@@ -125,12 +130,30 @@ export function computeCustomNutrition(food, state) {
   const foodSatFat = scale(food?.fat_saturated_g);
   const foodSodium = scale(food?.sodium_mg);
   const foodCholesterol = scale(food?.cholesterol_mg);
+  const foodCalcium = scale(food?.calcium_mg);
+  const foodIron = scale(food?.iron_mg);
+  const foodVitC = scale(food?.vitamin_c_mg);
+  const foodPotassium = scale(food?.potassium_mg);
+  const foodZinc = scale(food?.zinc_mg);
 
   const fat = getCookingFat(state.fatId);
   const tsp = state.fatId === "none" ? 0 : getFatTsp(state.fatAmountId);
   const oilCalories = fat.kcalPerTsp * tsp;
   // Approximate oil mass: 5 g per tsp; fat grams ≈ oilCalories / 9
   const oilFatGrams = oilCalories > 0 ? oilCalories / 9 : 0;
+
+  const calories =
+    foodCalories == null
+      ? oilCalories > 0
+        ? oilCalories
+        : null
+      : foodCalories + oilCalories;
+  const fatTotal =
+    foodFat == null
+      ? oilFatGrams > 0
+        ? oilFatGrams
+        : null
+      : foodFat + oilFatGrams;
 
   return {
     portionGrams,
@@ -140,15 +163,20 @@ export function computeCustomNutrition(food, state) {
     oilCalories,
     oilFatGrams,
     oilLabel: fat.id === "none" || tsp === 0 ? null : `${fat.label} · ${tsp} tsp`,
-    calories: foodCalories + oilCalories,
+    calories,
     protein_g: foodProtein,
     carbohydrates_total_g: foodCarbs,
-    fat_total_g: foodFat + oilFatGrams,
+    fat_total_g: fatTotal,
     fiber_g: foodFiber,
     sugar_g: foodSugar,
     fat_saturated_g: foodSatFat,
     sodium_mg: foodSodium,
     cholesterol_mg: foodCholesterol,
+    calcium_mg: foodCalcium,
+    iron_mg: foodIron,
+    vitamin_c_mg: foodVitC,
+    potassium_mg: foodPotassium,
+    zinc_mg: foodZinc,
     disclaimer:
       "Base macros from the food database. Extra oil/ghee is added using standard kcal per teaspoon — household recipes still vary.",
   };

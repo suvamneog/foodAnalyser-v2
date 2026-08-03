@@ -1,102 +1,175 @@
 import axios from "axios";
 import { API_ENDPOINTS } from "./apiConfig";
 
+function authHeaders() {
+  const headers = { "Content-Type": "application/json" };
+  const authToken = localStorage.getItem("authToken");
+  if (authToken) headers.Authorization = `Bearer ${authToken}`;
+  return headers;
+}
+
+function mapFoodItems(foodItems) {
+  return foodItems.map((foodItem) => {
+    const availableFields = Array.isArray(foodItem.availableFields)
+      ? foodItem.availableFields
+      : null;
+    const nullable = availableFields != null;
+
+    return {
+      name: foodItem.name || "Unknown Food",
+      displayName: foodItem.displayName || foodItem.name || "Unknown Food",
+      requestedName: foodItem.requestedName || null,
+      food_code: foodItem.food_code || null,
+      calories: parseNutritionValue(foodItem.calories, { nullable }),
+      protein_g: parseNutritionValue(foodItem.protein_g, { nullable }),
+      carbohydrates_total_g: parseNutritionValue(
+        foodItem.carbs_g || foodItem.carbohydrates_total_g,
+        { nullable }
+      ),
+      fat_total_g: parseNutritionValue(foodItem.fat_g || foodItem.fat_total_g, {
+        nullable,
+      }),
+      fiber_g: parseNutritionValue(foodItem.fiber_g, { nullable }),
+      sugar_g: parseNutritionValue(foodItem.sugar_g, { nullable }),
+      fat_saturated_g: parseNutritionValue(foodItem.fat_saturated_g, {
+        nullable,
+      }),
+      sodium_mg: parseNutritionValue(foodItem.sodium_mg, { nullable }),
+      cholesterol_mg: parseNutritionValue(foodItem.cholesterol_mg, {
+        nullable,
+      }),
+      calcium_mg: parseNutritionValue(foodItem.calcium_mg, { nullable }),
+      iron_mg: parseNutritionValue(foodItem.iron_mg, { nullable }),
+      potassium_mg: parseNutritionValue(foodItem.potassium_mg, { nullable }),
+      zinc_mg: parseNutritionValue(foodItem.zinc_mg, { nullable }),
+      vitamin_c_mg: parseNutritionValue(foodItem.vitamin_c_mg, { nullable }),
+      beta_carotene_ug: parseNutritionValue(foodItem.beta_carotene_ug, {
+        nullable,
+      }),
+      retinol_ug: parseNutritionValue(foodItem.retinol_ug, { nullable }),
+      availableFields,
+      citation: null,
+      notes: foodItem.notes || null,
+      region: foodItem.region || null,
+      serving_size_g: foodItem.serving_size_g || 100,
+      serving_description: foodItem.serving_description || "per 100g",
+      source: foodItem.source || "Unknown Source",
+      sourceShort: foodItem.sourceShort || null,
+      cut: foodItem.cut || null,
+      preparation: foodItem.preparation || null,
+      isRaw: foodItem.isRaw || false,
+      isCooked: foodItem.isCooked || false,
+    };
+  });
+}
+
+function attachAxiosMeta(error) {
+  if (!axios.isAxiosError(error)) throw error;
+  const status = error.response?.status;
+  const data = error.response?.data || {};
+  const message = data.error;
+
+  const withMeta = (msg) => {
+    const e = new Error(msg);
+    if (Array.isArray(data.suggestions)) e.suggestions = data.suggestions;
+    if (Array.isArray(data.hints)) e.hints = data.hints;
+    if (Array.isArray(data.related)) e.related = data.related;
+    e.status = status;
+    e.confident = data.confident;
+    return e;
+  };
+
+  switch (status) {
+    case 400:
+      throw withMeta("Please enter a food name to search.");
+    case 404:
+      throw withMeta(message || "No results found in Indian food databases.");
+    case 500:
+      throw withMeta(
+        "Food database is temporarily unavailable. Please try again later."
+      );
+    default:
+      throw withMeta(message || "Failed to fetch food data. Please try again.");
+  }
+}
+
+/** Exact IFCT/INDB/ASSAM lookup for Discover cards */
+export const fetchFoodById = async ({ source, code, label }) => {
+  if (!source || !code) {
+    throw new Error("Missing food source or code");
+  }
+  const params = new URLSearchParams({
+    source: String(source).toUpperCase(),
+    code: String(code).toUpperCase(),
+  });
+  if (label) params.set("label", label);
+
+  try {
+    const response = await axios.get(
+      `${API_ENDPOINTS.FOOD_BY_ID}?${params.toString()}`,
+      { headers: authHeaders() }
+    );
+    const foodItems = response.data?.items;
+    if (!Array.isArray(foodItems) || foodItems.length === 0) {
+      throw new Error(`No exact match for ${label || code}`);
+    }
+    return mapFoodItems(foodItems);
+  } catch (error) {
+    attachAxiosMeta(error);
+  }
+};
+
 export const fetchFoodData = async (foodName) => {
   const url = `${API_ENDPOINTS.FOOD_SEARCH}?q=${encodeURIComponent(
     foodName.trim()
   )}`;
 
   try {
-    const headers = {
-      "Content-Type": "application/json",
-    };
+    const response = await axios.get(url, { headers: authHeaders() });
 
-    const authToken = localStorage.getItem("authToken");
-    if (authToken) {
-      headers.Authorization = `Bearer ${authToken}`;
-    }
-
-    const response = await axios.get(url, { headers });
-
-    // ✅ Handle response format
     let foodItems = [];
-    
-    if (response.data.items && Array.isArray(response.data.items) && response.data.items.length > 0) {
+
+    if (
+      response.data.items &&
+      Array.isArray(response.data.items) &&
+      response.data.items.length > 0
+    ) {
       foodItems = response.data.items;
-    }
-    else if (response.data && typeof response.data === 'object' && response.data.name) {
+    } else if (
+      response.data &&
+      typeof response.data === "object" &&
+      response.data.name
+    ) {
       foodItems = [response.data];
-    }
-    else {
+    } else {
       throw new Error(`No results found for "${foodName}" in our databases.`);
     }
 
-    if (!foodItems || foodItems.length === 0) {
-      throw new Error(`No results found for "${foodName}" in our databases.`);
-    }
-
-    // ✅ Map all items with enhanced information
-    const mappedItems = foodItems.map(foodItem => {
-      return {
-        name: foodItem.name || "Unknown Food",
-        displayName: foodItem.displayName || foodItem.name || "Unknown Food",
-        calories: parseNutritionValue(foodItem.calories),
-        protein_g: parseNutritionValue(foodItem.protein_g),
-        carbohydrates_total_g: parseNutritionValue(foodItem.carbs_g || foodItem.carbohydrates_total_g),
-        fat_total_g: parseNutritionValue(foodItem.fat_g || foodItem.fat_total_g),
-        fiber_g: parseNutritionValue(foodItem.fiber_g),
-        sugar_g: parseNutritionValue(foodItem.sugar_g),
-        fat_saturated_g: parseNutritionValue(foodItem.fat_saturated_g),
-        sodium_mg: parseNutritionValue(foodItem.sodium_mg),
-        cholesterol_mg: parseNutritionValue(foodItem.cholesterol_mg),
-        serving_size_g: foodItem.serving_size_g || 100,
-        serving_description: foodItem.serving_description || "per 100g",
-        source: foodItem.source || "Unknown Source",
-        // 🆕 Enhanced fields for differentiation
-        cut: foodItem.cut || null,
-        preparation: foodItem.preparation || null,
-        isRaw: foodItem.isRaw || false,
-        isCooked: foodItem.isCooked || false,
-      };
-    });
-
+    const mappedItems = mapFoodItems(foodItems);
+    mappedItems.confident = response.data.confident !== false;
+    mappedItems.related = Array.isArray(response.data.related)
+      ? mapFoodItems(response.data.related)
+      : [];
     return mappedItems;
-    
   } catch (error) {
-    if (axios.isAxiosError(error)) {
-      const status = error.response?.status;
-      const data = error.response?.data || {};
-      const message = data.error;
-
-      const withMeta = (msg) => {
-        const e = new Error(msg);
-        if (Array.isArray(data.suggestions)) e.suggestions = data.suggestions;
-        if (Array.isArray(data.hints)) e.hints = data.hints;
-        e.status = status;
-        return e;
-      };
-
-      switch (status) {
-        case 400:
-          throw withMeta("Please enter a food name to search.");
-        case 404:
-          throw withMeta(message || `No results found for "${foodName}" in Indian food databases.`);
-        case 500:
-          throw withMeta("Food database is temporarily unavailable. Please try again later.");
-        default:
-          throw withMeta(message || "Failed to fetch food data. Please try again.");
-      }
-    }
-    throw error;
+    attachAxiosMeta(error);
   }
 };
 
-// Helper function to handle "N/A" values and convert to numbers
-function parseNutritionValue(value) {
-  if (value === "N/A" || value === undefined || value === null) return 0;
-  if (typeof value === 'string') {
-    const cleaned = value.replace(/[^\d.-]/g, '');
-    return Number(cleaned) || 0;
+function parseNutritionValue(value, { nullable = false } = {}) {
+  if (value === "N/A" || value === undefined || value === null) {
+    return nullable ? null : 0;
   }
-  return Number(value) || 0;
+  if (typeof value === "string") {
+    const cleaned = value.replace(/[^\d.-]/g, "");
+    if (cleaned === "" || cleaned === "-" || cleaned === ".") {
+      return nullable ? null : 0;
+    }
+    const n = Number(cleaned);
+    if (!Number.isFinite(n)) return nullable ? null : 0;
+    return n;
+  }
+  const n = Number(value);
+  if (!Number.isFinite(n)) return nullable ? null : 0;
+  return n;
 }

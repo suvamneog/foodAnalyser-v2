@@ -157,23 +157,60 @@ function scoreName(query, name, opts = {}) {
   if (n.length < 40) score += 2;
   if (n.length > 80) score -= 4;
 
-  const looksCooked = qTokens.some((t) => COOKED_TOKENS.has(t));
-  if (looksCooked && opts.source === "INDB") score += 3;
-  if (!looksCooked && opts.source === "IFCT") score += 1;
+  const looksCooked =
+    qTokens.some((t) => COOKED_TOKENS.has(t)) ||
+    meaningful.length >= 2 ||
+    Boolean(opts.preferCooked);
+  if (looksCooked && opts.source === "INDB") score += 28;
+  if (looksCooked && opts.source === "IFCT") {
+    // Soft-penalise raw IFCT rows when the user clearly wants a dish
+    if (/\braw\b/i.test(n) || n.includes("poultry") || n.includes(", ")) {
+      score -= 18;
+    } else {
+      score -= 6;
+    }
+  }
+  if (!looksCooked && opts.source === "IFCT") score += 8;
+  if (!looksCooked && opts.source === "INDB" && meaningful.length === 1) score -= 2;
+
+  // Specialty phrase alignment (biryani → pulao/biryani dishes)
+  if (q.includes("biryani") || q.includes("biriyani")) {
+    if (n.includes("biryani") || n.includes("biriyani") || n.includes("pulao")) {
+      score += 45;
+    } else if (n.includes("chicken") || n.includes("mutton")) {
+      score -= 12;
+    }
+  }
+  if (q.includes("bhature") || q.includes("bhatura") || q.includes("chole")) {
+    if (n.includes("channa") || n.includes("bhatura") || n.includes("chickpea")) {
+      score += 30;
+    }
+  }
+  if ((q.includes("butter") && q.includes("paneer")) || q.includes("makhani")) {
+    if (n.includes("butter sauce") || n.includes("shahi paneer") || n.includes("makhani")) {
+      score += 35;
+    }
+  }
 
   return score;
+}
+function isDishQuery(query) {
+  const qTokens = tokens(query);
+  if (qTokens.length >= 2) return true;
+  return qTokens.some((t) => COOKED_TOKENS.has(t));
 }
 
 /**
  * Return top N candidates from an array of { name, item, source } after
  * scoring. `getName` extracts the display string from an item.
  */
-function rankCandidates(query, items, { source, getName, limit = 12, minScore = 6 }) {
+function rankCandidates(query, items, { source, getName, limit = 12, minScore = 6, preferCooked }) {
+  const cooked = preferCooked ?? isDishQuery(query);
   const scored = [];
   for (const it of items) {
     const name = getName(it);
     if (!name) continue;
-    const s = scoreName(query, name, { source });
+    const s = scoreName(query, name, { source, preferCooked: cooked });
     if (s < minScore) continue;
     scored.push({ item: it, name, score: s, source });
   }
@@ -181,4 +218,11 @@ function rankCandidates(query, items, { source, getName, limit = 12, minScore = 
   return scored.slice(0, limit);
 }
 
-module.exports = { levenshtein, scoreName, rankCandidates, normalize };
+module.exports = {
+  levenshtein,
+  scoreName,
+  rankCandidates,
+  normalize,
+  isDishQuery,
+  COOKED_TOKENS,
+};

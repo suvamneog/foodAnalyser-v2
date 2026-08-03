@@ -42,29 +42,30 @@ function analyzeFood(food) {
   const pros = []
   const cons = []
 
-  const protein = food.protein_g || 0;
-  const carbs = food.carbohydrates_total_g || 0;
-  const fiber = food.fiber_g || 0;
-  const sugar = food.sugar_g || 0;
-  const fat = food.fat_total_g || 0;
-  const saturatedFat = food.fat_saturated_g || 0;
-  const sodium = food.sodium_mg || 0;
-  const cholesterol = food.cholesterol_mg || 0;
-  const calories = food.calories || 0;
+  const present = (v) => v !== null && v !== undefined && Number.isFinite(Number(v));
+  const protein = present(food.protein_g) ? Number(food.protein_g) : null;
+  const carbs = present(food.carbohydrates_total_g) ? Number(food.carbohydrates_total_g) : null;
+  const fiber = present(food.fiber_g) ? Number(food.fiber_g) : null;
+  const sugar = present(food.sugar_g) ? Number(food.sugar_g) : null;
+  const fat = present(food.fat_total_g) ? Number(food.fat_total_g) : null;
+  const saturatedFat = present(food.fat_saturated_g) ? Number(food.fat_saturated_g) : null;
+  const sodium = present(food.sodium_mg) ? Number(food.sodium_mg) : null;
+  const cholesterol = present(food.cholesterol_mg) ? Number(food.cholesterol_mg) : null;
+  const calories = present(food.calories) ? Number(food.calories) : null;
 
-  if (protein > 20) pros.push("High in protein")
-  else if (protein > 10) pros.push("Good source of protein")
+  if (protein != null && protein > 20) pros.push("High in protein")
+  else if (protein != null && protein > 10) pros.push("Good source of protein")
 
-  if (carbs < 5) pros.push("Low in carbs")
-  else if (carbs > 50) cons.push("High in carbohydrates")
+  if (carbs != null && carbs < 5) pros.push("Low in carbs")
+  else if (carbs != null && carbs > 50) cons.push("High in carbohydrates")
 
-  if (fiber > 5) pros.push("High in fiber")
-  if (sugar > 10) cons.push("High in sugar")
-  if (fat > 15) cons.push("High in fat")
-  if (saturatedFat > 5) cons.push("High in saturated fat")
-  if (sodium > 500) cons.push("High in sodium")
-  if (cholesterol > 50) cons.push("Contains cholesterol")
-  if (calories < 100) pros.push("Low calorie food")
+  if (fiber != null && fiber > 5) pros.push("High in fiber")
+  if (sugar != null && sugar > 10) cons.push("High in sugar")
+  if (fat != null && fat > 15) cons.push("High in fat")
+  if (saturatedFat != null && saturatedFat > 5) cons.push("High in saturated fat")
+  if (sodium != null && sodium > 500) cons.push("High in sodium")
+  if (cholesterol != null && cholesterol > 50) cons.push("Contains cholesterol")
+  if (calories != null && calories < 100) pros.push("Low calorie food")
 
   return { pros, cons }
 }
@@ -140,15 +141,20 @@ function calculateProteinDensity(protein_g, calories) {
 function getSourceColor(source) {
   if (source?.includes('IFCT')) return 'text-blue-400';
   if (source?.includes('INDB')) return 'text-green-400';
+  if (/Assam|Manipur|Meghalaya|Nagaland/i.test(source || '')) return 'text-sky-300';
   if (source?.includes('CalorieNinjas')) return 'text-yellow-400';
   return 'text-gray-400';
 }
 
+function hasNutrient(value) {
+  return value !== null && value !== undefined && Number.isFinite(Number(value));
+}
+
 // Helper function to format numbers to 2 decimal places
 function formatNumber(value) {
-  if (value === undefined || value === null) return '0';
+  if (value === undefined || value === null) return '—';
   const num = typeof value === 'string' ? parseFloat(value) : value;
-  if (isNaN(num)) return '0';
+  if (isNaN(num)) return '—';
   return Number.isInteger(num) ? num.toString() : num.toFixed(2);
 }
 
@@ -377,6 +383,11 @@ function FoodAnalyzer({ output, loading, originalQuery, searchAttempted, regiona
   const adjustedCholesterol = plate.cholesterol_mg;
 
   const proteinDensity = calculateProteinDensity(adjustedProtein, adjustedCalories);
+  const hasPartialResearch =
+    ["ASSAM", "MANIPUR", "MEGHALAYA", "NAGALAND"].includes(
+      String(currentFood.sourceShort || "").toUpperCase()
+    ) ||
+    /assam|manipur|meghalaya|nagaland/i.test(String(currentFood.source || ""));
 
   return (
    <div className={`flex flex-col justify-center items-center w-full gap-4 transition-opacity duration-500 ease-in-out ${
@@ -462,6 +473,19 @@ function FoodAnalyzer({ output, loading, originalQuery, searchAttempted, regiona
     <CardTitle className="break-words px-1 text-center font-display text-base font-extrabold tracking-tight text-white sm:text-lg md:text-xl">
       {displayName}
     </CardTitle>
+    {currentFood.requestedName &&
+      currentFood.requestedName.toLowerCase() !== displayName.toLowerCase() && (
+        <p className="mt-1 px-2 text-center text-[11px] text-white/45">
+          {["ASSAM", "MANIPUR", "MEGHALAYA", "NAGALAND"].includes(
+            String(currentFood.sourceShort || "").toUpperCase()
+          )
+            ? `Showing regional match for “${currentFood.requestedName}”`
+            : String(currentFood.source || "").includes("IFCT") ||
+              String(currentFood.source || "").includes("INDB")
+            ? `Closest database match for “${currentFood.requestedName}”`
+            : `Closest available match for “${currentFood.requestedName}”`}
+        </p>
+      )}
 
     {/* Food Specifics Row */}
     <div className="mb-2 flex flex-wrap justify-center gap-1.5 sm:mb-3">
@@ -541,6 +565,12 @@ function FoodAnalyzer({ output, loading, originalQuery, searchAttempted, regiona
       )}
     </div>
 
+    {hasPartialResearch && (
+      <CardDescription className="mt-2 max-w-sm px-2 text-center text-[10px] leading-relaxed text-sky-200/70">
+        Approximate regional estimate — only available nutrients are shown; home recipes may differ.
+      </CardDescription>
+    )}
+
     <CardDescription className="mt-1.5 flex flex-wrap items-center justify-center gap-1 text-xs">
       <Scale className="h-3 w-3 text-white/45" />
       <span className="text-white/45">Showing for:</span>
@@ -585,29 +615,35 @@ function FoodAnalyzer({ output, loading, originalQuery, searchAttempted, regiona
                       )}
                     </div>
                     <p className="fa-num relative text-2xl text-white sm:text-3xl">
-                      {Math.round(Number(adjustedCalories) || 0)}
+                      {hasNutrient(adjustedCalories)
+                        ? Math.round(Number(adjustedCalories))
+                        : "—"}
                       <span className="ml-1 text-sm font-semibold text-white/55">kcal</span>
                     </p>
                   </div>
 
-                  <AddToTrackerButton
-                    name={currentFood.displayName || currentFood.name}
-                    calories={plate.calories}
-                    protein={plate.protein_g}
-                    carbs={plate.carbohydrates_total_g}
-                    fat={plate.fat_total_g}
-                    grams={plate.portionGrams}
-                    source={currentFood.source}
-                    className="mt-0.5 justify-center"
-                  />
+                  {hasNutrient(plate.calories) && (
+                    <AddToTrackerButton
+                      name={currentFood.displayName || currentFood.name}
+                      calories={plate.calories}
+                      protein={plate.protein_g ?? 0}
+                      carbs={plate.carbohydrates_total_g ?? 0}
+                      fat={plate.fat_total_g ?? 0}
+                      grams={plate.portionGrams}
+                      source={currentFood.source}
+                      className="mt-0.5 justify-center"
+                    />
+                  )}
 
-                  {/* Macronutrients — sticker tiles */}
+                  {/* Macronutrients — sticker tiles (hide unpublished Assam fields) */}
                   <div className="grid grid-cols-3 gap-2">
                     {[
                       { label: "Protein", value: adjustedProtein, tone: "fa-sticker-leaf" },
                       { label: "Carbs", value: adjustedCarbs, tone: "fa-sticker-sky" },
                       { label: "Fats", value: adjustedFat, tone: "fa-sticker-ember" },
-                    ].map((m) => (
+                    ]
+                      .filter((m) => !hasPartialResearch || hasNutrient(m.value))
+                      .map((m) => (
                       <div key={m.label} className={`fa-sticker ${m.tone} p-2.5 text-center sm:p-3`}>
                         <p className="relative text-[10px] font-semibold uppercase tracking-[0.16em] text-white/60">
                           {m.label}
@@ -621,16 +657,25 @@ function FoodAnalyzer({ output, loading, originalQuery, searchAttempted, regiona
                   </div>
 
                   {/* Additional Nutrients — keep quiet/reliable */}
-                  {(adjustedFiber > 0 || adjustedSugar > 0 || adjustedSaturatedFat > 0 || adjustedSodium > 0 || adjustedCholesterol > 0) && (
+                  {(hasNutrient(adjustedFiber) && adjustedFiber > 0 ||
+                    hasNutrient(adjustedSugar) && adjustedSugar > 0 ||
+                    hasNutrient(adjustedSaturatedFat) && adjustedSaturatedFat > 0 ||
+                    hasNutrient(adjustedSodium) && adjustedSodium > 0 ||
+                    hasNutrient(adjustedCholesterol) && adjustedCholesterol > 0 ||
+                    hasNutrient(plate.calcium_mg) && plate.calcium_mg > 0 ||
+                    hasNutrient(plate.iron_mg) && plate.iron_mg > 0 ||
+                    hasNutrient(plate.vitamin_c_mg) && plate.vitamin_c_mg > 0 ||
+                    hasNutrient(plate.potassium_mg) && plate.potassium_mg > 0 ||
+                    hasNutrient(plate.zinc_mg) && plate.zinc_mg > 0) && (
                     <div className="rounded-xl border border-white/10 bg-black/30 px-3 py-2.5">
                       <div className="grid grid-cols-2 gap-x-3 gap-y-1.5">
-                        {adjustedFiber > 0 && (
+                        {hasNutrient(adjustedFiber) && adjustedFiber > 0 && (
                           <div className="flex items-center justify-between text-xs">
                             <span className="text-white/50">Fiber</span>
                             <span className="font-semibold text-white/85">{formatNumber(adjustedFiber)} g</span>
                           </div>
                         )}
-                        {adjustedSugar > 0 && (
+                        {hasNutrient(adjustedSugar) && adjustedSugar > 0 && (
                           <div className="flex items-center justify-between text-xs">
                             <span className="text-white/50">Sugar</span>
                             <span className="font-semibold text-white/85">{formatNumber(adjustedSugar)} g</span>
@@ -652,6 +697,36 @@ function FoodAnalyzer({ output, loading, originalQuery, searchAttempted, regiona
                           <div className="flex items-center justify-between text-xs">
                             <span className="text-white/50">Cholesterol</span>
                             <span className="font-semibold text-white/85">{formatNumber(adjustedCholesterol)} mg</span>
+                          </div>
+                        )}
+                        {hasNutrient(plate.calcium_mg) && plate.calcium_mg > 0 && (
+                          <div className="flex items-center justify-between text-xs">
+                            <span className="text-white/50">Calcium</span>
+                            <span className="font-semibold text-white/85">{formatNumber(plate.calcium_mg)} mg</span>
+                          </div>
+                        )}
+                        {hasNutrient(plate.iron_mg) && plate.iron_mg > 0 && (
+                          <div className="flex items-center justify-between text-xs">
+                            <span className="text-white/50">Iron</span>
+                            <span className="font-semibold text-white/85">{formatNumber(plate.iron_mg)} mg</span>
+                          </div>
+                        )}
+                        {hasNutrient(plate.vitamin_c_mg) && plate.vitamin_c_mg > 0 && (
+                          <div className="flex items-center justify-between text-xs">
+                            <span className="text-white/50">Vitamin C</span>
+                            <span className="font-semibold text-white/85">{formatNumber(plate.vitamin_c_mg)} mg</span>
+                          </div>
+                        )}
+                        {hasNutrient(plate.potassium_mg) && plate.potassium_mg > 0 && (
+                          <div className="flex items-center justify-between text-xs">
+                            <span className="text-white/50">Potassium</span>
+                            <span className="font-semibold text-white/85">{formatNumber(plate.potassium_mg)} mg</span>
+                          </div>
+                        )}
+                        {hasNutrient(plate.zinc_mg) && plate.zinc_mg > 0 && (
+                          <div className="flex items-center justify-between text-xs">
+                            <span className="text-white/50">Zinc</span>
+                            <span className="font-semibold text-white/85">{formatNumber(plate.zinc_mg)} mg</span>
                           </div>
                         )}
                       </div>
@@ -794,6 +869,10 @@ function NoResultsCard({ query, onPick }) {
                       className={`rounded-full border px-1.5 py-[1px] text-[9px] font-semibold ${
                         s.sourceShort === "IFCT"
                           ? "border-emerald-400/40 bg-emerald-500/15 text-emerald-100"
+                          : ["ASSAM", "MANIPUR", "MEGHALAYA", "NAGALAND"].includes(
+                              s.sourceShort
+                            )
+                          ? "border-amber-400/40 bg-amber-500/15 text-amber-100"
                           : "border-sky-400/40 bg-sky-500/15 text-sky-100"
                       }`}
                     >

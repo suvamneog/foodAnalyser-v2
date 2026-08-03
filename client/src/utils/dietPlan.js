@@ -129,7 +129,7 @@ export function personaTargets({ weightKg, tdee, personaId }) {
 
 function buildGuidance(persona) {
   const tips = [
-    "Base every meal on IFCT/INDB foods when possible — those macros are lab-measured.",
+    "Prefer IFCT/INDB matches when available — those are database compositions. Regional research and estimates are labeled separately.",
     "Adjust oil/ghee in the plate customizer — cooking fat is where most home-vs-restaurant drift happens.",
     "Weigh yourself weekly, same time, before food.",
   ];

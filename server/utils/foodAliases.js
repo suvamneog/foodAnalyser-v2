@@ -159,16 +159,83 @@ const ALIAS_MAP = {
   saag: "saag",
   palak: "palak",
   spinach: "palak",
+  rajma: "rajmah",
+  rajmah: "rajmah",
+  rogan: "roghan",
+  roghan: "roghan",
+};
+
+/**
+ * Multi-word dish phrases → INDB/IFCT-friendly search terms.
+ * Improves recall when users type popular restaurant names.
+ */
+const PHRASE_ALIASES = {
+  "butter chicken": ["butter chicken"],
+  "chicken butter masala": ["butter chicken"],
+  "murgh makhani": ["butter chicken"],
+  "chicken biryani": ["chicken pulao", "mutton biryani", "vegetable biryani"],
+  "chicken biriyani": ["chicken pulao", "mutton biryani", "vegetable biryani"],
+  "masala dosa": ["masala dosa"],
+  "rajma chawal": ["rajmah curry", "kidney bean curry"],
+  "rajma rice": ["rajmah curry"],
+  "paneer butter masala": ["paneer in butter sauce", "shahi paneer"],
+  "butter paneer": ["paneer in butter sauce"],
+  "paneer makhani": ["paneer in butter sauce"],
+  "chole bhature": ["kabuli channa curry", "bhatura", "chickpeas curry"],
+  "chole bhatura": ["kabuli channa curry", "bhatura"],
+  "channa bhatura": ["kabuli channa curry", "bhatura"],
+  "pav bhaji": ["pav bhaji"],
+  "rogan josh": ["roghan josh"],
+  "roghan josh": ["roghan josh"],
+  "palak paneer": ["spinach paneer", "palak paneer"],
+  "fish curry": ["fish curry", "machli curry"],
+  "chicken breast": ["chicken, poultry, breast"],
+  "boiled egg": ["boiled egg"],
+  "plain dosa": ["plain dosa"],
+  // Assamese regional dishes → research recipe names
+  "masor tenga": ["rou masar tenga", "masar tenga", "tenga"],
+  "masar tenga": ["rou masar tenga", "masor tenga"],
+  "aloo pitika": ["aloo pitika", "alu pitika", "pitika"],
+  "alu pitika": ["aloo pitika", "pitika"],
+  khorisa: ["khorisa", "bamboo shoot pickle"],
+  "lai xaak": ["lai sak bhaji", "lai xaak"],
+  "narikol pitha": ["narikol pitha", "coconut pitha"],
+  "til pitha": ["til pitha"],
+  "assamese thali": ["assamese thali", "axomiya thali"],
+  // Manipur / Meghalaya / Nagaland
+  hawaijar: ["hawaijar", "manipur fermented soybean"],
+  ngari: ["ngari", "manipur fermented fish"],
+  hentak: ["hentak", "hentaak"],
+  soibum: ["soibum", "fermented bamboo manipur"],
+  soidon: ["soidon"],
+  tungrymbai: ["tungrymbai", "khasi fermented soybean"],
+  tungtap: ["tungtap"],
+  lungsiej: ["lungsiej"],
+  sohiong: ["sohiong", "prunus nepalensis"],
+  hungrii: ["hungrii"],
+  anishi: ["anishi"],
+  rhujuk: ["rhujuk", "bastanga", "bastenga"],
+  bastanga: ["rhujuk", "bastanga"],
+  tsutuocie: ["tsutuocie"],
 };
 
 function expandQuery(raw) {
   const q = String(raw || "").trim();
   if (!q) return [];
-  const lower = q.toLowerCase();
+  const lower = q.toLowerCase().replace(/\s+/g, " ");
   const out = new Set([q, lower]);
 
   if (ALIAS_MAP[lower]) out.add(ALIAS_MAP[lower]);
   if (ALIAS_MAP[q]) out.add(ALIAS_MAP[q]);
+
+  // Phrase-level expansions (longest match first)
+  const phrases = Object.keys(PHRASE_ALIASES).sort((a, b) => b.length - a.length);
+  for (const phrase of phrases) {
+    if (lower === phrase || lower.includes(phrase)) {
+      for (const alt of PHRASE_ALIASES[phrase]) out.add(alt);
+      break;
+    }
+  }
 
   const tokens = lower.split(/[\s,]+/).filter(Boolean);
   let anyTokenAlias = false;
@@ -190,4 +257,4 @@ function expandQuery(raw) {
   return Array.from(out);
 }
 
-module.exports = { expandQuery, ALIAS_MAP };
+module.exports = { expandQuery, ALIAS_MAP, PHRASE_ALIASES };

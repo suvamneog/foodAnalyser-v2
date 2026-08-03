@@ -86,8 +86,8 @@ const About = () => {
               <div className="w-32 h-1 bg-gradient-to-r from-green-400 to-blue-400 mx-auto rounded-full mb-8"></div>
               
               <p className="text-xl md:text-2xl text-gray-300 max-w-3xl mx-auto leading-relaxed">
-                An AI-powered Indian nutrition analysis tool built to make healthy eating 
-                accurate, fast, and accessible for everyone.
+                An Indian nutrition analysis tool built to make food data clearer —
+                with honest source labels, not inflated accuracy claims.
               </p>
             </motion.div>
 
@@ -193,18 +193,19 @@ const About = () => {
                   
                   <div className="space-y-4">
                     <p className="text-lg text-gray-300 leading-relaxed">
-                      FoodAnalyser × Fit is built with a simple goal: Provide the most accurate nutrition data for Indian foods.
+                      FoodAnalyser × Fit is built to surface honest Indian nutrition data — with clear sources, not inflated claims.
                     </p>
                     
                     <p className="text-purple-300 font-medium">
-                      We combined powerful datasets:
+                      Primary datasets:
                     </p>
                     
                     <div className="space-y-3">
                       {[
-                        "IFCT 2017 (ICMR-NIN) — 542 scientifically measured Indian foods",
-                        "INDB (Indian Nutrient Databank) — 1,014 Indian recipes", 
-                        "CalorieNinja (global fallback only when needed)"
+                        "IFCT 2017 (ICMR-NIN) — lab-measured Indian foods",
+                        "INDB (Indian Nutrient Databank) — Indian recipe compositions",
+                        "Regional Assam / Northeast estimates — labeled separately from IFCT/INDB",
+                        "CalorieNinjas / Open Food Facts — third-party fallback only when needed"
                       ].map((item, index) => (
                         <motion.div
                           key={item}
@@ -490,7 +491,7 @@ const About = () => {
                 
                 <div className="space-y-4 text-gray-300 leading-relaxed">
                   <p>
-                    To build India&apos;s most accurate, AI-driven nutrition ecosystem 
+                    To build clear, source-labeled Indian nutrition tools people can trust 
                     that understands Indian food diversity and supports 
                     personalized health, diet, and fitness goals.
                   </p>
@@ -631,7 +632,7 @@ const About = () => {
                   Your Health Journey Starts Here
                 </h3>
                 <p className="text-xl text-gray-300 leading-relaxed mb-8 max-w-2xl mx-auto">
-                  &quot;We believe everyone deserves accurate nutritional information for the foods they actually eat.&quot;
+                  &quot;We believe everyone deserves clear, source-labeled nutrition info for the foods they actually eat.&quot;
                 </p>
                 
                 <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">

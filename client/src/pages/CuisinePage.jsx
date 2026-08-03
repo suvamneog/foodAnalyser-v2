@@ -6,7 +6,7 @@ import {
   REGIONS,
   getRegionBySlug,
 } from "../data/discoveryData";
-import { fetchFoodData } from "../utils/fetchFoodData";
+import { fetchFoodData, fetchFoodById } from "../utils/fetchFoodData";
 
 const EASE = [0.22, 1, 0.36, 1];
 
@@ -18,18 +18,26 @@ export default function CuisinePage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  const analyseDish = async (query) => {
-    const trimmed = String(query || "").trim();
+  const analyseDish = async (dish) => {
+    const trimmed = String(dish?.query || dish?.name || "").trim();
     if (!trimmed || loading) return;
     setLoading(true);
     setError(null);
     try {
-      // Prefetch to surface empty results early, then land on home with state
-      const data = await fetchFoodData(trimmed);
+      let data;
+      if (dish?.match?.source && dish?.match?.code) {
+        data = await fetchFoodById({
+          source: dish.match.source,
+          code: dish.match.code,
+          label: dish.name || trimmed,
+        });
+      } else {
+        data = await fetchFoodData(trimmed);
+      }
       navigate("/", {
         state: {
           cuisineSearch: {
-            query: trimmed,
+            query: dish?.name || trimmed,
             results: Array.isArray(data) ? data : [data],
           },
         },
@@ -98,7 +106,7 @@ export default function CuisinePage() {
               {region.tagline}
             </p>
             <p className="mt-2 text-xs text-white/40">
-              Tap a dish to search IFCT / INDB nutrition — results open on the home analyser.
+              Tap a dish for nutrition from IFCT, INDB, or regional data where available.
             </p>
           </div>
         </div>
@@ -117,7 +125,7 @@ export default function CuisinePage() {
               key={dish.name}
               type="button"
               disabled={loading}
-              onClick={() => analyseDish(dish.query || dish.name)}
+              onClick={() => analyseDish(dish)}
               initial={reduceMotion ? false : { opacity: 0, y: 12 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: Math.min(i * 0.04, 0.3), ease: EASE }}
@@ -128,7 +136,13 @@ export default function CuisinePage() {
                   {dish.name}
                 </p>
                 <p className="mt-1 text-xs text-white/40">
-                  Search IFCT / INDB
+                  {dish.match
+                    ? ["ASSAM", "MANIPUR", "MEGHALAYA", "NAGALAND"].includes(
+                        String(dish.match.source || "").toUpperCase()
+                      )
+                      ? `${String(dish.match.source).charAt(0)}${String(dish.match.source).slice(1).toLowerCase()} regional data`
+                      : `Exact ${dish.match.source} match`
+                    : "Search databases"}
                 </p>
               </div>
               <Search className="h-4 w-4 text-saffron-300 opacity-70 transition group-hover:opacity-100" />

@@ -37,7 +37,7 @@ import {
 } from "lucide-react";
 import PlaceholdersAndVanishInputDemo from "./input";
 import FoodAnalyzer from "./Text";
-import { fetchFoodData } from "../utils/fetchFoodData";
+import { fetchFoodData, fetchFoodById } from "../utils/fetchFoodData";
 import { pushRecentSearch } from "../utils/recentSearches";
 import {
   TRENDING_DISHES,
@@ -367,6 +367,41 @@ function Home({
     }
   };
 
+  /** Discover cards: exact IFCT/INDB code lookup (falls back to text search). */
+  const runExactFood = async ({ match, label, query }) => {
+    const friendly = (label || query || "").trim();
+    if (loading) return;
+    if (match?.source && match?.code) {
+      shouldScrollRef.current = true;
+      setRegionalPreset(null);
+      setFoodName(friendly);
+      setLoading(true);
+      setSearchAttempted(true);
+      if (friendly) pushRecentSearch(friendly);
+      try {
+        const data = await fetchFoodById({
+          source: match.source,
+          code: match.code,
+          label: friendly,
+        });
+        const results = Array.isArray(data) ? data : [data];
+        results.originalQuery = friendly;
+        setOutput(results);
+        setFoodName("");
+        setOriginalQuery(friendly);
+      } catch (err) {
+        console.error(err);
+        // Fall back to fuzzy search if exact id missing
+        await runSearch(friendly || query || "");
+        return;
+      } finally {
+        setLoading(false);
+      }
+      return;
+    }
+    return runSearch(friendly || query || "");
+  };
+
   return (
     <div className="min-h-screen w-full pt-14 sm:pt-16">
       {stickySearch && (
@@ -470,8 +505,8 @@ function Home({
             transition={{ duration: 0.5, delay: 0.1, ease: EASE }}
             className="mt-6 max-w-lg text-center text-[15px] leading-[1.7] text-white/52 sm:mt-7 sm:text-lg sm:leading-relaxed"
           >
-            Explore authentic Indian foods, analyze nutrition using official databases,
-            identify dishes with AI, and make healthier choices.
+            Explore authentic Indian foods, analyze nutrition from IFCT, INDB, and
+            regional data, identify dishes with AI, and make clearer food choices.
           </motion.p>
 
           <motion.div
@@ -652,7 +687,13 @@ function Home({
                     </Link>
                     <button
                       type="button"
-                      onClick={() => runSearch(region.query)}
+                      onClick={() =>
+                        runExactFood({
+                          match: region.match,
+                          label: region.state,
+                          query: region.query,
+                        })
+                      }
                       disabled={loading}
                       className="rounded-full border border-saffron-400/30 bg-saffron-500/15 px-3 py-1.5 text-[11px] font-semibold text-saffron-200 transition hover:bg-saffron-500/25 disabled:opacity-50"
                     >
@@ -684,7 +725,13 @@ function Home({
                 type="button"
                 {...fadeUp}
                 transition={{ ...fadeUp.transition, delay: Math.min(i * 0.04, 0.28) }}
-                onClick={() => runSearch(dish.name)}
+                onClick={() =>
+                  runExactFood({
+                    match: dish.match,
+                    label: dish.name,
+                    query: dish.name,
+                  })
+                }
                 disabled={loading}
                 aria-label={`Analyse ${dish.name}`}
                 className="fa-card group w-[260px] shrink-0 overflow-hidden text-left disabled:opacity-60 sm:w-[290px]"
@@ -761,7 +808,13 @@ function Home({
                   {...fadeUp}
                   transition={{ ...fadeUp.transition, delay: Math.min(i * 0.03, 0.24) }}
                   whileHover={reduceMotion ? undefined : { y: -5 }}
-                  onClick={() => runSearch(cat.query)}
+                  onClick={() =>
+                    runExactFood({
+                      match: cat.match,
+                      label: cat.label,
+                      query: cat.query,
+                    })
+                  }
                   disabled={loading}
                   aria-label={`Browse ${cat.label}`}
                   className="fa-card group relative min-h-[220px] overflow-hidden text-left disabled:opacity-60 sm:min-h-[250px]"
@@ -867,7 +920,13 @@ function Home({
               <div className="mt-8 flex flex-wrap gap-3">
                 <button
                   type="button"
-                  onClick={() => runSearch(featured.name)}
+                  onClick={() =>
+                    runExactFood({
+                      match: featured.match,
+                      label: featured.name,
+                      query: featured.name,
+                    })
+                  }
                   disabled={loading}
                   className="fa-btn fa-btn-primary disabled:opacity-60"
                 >
@@ -876,7 +935,13 @@ function Home({
                 </button>
                 <button
                   type="button"
-                  onClick={() => runSearch(featured.name)}
+                  onClick={() =>
+                    runExactFood({
+                      match: featured.match,
+                      label: featured.name,
+                      query: featured.name,
+                    })
+                  }
                   disabled={loading}
                   className="fa-btn fa-btn-secondary disabled:opacity-60"
                 >
@@ -993,8 +1058,8 @@ function Home({
               FoodAnalyser <span className="text-white/30">×</span> Fit
             </p>
             <p className="mt-4 max-w-sm text-sm leading-relaxed text-white/42">
-              Indian nutrition intelligence powered by official food databases, AI recognition,
-              and practical health scoring.
+              Indian nutrition tools using IFCT 2017, INDB, Open Food Facts, and
+              regional estimates — with clear source labels so nothing is oversold.
             </p>
             <div className="mt-6 flex items-center gap-3">
               <a

@@ -107,6 +107,33 @@ export function resolveTrust(input = {}) {
   }
 
   if (
+    source.includes("assam") ||
+    source.includes("manipur") ||
+    source.includes("meghalaya") ||
+    source.includes("nagaland") ||
+    source.includes("northeast")
+  ) {
+    const region =
+      source.includes("manipur")
+        ? "Manipur"
+        : source.includes("meghalaya")
+        ? "Meghalaya"
+        : source.includes("nagaland")
+        ? "Nagaland"
+        : source.includes("assam")
+        ? "Assam"
+        : "Northeast";
+    return {
+      level: "estimate",
+      short: `${region} estimate`,
+      label: "Not IFCT/INDB",
+      detail:
+        `${region} regional estimate (not ICMR–NIN IFCT/INDB). Approximate; recipes vary. Only available nutrients are shown — gaps are not filled with zeros.`,
+      tone: "amber",
+    };
+  }
+
+  if (
     source.includes("calorieninjas") ||
     source.includes("open food") ||
     source.includes("openfoodfacts")

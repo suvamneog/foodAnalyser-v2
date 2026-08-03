@@ -13,7 +13,7 @@ const mongoose = require("mongoose");
 const auth = require("../middleware/authMiddleware");
 const FoodSearch = require("../models/foodSearch");
 const { expandQuery } = require("../utils/foodAliases");
-const { scoreName, rankCandidates } = require("../utils/searchRanking");
+const { scoreName, rankCandidates, isDishQuery } = require("../utils/searchRanking");
 require("dotenv").config();
 
 // 🥗 Load IFCT dataset
@@ -38,6 +38,31 @@ try {
   console.error("❌ Error loading INDB dataset:", err.message);
 }
 
+// 🌿 Assam regional research recipes (lab papers — not IFCT/INDB)
+let assamData = [];
+try {
+  const assamPath = path.resolve(__dirname, "../data/assam_dataset.json");
+  console.log("📄 Loading Assam research recipes from:", assamPath);
+  assamData = JSON.parse(fs.readFileSync(assamPath, "utf-8"));
+  console.log(`✅ Assam research recipes loaded (${assamData.length})`);
+} catch (err) {
+  console.error("❌ Error loading Assam dataset:", err.message);
+}
+
+// 🌿 Manipur / Meghalaya / Nagaland research foods
+let northeastData = [];
+try {
+  const nePath = path.resolve(__dirname, "../data/northeast_dataset.json");
+  console.log("📄 Loading Northeast research recipes from:", nePath);
+  northeastData = JSON.parse(fs.readFileSync(nePath, "utf-8"));
+  console.log(`✅ Northeast research recipes loaded (${northeastData.length})`);
+} catch (err) {
+  console.error("❌ Error loading Northeast dataset:", err.message);
+}
+
+const REGIONAL_SOURCES = new Set(["ASSAM", "MANIPUR", "MEGHALAYA", "NAGALAND"]);
+const allRegionalData = () => [...assamData, ...northeastData];
+
 // Helper function to parse nutrition values
 function parseNutritionValue(value) {
   if (value === "N/A" || value === undefined || value === null) return 0;
@@ -46,6 +71,148 @@ function parseNutritionValue(value) {
     return Number(cleaned) || 0;
   }
   return Number(value) || 0;
+}
+
+function formatIfctItem(item, score = null) {
+  const enhanced = addChickenSpecificity(item.name, "IFCT 2017", item);
+  const row = {
+    source: "IFCT 2017 (ICMR-NIN)",
+    sourceShort: "IFCT",
+    food_code: item.code || null,
+    name: enhanced.displayName,
+    displayName: enhanced.displayName,
+    cut: enhanced.cut,
+    preparation: enhanced.preparation,
+    isRaw: enhanced.isRaw,
+    isCooked: enhanced.isCooked,
+    calories: parseFloat((item.enerc / 4.184).toFixed(1)),
+    protein_g: parseFloat((item.protcnt || 0).toFixed(2)),
+    carbohydrates_total_g: parseFloat((item.choavldf || 0).toFixed(2)),
+    fat_total_g: parseFloat((item.fatce || 0).toFixed(2)),
+    fiber_g: parseFloat((item.fibtg || 0).toFixed(2)),
+    serving_size_g: 100,
+    serving_description: "per 100g edible portion",
+  };
+  if (score != null) row.search_score = score;
+  return row;
+}
+
+function formatIndbItem(item, score = null) {
+  const enhanced = addChickenSpecificity(item.food_name, "INDB", item);
+  const row = {
+    source: "INDB (Indian Nutrient Databank)",
+    sourceShort: "INDB",
+    food_code: item.food_code || null,
+    name: enhanced.displayName,
+    displayName: enhanced.displayName,
+    cut: enhanced.cut,
+    preparation: enhanced.preparation,
+    isRaw: enhanced.isRaw,
+    isCooked: enhanced.isCooked,
+    calories: parseNutritionValue(item.energy_kcal || item["energy (kcal)"]),
+    protein_g: parseNutritionValue(item.protein_g || item["protein (g)"]),
+    carbohydrates_total_g: parseNutritionValue(item.carb_g || item["carbohydrates (g)"]),
+    fat_total_g: parseNutritionValue(item.fat_g || item["fat (g)"]),
+    fiber_g: parseNutritionValue(item.fibre_g || item["fibre (g)"]),
+    serving_size_g: 100,
+    serving_description: "per 100g",
+  };
+  if (score != null) row.search_score = score;
+  return row;
+}
+
+function formatRegionalResearchItem(item, score = null) {
+  const availableFields = [];
+  const pick = (key, value) => {
+    if (value === null || value === undefined || Number.isNaN(Number(value))) return null;
+    availableFields.push(key);
+    return Number(Number(value).toFixed(2));
+  };
+
+  const region = item.region || "Northeast";
+  const sourceShort = String(item.source_short || "NE").toUpperCase();
+  const displayName = item.display_name || item.food_name;
+  const row = {
+    source: `${region} regional data`,
+    sourceShort,
+    food_code: item.food_code || null,
+    name: displayName,
+    displayName,
+    region,
+    isRaw: false,
+    isCooked: true,
+    // Do not expose paper citations to clients
+    citation: null,
+    notes:
+      "Approximate regional estimate. Only available nutrients are shown; home recipes may differ.",
+    calories: pick("calories", item.energy_kcal),
+    protein_g: pick("protein_g", item.protein_g),
+    carbohydrates_total_g: pick("carbohydrates_total_g", item.carb_g),
+    fat_total_g: pick("fat_total_g", item.fat_g),
+    fiber_g: pick("fiber_g", item.fibre_g),
+    calcium_mg: pick("calcium_mg", item.calcium_mg),
+    iron_mg: pick("iron_mg", item.iron_mg),
+    sodium_mg: pick("sodium_mg", item.sodium_mg),
+    potassium_mg: pick("potassium_mg", item.potassium_mg),
+    zinc_mg: pick("zinc_mg", item.zinc_mg),
+    vitamin_c_mg: pick("vitamin_c_mg", item.vitamin_c_mg),
+    beta_carotene_ug: pick("beta_carotene_ug", item.beta_carotene_ug),
+    retinol_ug: pick("retinol_ug", item.retinol_ug),
+    availableFields,
+    serving_size_g: 100,
+    serving_description: "per 100g",
+  };
+  if (score != null) row.search_score = score;
+  return row;
+}
+
+function formatAssamItem(item, score = null) {
+  return formatRegionalResearchItem(
+    { ...item, region: item.region || "Assam", source_short: "ASSAM" },
+    score
+  );
+}
+
+function searchRegionalPool(query, pool) {
+  return rankCandidates(query, pool, {
+    source: "INDB",
+    getName: (item) =>
+      [item.food_name, item.display_name, ...(item.aliases || [])]
+        .filter(Boolean)
+        .join(" "),
+    limit: 20,
+    minScore: 8,
+    preferCooked: true,
+  }).map(({ item, name, score }) => ({
+    item,
+    name: item.display_name || item.food_name || name,
+    score,
+  }));
+}
+
+function searchAssam(query) {
+  return searchRegionalPool(query, assamData);
+}
+
+function searchNortheast(query) {
+  return searchRegionalPool(query, northeastData);
+}
+
+function regionalBoostForQuery(query) {
+  const q = String(query || "");
+  if (/\b(assam|axomiya|tenga|pitika|khorisa|khar|pitha|xaak|lai sak|dhekia|kalmou|masor|masar)\b/i.test(q)) {
+    return { regions: ["Assam"], boost: 80 };
+  }
+  if (/\b(manipur|hawaijar|hentak|ngari|soibum|soidon|meitei)\b/i.test(q)) {
+    return { regions: ["Manipur"], boost: 80 };
+  }
+  if (/\b(meghalaya|khasi|tungrymbai|tungtap|lungsiej|sohiong)\b/i.test(q)) {
+    return { regions: ["Meghalaya"], boost: 80 };
+  }
+  if (/\b(nagaland|hungrii|rhujuk|bastanga|bastenga|tsutuocie|anishi|axone|akhuni)\b/i.test(q)) {
+    return { regions: ["Nagaland"], boost: 80 };
+  }
+  return { regions: [], boost: 0 };
 }
 
 // 🆕 Enhanced naming function for Indian foods
@@ -144,7 +311,11 @@ function addChickenSpecificity(baseName, source, foodItem) {
 
 // 🆕 Smart grouping to avoid duplicate chicken results
 function groupAndDiversifyResults(results, query) {
-  if (results.length <= 6) return results;
+  const byScore = (a, b) => (b.search_score || 0) - (a.search_score || 0);
+
+  if (results.length <= 6) {
+    return results.slice().sort(byScore);
+  }
   
   const lowerQuery = query.toLowerCase();
   
@@ -154,7 +325,9 @@ function groupAndDiversifyResults(results, query) {
                      lowerQuery.includes('dal') ||
                      lowerQuery.includes('paneer');
   
-  if (!shouldGroup) return results.slice(0, 6);
+  if (!shouldGroup) {
+    return results.slice().sort(byScore).slice(0, 6);
+  }
   
   const groups = {
     raw: [],
@@ -163,14 +336,24 @@ function groupAndDiversifyResults(results, query) {
     grilled: [],
     biryani: [],
     traditional: [],
+    assam: [],
     other: []
   };
   
   results.forEach(result => {
     const name = result.displayName.toLowerCase();
     const source = result.source || '';
+    const short = String(result.sourceShort || "").toUpperCase();
     
-    if (name.includes('raw') || (source.includes('IFCT') && !name.includes('curry'))) {
+    if (
+      REGIONAL_SOURCES.has(short) ||
+      source.toLowerCase().includes("assam") ||
+      source.toLowerCase().includes("manipur") ||
+      source.toLowerCase().includes("meghalaya") ||
+      source.toLowerCase().includes("nagaland")
+    ) {
+      groups.assam.push(result);
+    } else if (name.includes('raw') || (source.includes('IFCT') && !name.includes('curry'))) {
       groups.raw.push(result);
     } else if (name.includes('curry') || name.includes('masala') || name.includes('gravy')) {
       groups.curry.push(result);
@@ -192,36 +375,129 @@ function groupAndDiversifyResults(results, query) {
   Object.values(groups).forEach(group => {
     if (group.length > 0) {
       // Sort by search score and take the best one
-      const bestInGroup = group.sort((a, b) => (b.search_score || 0) - (a.search_score || 0))[0];
+      const bestInGroup = group.sort(byScore)[0];
       finalResults.push(bestInGroup);
     }
   });
   
   // Sort final results by search score
-  return finalResults.sort((a, b) => (b.search_score || 0) - (a.search_score || 0)).slice(0, 6);
+  return finalResults.sort(byScore).slice(0, 6);
 }
 
 // Ranking-backed IFCT search (typo-tolerant + Indian relevance)
-function searchIFCT(query) {
+function searchIFCT(query, preferCooked) {
   const ranked = rankCandidates(query, ifctData, {
     source: "IFCT",
     getName: (item) => item.name,
     limit: 40,
     minScore: 6,
+    preferCooked,
   });
   return ranked.map(({ item, name, score }) => ({ item, name, score }));
 }
 
 // Ranking-backed INDB search
-function searchINDB(query) {
+function searchINDB(query, preferCooked) {
   const ranked = rankCandidates(query, indbData, {
     source: "INDB",
     getName: (item) => item.food_name,
     limit: 40,
     minScore: 6,
+    preferCooked,
   });
   return ranked.map(({ item, name, score }) => ({ item, name, score }));
 }
+
+// ------------------------------------
+// 🎯 Exact lookup by dataset code (Discover cards)
+// GET /api/food/by-id?source=INDB&code=ASC242
+// ------------------------------------
+router.get("/by-id", (req, res) => {
+  try {
+    const source = String(req.query.source || "").trim().toUpperCase();
+    const code = String(req.query.code || "").trim().toUpperCase();
+    const label = String(req.query.label || "").trim();
+
+    if (!source || !code) {
+      return res.status(400).json({ error: "Missing source or code" });
+    }
+
+    let item = null;
+    if (source === "INDB") {
+      item = indbData.find(
+        (f) => String(f.food_code || "").toUpperCase() === code
+      );
+      if (!item) {
+        return res.status(404).json({ error: `No INDB food with code ${code}` });
+      }
+      const formatted = formatIndbItem(item);
+      if (label) formatted.requestedName = label;
+      saveSearch(req, label || formatted.displayName, formatted);
+      return res.json({ items: [formatted], exact: true });
+    }
+
+    if (source === "IFCT") {
+      item = ifctData.find((f) => String(f.code || "").toUpperCase() === code);
+      if (!item) {
+        return res.status(404).json({ error: `No IFCT food with code ${code}` });
+      }
+      const formatted = formatIfctItem(item);
+      if (label) formatted.requestedName = label;
+      saveSearch(req, label || formatted.displayName, formatted);
+      return res.json({ items: [formatted], exact: true });
+    }
+
+    if (source === "ASSAM") {
+      item = assamData.find(
+        (f) => String(f.food_code || "").toUpperCase() === code
+      );
+      if (!item) {
+        return res.status(404).json({ error: `No Assam research food with code ${code}` });
+      }
+      const formatted = formatAssamItem(item);
+      if (label) formatted.requestedName = label;
+      saveSearch(req, label || formatted.displayName, formatted);
+      return res.json({ items: [formatted], exact: true });
+    }
+
+    if (REGIONAL_SOURCES.has(source) || source === "NE" || source === "NORTHEAST") {
+      const pool =
+        source === "ASSAM"
+          ? assamData
+          : source === "NE" || source === "NORTHEAST"
+          ? allRegionalData()
+          : northeastData.filter(
+              (f) => String(f.source_short || "").toUpperCase() === source
+            );
+      item = pool.find((f) => String(f.food_code || "").toUpperCase() === code);
+      if (!item) {
+        // Also allow looking up any NE code regardless of source filter
+        item = allRegionalData().find(
+          (f) => String(f.food_code || "").toUpperCase() === code
+        );
+      }
+      if (!item) {
+        return res.status(404).json({
+          error: `No regional research food with code ${code}`,
+        });
+      }
+      const formatted = formatRegionalResearchItem({
+        ...item,
+        source_short: item.source_short || source,
+      });
+      if (label) formatted.requestedName = label;
+      saveSearch(req, label || formatted.displayName, formatted);
+      return res.json({ items: [formatted], exact: true });
+    }
+
+    return res.status(400).json({
+      error: "source must be IFCT, INDB, ASSAM, MANIPUR, MEGHALAYA, or NAGALAND",
+    });
+  } catch (err) {
+    console.error("❌ /by-id error:", err.message);
+    return res.status(500).json({ error: "Lookup failed" });
+  }
+});
 
 // ------------------------------------
 // ⚡ Fast Autocomplete: /api/food/suggest?q=...
@@ -243,11 +519,20 @@ router.get("/suggest", (req, res) => {
       for (const it of ifctData) {
         const name = it.name;
         if (!name) continue;
-        const s = scoreName(qv, name, { source: "IFCT" });
+        const s = scoreName(qv, name, {
+          source: "IFCT",
+          preferCooked: isDishQuery(raw),
+        });
         if (s < 10) continue;
         const key = name.toLowerCase();
         const prev = ifctScored.get(key);
-        if (!prev || s > prev.score) ifctScored.set(key, { name, score: s, source: "IFCT" });
+        if (!prev || s > prev.score)
+          ifctScored.set(key, {
+            name,
+            score: s,
+            source: "IFCT",
+            food_code: it.code || null,
+          });
       }
     }
 
@@ -257,15 +542,50 @@ router.get("/suggest", (req, res) => {
       for (const it of indbData) {
         const name = it.food_name;
         if (!name) continue;
-        const s = scoreName(qv, name, { source: "INDB" });
+        const s = scoreName(qv, name, {
+          source: "INDB",
+          preferCooked: isDishQuery(raw),
+        });
         if (s < 10) continue;
         const key = name.toLowerCase();
         const prev = indbScored.get(key);
-        if (!prev || s > prev.score) indbScored.set(key, { name, score: s, source: "INDB" });
+        if (!prev || s > prev.score)
+          indbScored.set(key, {
+            name,
+            score: s,
+            source: "INDB",
+            food_code: it.food_code || null,
+          });
       }
     }
 
-    // Merge: dedupe by lowercase name, prefer higher score, prefer INDB tie-break for cooked queries
+    // Score Assam + Northeast research recipes
+    const regionalScored = new Map();
+    for (const qv of variants) {
+      for (const it of allRegionalData()) {
+        const name = it.display_name || it.food_name;
+        const hay = [it.food_name, it.display_name, ...(it.aliases || [])]
+          .filter(Boolean)
+          .join(" ");
+        if (!hay) continue;
+        const s = scoreName(qv, hay, {
+          source: "INDB",
+          preferCooked: isDishQuery(raw),
+        });
+        if (s < 10) continue;
+        const key = name.toLowerCase();
+        const prev = regionalScored.get(key);
+        if (!prev || s > prev.score)
+          regionalScored.set(key, {
+            name,
+            score: s,
+            source: String(it.source_short || "NE").toUpperCase(),
+            food_code: it.food_code || null,
+          });
+      }
+    }
+
+    // Merge: dedupe by lowercase name, prefer higher score
     const merged = new Map();
     const push = (row) => {
       const key = row.name.toLowerCase();
@@ -274,6 +594,16 @@ router.get("/suggest", (req, res) => {
     };
     for (const row of ifctScored.values()) push(row);
     for (const row of indbScored.values()) push(row);
+    for (const row of regionalScored.values()) push(row);
+
+    const sourceLabel = {
+      IFCT: "IFCT 2017 (ICMR-NIN)",
+      INDB: "INDB (Indian Nutrient Databank)",
+      ASSAM: "Assam regional data",
+      MANIPUR: "Manipur regional data",
+      MEGHALAYA: "Meghalaya regional data",
+      NAGALAND: "Nagaland regional data",
+    };
 
     const items = Array.from(merged.values())
       .sort((a, b) => b.score - a.score)
@@ -281,7 +611,8 @@ router.get("/suggest", (req, res) => {
       .map((r) => ({
         name: r.name,
         displayName: r.name,
-        source: r.source === "IFCT" ? "IFCT 2017 (ICMR-NIN)" : "INDB (Indian Nutrient Databank)",
+        food_code: r.food_code,
+        source: sourceLabel[r.source] || `${r.source} research`,
         sourceShort: r.source,
       }));
 
@@ -305,16 +636,18 @@ router.get("/search", async (req, res) => {
     console.log(`\n🔍 MAIN SEARCH for: "${query}"`);
 
     let allResults = [];
+    const preferCooked = isDishQuery(query);
 
     // Expand multilingual / transliteration aliases (recall only — not a nutrition claim)
     const queryVariants = expandQuery(query);
     console.log(`🌐 Alias expansions: ${queryVariants.join(" | ")}`);
+    console.log(`🍳 Dish intent: ${preferCooked ? "cooked/INDB preferred" : "ingredient/IFCT preferred"}`);
 
     // 🔹 Step 1 — Search IFCT (original + alias expansions)
     console.log(`🔍 STEP 1: Searching IFCT database...`);
     const ifctByName = new Map();
     for (const qv of queryVariants) {
-      for (const match of searchIFCT(qv)) {
+      for (const match of searchIFCT(qv, preferCooked)) {
         const key = (match.name || "").toLowerCase();
         const prev = ifctByName.get(key);
         if (!prev || match.score > prev.score) ifctByName.set(key, match);
@@ -325,27 +658,9 @@ router.get("/search", async (req, res) => {
     if (ifctResults.length > 0) {
       console.log(`✅ STEP 1 RESULT: Found ${ifctResults.length} items in IFCT`);
       
-      const topIfctResults = ifctResults.slice(0, 4).map(match => {
-        const enhanced = addChickenSpecificity(match.item.name, "IFCT 2017", match.item);
-        
-        return {
-          source: "IFCT 2017 (ICMR-NIN)",
-          name: enhanced.displayName,
-          displayName: enhanced.displayName,
-          cut: enhanced.cut,
-          preparation: enhanced.preparation,
-          isRaw: enhanced.isRaw,
-          isCooked: enhanced.isCooked,
-          calories: parseFloat((match.item.enerc / 4.184).toFixed(1)),
-          protein_g: parseFloat((match.item.protcnt || 0).toFixed(2)),
-          carbohydrates_total_g: parseFloat((match.item.choavldf || 0).toFixed(2)),
-          fat_total_g: parseFloat((match.item.fatce || 0).toFixed(2)),
-          fiber_g: parseFloat((match.item.fibtg || 0).toFixed(2)),
-          serving_size_g: 100,
-          serving_description: "per 100g edible portion",
-          search_score: match.score
-        };
-      });
+      const topIfctResults = ifctResults
+        .slice(0, preferCooked ? 2 : 4)
+        .map((match) => formatIfctItem(match.item, match.score));
 
       allResults = [...allResults, ...topIfctResults];
     }
@@ -354,7 +669,7 @@ router.get("/search", async (req, res) => {
     console.log(`🔍 STEP 2: Searching INDB database...`);
     const indbByName = new Map();
     for (const qv of queryVariants) {
-      for (const match of searchINDB(qv)) {
+      for (const match of searchINDB(qv, preferCooked)) {
         const key = (match.name || "").toLowerCase();
         const prev = indbByName.get(key);
         if (!prev || match.score > prev.score) indbByName.set(key, match);
@@ -365,29 +680,53 @@ router.get("/search", async (req, res) => {
     if (indbResults.length > 0) {
       console.log(`✅ STEP 2 RESULT: Found ${indbResults.length} items in INDB`);
       
-      const topIndbResults = indbResults.slice(0, 5).map(match => {
-        const enhanced = addChickenSpecificity(match.item.food_name, "INDB", match.item);
-        
-        return {
-          source: "INDB (Indian Nutrient Databank)",
-          name: enhanced.displayName,
-          displayName: enhanced.displayName,
-          cut: enhanced.cut,
-          preparation: enhanced.preparation,
-          isRaw: enhanced.isRaw,
-          isCooked: enhanced.isCooked,
-          calories: parseNutritionValue(match.item.energy_kcal || match.item["energy (kcal)"]),
-          protein_g: parseNutritionValue(match.item.protein_g || match.item["protein (g)"]),
-          carbohydrates_total_g: parseNutritionValue(match.item.carb_g || match.item["carbohydrates (g)"]),
-          fat_total_g: parseNutritionValue(match.item.fat_g || match.item["fat (g)"]),
-          fiber_g: parseNutritionValue(match.item.fibre_g || match.item["fibre (g)"]),
-          serving_size_g: 100,
-          serving_description: "per 100g",
-          search_score: match.score
-        };
-      });
+      const topIndbResults = indbResults
+        .slice(0, preferCooked ? 5 : 3)
+        .map((match) => formatIndbItem(match.item, match.score));
 
       allResults = [...allResults, ...topIndbResults];
+    }
+
+    // 🔹 Step 2b — Assam + Northeast regional research recipes
+    console.log(`🔍 STEP 2b: Searching regional research recipes...`);
+    const regionalByName = new Map();
+    for (const qv of queryVariants) {
+      for (const match of [...searchAssam(qv), ...searchNortheast(qv)]) {
+        const key = (match.name || "").toLowerCase();
+        const prev = regionalByName.get(key);
+        if (!prev || match.score > prev.score) regionalByName.set(key, match);
+      }
+    }
+    const regionalResults = Array.from(regionalByName.values()).sort(
+      (a, b) => b.score - a.score
+    );
+
+    if (regionalResults.length > 0) {
+      console.log(`✅ STEP 2b RESULT: Found ${regionalResults.length} regional research items`);
+      const { regions: boostRegions, boost } = regionalBoostForQuery(query);
+      const topRegional = regionalResults
+        .slice(0, boost > 0 ? 5 : 3)
+        .map((match) => {
+          const row = formatRegionalResearchItem(
+            {
+              ...match.item,
+              source_short:
+                match.item.source_short ||
+                (match.item.region === "Assam" ? "ASSAM" : "NE"),
+            },
+            match.score
+          );
+          if (
+            boost > 0 &&
+            (boostRegions.length === 0 ||
+              boostRegions.includes(match.item.region) ||
+              boostRegions.includes(row.region))
+          ) {
+            row.search_score = (row.search_score || 0) + boost;
+          }
+          return row;
+        });
+      allResults = [...allResults, ...topRegional];
     }
 
     // 🔹 Step 3 — Global fallback (ONLY if no Indian database matches)
@@ -448,14 +787,27 @@ router.get("/search", async (req, res) => {
       // Sort by search score
       diversifiedResults.sort((a, b) => (b.search_score || 0) - (a.search_score || 0));
 
+      const topScore = diversifiedResults[0]?.search_score || 0;
+      const confident = topScore >= 40;
+
+      // Keep related alternatives when confidence is middling
+      const related = diversifiedResults
+        .slice(1, 5)
+        .map(({ search_score, ...rest }) => rest);
+
       // Remove search_score from final response
       const finalResults = diversifiedResults.map(({ search_score, ...rest }) => rest);
 
-      console.log(`🏁 FINAL: Returning ${finalResults.length} diverse results`);
+      console.log(`🏁 FINAL: Returning ${finalResults.length} diverse results (top=${topScore}, confident=${confident})`);
       console.log("🏁 Results:", finalResults.map(r => `${r.displayName} (${r.source})`));
       
       saveSearch(req, query, finalResults[0]);
-      return res.json({ items: finalResults });
+      return res.json({
+        items: finalResults,
+        query,
+        confident,
+        related,
+      });
     } else {
       console.log(`💀 FINAL RESULT: No results found for "${query}"`);
 
@@ -479,6 +831,25 @@ router.get("/search", async (req, res) => {
           const key = name.toLowerCase();
           const prev = guessSet.get(key);
           if (!prev || s > prev.score) guessSet.set(key, { name, score: s, source: "INDB (Indian Nutrient Databank)" });
+        }
+        for (const it of allRegionalData()) {
+          const name = it.display_name || it.food_name;
+          const hay = [it.food_name, it.display_name, ...(it.aliases || [])]
+            .filter(Boolean)
+            .join(" ");
+          if (!hay) continue;
+          const s = scoreName(qv, hay, { source: "INDB" });
+          if (s < 4) continue;
+          const key = name.toLowerCase();
+          const prev = guessSet.get(key);
+          const label = `${it.region || "Northeast"} regional data`;
+          if (!prev || s > prev.score)
+            guessSet.set(key, {
+              name,
+              score: s,
+              source: label,
+              sourceShort: String(it.source_short || "NE").toUpperCase(),
+            });
         }
       }
       const suggestions = Array.from(guessSet.values())

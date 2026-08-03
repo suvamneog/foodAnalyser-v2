@@ -3,6 +3,7 @@
 export const TRENDING_DISHES = [
   {
     name: "Butter Chicken",
+    match: { source: "INDB", code: "ASC242" },
     calories: 290,
     protein: 23,
     healthScore: 62,
@@ -12,6 +13,8 @@ export const TRENDING_DISHES = [
   },
   {
     name: "Chicken Biryani",
+    match: { source: "INDB", code: "BFP142" },
+    note: "Closest INDB match: Chicken pulao",
     calories: 320,
     protein: 18,
     healthScore: 58,
@@ -21,6 +24,7 @@ export const TRENDING_DISHES = [
   },
   {
     name: "Masala Dosa",
+    match: { source: "INDB", code: "ASC146" },
     calories: 210,
     protein: 6,
     healthScore: 74,
@@ -30,6 +34,8 @@ export const TRENDING_DISHES = [
   },
   {
     name: "Rajma Chawal",
+    match: { source: "INDB", code: "ASC165" },
+    note: "Rajmah curry (pair with rice)",
     calories: 250,
     protein: 12,
     healthScore: 78,
@@ -39,6 +45,7 @@ export const TRENDING_DISHES = [
   },
   {
     name: "Paneer Butter Masala",
+    match: { source: "INDB", code: "ASC222" },
     calories: 310,
     protein: 14,
     healthScore: 55,
@@ -48,6 +55,8 @@ export const TRENDING_DISHES = [
   },
   {
     name: "Chole Bhature",
+    match: { source: "INDB", code: "BFP185" },
+    note: "Kabuli channa curry — add bhatura separately",
     calories: 420,
     protein: 11,
     healthScore: 42,
@@ -57,6 +66,7 @@ export const TRENDING_DISHES = [
   },
   {
     name: "Pav Bhaji",
+    match: { source: "INDB", code: "OSR112" },
     calories: 280,
     protein: 8,
     healthScore: 48,
@@ -66,6 +76,7 @@ export const TRENDING_DISHES = [
   },
   {
     name: "Poha",
+    match: { source: "INDB", code: "BFP044" },
     calories: 180,
     protein: 4,
     healthScore: 82,
@@ -75,6 +86,7 @@ export const TRENDING_DISHES = [
   },
   {
     name: "Idli",
+    match: { source: "INDB", code: "ASC144" },
     calories: 60,
     protein: 2,
     healthScore: 88,
@@ -84,6 +96,7 @@ export const TRENDING_DISHES = [
   },
   {
     name: "Rogan Josh",
+    match: { source: "INDB", code: "ASC227" },
     calories: 270,
     protein: 22,
     healthScore: 64,
@@ -112,9 +125,10 @@ export const REGIONS = [
     slug: "punjab",
     tagline: "Rich tandoori flavours",
     query: "butter chicken",
+    match: { source: "INDB", code: "ASC242" },
     foods: 48,
     dishes: [
-      { name: "Butter Chicken", query: "butter chicken" },
+      { name: "Butter Chicken", query: "butter chicken", match: { source: "INDB", code: "ASC242" } },
       { name: "Sarson da Saag", query: "sarson" },
       { name: "Makki di Roti", query: "makki" },
       { name: "Chole", query: "chole" },
@@ -128,28 +142,77 @@ export const REGIONS = [
     state: "Assam",
     slug: "assam",
     tagline: "Fresh river fish & traditional cuisine",
-    query: "fish curry",
+    query: "masor tenga",
+    match: { source: "ASSAM", code: "ASM016" },
     foods: 32,
     dishes: [
-      { name: "Fish Curry", query: "fish curry" },
-      { name: "Masor Tenga", query: "fish" },
-      { name: "Aloo Pitika", query: "potato" },
-      { name: "Khar", query: "khar" },
-      { name: "Pitha", query: "pitha" },
+      { name: "Masor Tenga", query: "masor tenga", match: { source: "ASSAM", code: "ASM016" } },
+      { name: "Aloo Pitika", query: "aloo pitika", match: { source: "ASSAM", code: "ASM008" } },
+      { name: "Khorisa", query: "khorisa", match: { source: "ASSAM", code: "ASM028" } },
+      { name: "Lai Xaak", query: "lai xaak", match: { source: "ASSAM", code: "ASM007" } },
+      { name: "Narikol Pitha", query: "narikol pitha", match: { source: "ASSAM", code: "ASM031" } },
+      { name: "Assamese Thali", query: "assamese thali", match: { source: "ASSAM", code: "ASM030" } },
     ],
     image:
       "/foods/fish-curry.jpg",
+  },
+  {
+    state: "Manipur",
+    slug: "manipur",
+    tagline: "Fermented soy, fish & bamboo classics",
+    query: "hawaijar",
+    match: { source: "MANIPUR", code: "MNP001" },
+    foods: 5,
+    dishes: [
+      { name: "Hawaijar", query: "hawaijar", match: { source: "MANIPUR", code: "MNP001" } },
+      { name: "Ngari", query: "ngari", match: { source: "MANIPUR", code: "MNP003" } },
+      { name: "Hentak", query: "hentak", match: { source: "MANIPUR", code: "MNP002" } },
+      { name: "Soibum", query: "soibum", match: { source: "MANIPUR", code: "MNP004" } },
+      { name: "Soidon", query: "soidon", match: { source: "MANIPUR", code: "MNP005" } },
+    ],
+    image: "/foods/manipur-food.jpg",
+  },
+  {
+    state: "Meghalaya",
+    slug: "meghalaya",
+    tagline: "Khasi fermented soy, fish & wild foods",
+    query: "tungrymbai",
+    match: { source: "MEGHALAYA", code: "MLG002" },
+    foods: 6,
+    dishes: [
+      { name: "Tungrymbai", query: "tungrymbai", match: { source: "MEGHALAYA", code: "MLG002" } },
+      { name: "Tungtap", query: "tungtap", match: { source: "MEGHALAYA", code: "MLG001" } },
+      { name: "Lungsiej", query: "lungsiej", match: { source: "MEGHALAYA", code: "MLG003" } },
+      { name: "Sohiong", query: "sohiong", match: { source: "MEGHALAYA", code: "MLG009" } },
+    ],
+    image: "/foods/veg-meal.jpg",
+  },
+  {
+    state: "Nagaland",
+    slug: "nagaland",
+    tagline: "Smoky fermented leaves & bamboo",
+    query: "hungrii",
+    match: { source: "NAGALAND", code: "NGL001" },
+    foods: 4,
+    dishes: [
+      { name: "Hungrii", query: "hungrii", match: { source: "NAGALAND", code: "NGL001" } },
+      { name: "Anishi", query: "anishi", match: { source: "NAGALAND", code: "NGL004" } },
+      { name: "Rhujuk", query: "rhujuk", match: { source: "NAGALAND", code: "NGL002" } },
+      { name: "Tsutuocie", query: "tsutuocie", match: { source: "NAGALAND", code: "NGL003" } },
+    ],
+    image: "/foods/nagaland-food.jpg",
   },
   {
     state: "Kerala",
     slug: "kerala",
     tagline: "Coastal coconut delicacies",
     query: "appam",
+    match: { source: "INDB", code: "BFP153" },
     foods: 41,
     dishes: [
-      { name: "Appam", query: "appam" },
-      { name: "Fish Curry", query: "fish curry" },
-      { name: "Puttu", query: "puttu" },
+      { name: "Appam", query: "appam", match: { source: "INDB", code: "BFP153" } },
+      { name: "Fish Curry", query: "fish curry", match: { source: "INDB", code: "ASC246" } },
+      { name: "Puttu", query: "puttu", match: { source: "INDB", code: "OSR105" } },
       { name: "Avial", query: "avial" },
       { name: "Idiyappam", query: "idiyappam" },
     ],
@@ -161,11 +224,12 @@ export const REGIONS = [
     slug: "tamil-nadu",
     tagline: "Idli, dosa & filter coffee culture",
     query: "masala dosa",
+    match: { source: "INDB", code: "ASC146" },
     foods: 56,
     dishes: [
-      { name: "Masala Dosa", query: "masala dosa" },
-      { name: "Idli", query: "idli" },
-      { name: "Sambar", query: "sambar" },
+      { name: "Masala Dosa", query: "masala dosa", match: { source: "INDB", code: "ASC146" } },
+      { name: "Idli", query: "idli", match: { source: "INDB", code: "ASC144" } },
+      { name: "Sambar", query: "sambar", match: { source: "INDB", code: "ASC167" } },
       { name: "Rasam", query: "rasam" },
       { name: "Pongal", query: "pongal" },
       { name: "Vada", query: "vada" },
@@ -178,9 +242,10 @@ export const REGIONS = [
     slug: "west-bengal",
     tagline: "Mustard fish & festive sweets",
     query: "fish",
+    match: { source: "INDB", code: "BFP223" },
     foods: 38,
     dishes: [
-      { name: "Fish Curry", query: "fish curry" },
+      { name: "Fish Curry", query: "fish curry", match: { source: "INDB", code: "ASC246" } },
       { name: "Aloo Posto", query: "aloo" },
       { name: "Luchi", query: "luchi" },
       { name: "Rosogolla", query: "rosogolla" },
@@ -194,9 +259,10 @@ export const REGIONS = [
     slug: "gujarat",
     tagline: "Light, sweet & savoury snacks",
     query: "dhokla",
+    match: { source: "INDB", code: "ASC474" },
     foods: 35,
     dishes: [
-      { name: "Dhokla", query: "dhokla" },
+      { name: "Dhokla", query: "dhokla", match: { source: "INDB", code: "ASC474" } },
       { name: "Thepla", query: "thepla" },
       { name: "Undhiyu", query: "undhiyu" },
       { name: "Khandvi", query: "khandvi" },
@@ -210,9 +276,10 @@ export const REGIONS = [
     slug: "maharashtra",
     tagline: "Street classics & coastal thalis",
     query: "pav bhaji",
+    match: { source: "INDB", code: "OSR112" },
     foods: 44,
     dishes: [
-      { name: "Pav Bhaji", query: "pav bhaji" },
+      { name: "Pav Bhaji", query: "pav bhaji", match: { source: "INDB", code: "OSR112" } },
       { name: "Vada Pav", query: "vada" },
       { name: "Misal Pav", query: "misal" },
       { name: "Puran Poli", query: "puran poli" },
@@ -226,6 +293,7 @@ export const REGIONS = [
     slug: "rajasthan",
     tagline: "Desert spices & royal plates",
     query: "dal",
+    match: { source: "INDB", code: "OSR139" },
     foods: 29,
     dishes: [
       { name: "Dal Baati", query: "dal" },
@@ -242,9 +310,10 @@ export const REGIONS = [
     slug: "kashmir",
     tagline: "Warming curries from the valley",
     query: "rogan josh",
+    match: { source: "INDB", code: "ASC227" },
     foods: 26,
     dishes: [
-      { name: "Rogan Josh", query: "rogan josh" },
+      { name: "Rogan Josh", query: "rogan josh", match: { source: "INDB", code: "ASC227" } },
       { name: "Yakhni", query: "yakhni" },
       { name: "Dum Aloo", query: "dum aloo" },
       { name: "Kahwa", query: "tea" },
@@ -258,6 +327,7 @@ export const REGIONS = [
     slug: "odisha",
     tagline: "Temple cuisine & fermented rice",
     query: "rice",
+    match: { source: "INDB", code: "ASC126" },
     foods: 24,
     dishes: [
       { name: "Pakhala", query: "rice" },
@@ -312,6 +382,7 @@ export const CREDIBILITY_STATS = [
 export const FEATURED_DISHES = [
   {
     name: "Masala Dosa",
+    match: { source: "INDB", code: "ASC146" },
     state: "Tamil Nadu",
     description:
       "A crisp fermented rice-lentil crepe filled with spiced potato — light, satisfying, and rooted in South Indian breakfast culture.",
@@ -327,6 +398,7 @@ export const FEATURED_DISHES = [
   },
   {
     name: "Rajma Chawal",
+    match: { source: "INDB", code: "ASC165" },
     state: "North India",
     description:
       "Kidney beans simmered with onion-tomato masala over steamed rice — everyday comfort with solid plant protein.",
@@ -342,6 +414,7 @@ export const FEATURED_DISHES = [
   },
   {
     name: "Idli",
+    match: { source: "INDB", code: "ASC144" },
     state: "South India",
     description:
       "Steamed rice cakes that are soft, low-oil, and easy to digest — a classic healthy Indian breakfast staple.",
@@ -357,6 +430,7 @@ export const FEATURED_DISHES = [
   },
   {
     name: "Fish Curry",
+    match: { source: "INDB", code: "ASC246" },
     state: "Assam / Coastal India",
     description:
       "Tangy, spice-forward fish preparations that deliver lean protein with regional character from river and coast.",
@@ -377,6 +451,7 @@ export const CATEGORIES = [
     id: "high-protein",
     label: "High Protein",
     query: "chicken breast",
+    match: { source: "IFCT", code: "N003" },
     blurb: "Build muscle with Indian staples",
     examples: ["Chicken", "Egg", "Fish", "Paneer"],
     count: "120+",
@@ -389,6 +464,7 @@ export const CATEGORIES = [
     id: "weight-loss",
     label: "Weight Loss",
     query: "khichdi",
+    match: { source: "INDB", code: "BFP144" },
     blurb: "Lighter bowls that still satisfy",
     examples: ["Khichdi", "Soup", "Salad", "Dalia"],
     count: "90+",
@@ -401,6 +477,7 @@ export const CATEGORIES = [
     id: "high-fibre",
     label: "High Fibre",
     query: "dal",
+    match: { source: "INDB", code: "ASC165" },
     blurb: "Gut-friendly dals & grains",
     examples: ["Dal", "Oats", "Millet", "Sprouts"],
     count: "85+",
@@ -413,6 +490,7 @@ export const CATEGORIES = [
     id: "low-carb",
     label: "Low Carb",
     query: "paneer",
+    match: { source: "INDB", code: "ASC215" },
     blurb: "Fewer carbs, more flavour",
     examples: ["Paneer", "Egg", "Chicken", "Fish"],
     count: "70+",
@@ -425,6 +503,7 @@ export const CATEGORIES = [
     id: "vegetarian",
     label: "Vegetarian",
     query: "palak paneer",
+    match: { source: "INDB", code: "ASC215" },
     blurb: "Classic sabzi & curries",
     examples: ["Paneer", "Dal", "Sabzi", "Curd"],
     count: "200+",
@@ -437,6 +516,7 @@ export const CATEGORIES = [
     id: "vegan",
     label: "Vegan",
     query: "chole",
+    match: { source: "INDB", code: "ASC162" },
     blurb: "Plant-forward Indian plates",
     examples: ["Chole", "Rajma", "Tofu", "Millet"],
     count: "110+",
@@ -449,6 +529,7 @@ export const CATEGORIES = [
     id: "traditional",
     label: "Traditional Indian",
     query: "thali",
+    match: { source: "INDB", code: "ASC165" },
     blurb: "Homestyle classics",
     examples: ["Thali", "Rice", "Roti", "Curry"],
     count: "300+",
@@ -461,6 +542,7 @@ export const CATEGORIES = [
     id: "street-food",
     label: "Street Food",
     query: "samosa",
+    match: { source: "INDB", code: "ASC361" },
     blurb: "Know what you snack on",
     examples: ["Samosa", "Pani Puri", "Vada", "Chaat"],
     count: "60+",
@@ -473,6 +555,7 @@ export const CATEGORIES = [
     id: "breakfast",
     label: "Healthy Breakfast",
     query: "idli",
+    match: { source: "INDB", code: "ASC144" },
     blurb: "Start light, stay fuelled",
     examples: ["Idli", "Poha", "Upma", "Oats"],
     count: "75+",
@@ -485,6 +568,7 @@ export const CATEGORIES = [
     id: "snacks",
     label: "Healthy Snacks",
     query: "roasted chana",
+    match: { source: "INDB", code: "ASC259" },
     blurb: "Smarter munching",
     examples: ["Chana", "Fruit", "Nuts", "Yogurt"],
     count: "50+",
@@ -501,8 +585,8 @@ export const WHY_FEATURES = [
     body: "Designed around everyday Indian meals — not Western calorie apps with missing dishes.",
   },
   {
-    title: "Official IFCT & INDB Nutrition",
-    body: "Macros grounded in ICMR–NIN IFCT 2017 and the Indian Nutrient Databank.",
+    title: "IFCT & INDB first",
+    body: "Core macros prefer ICMR–NIN IFCT 2017 and the Indian Nutrient Databank when a match exists.",
   },
   {
     title: "AI Food Recognition",
@@ -510,7 +594,7 @@ export const WHY_FEATURES = [
   },
   {
     title: "Barcode Scanner",
-    body: "Decode packaged foods and map them toward healthier Indian equivalents.",
+    body: "Decode packaged foods via Open Food Facts and map toward Indian alternatives when possible.",
   },
   {
     title: "Meal Tracking",
@@ -518,26 +602,26 @@ export const WHY_FEATURES = [
   },
   {
     title: "Health Score",
-    body: "A simple score to compare choices and spot lighter alternatives.",
+    body: "A habit-style score from your logs — not a clinical diagnosis.",
   },
   {
-    title: "Research-backed Intelligence",
-    body: "Built as a nutrition intelligence system — accepted research at IEEE CCPIS 2025.",
+    title: "Regional estimates",
+    body: "Assam and Northeast dishes may use regional estimates. Only listed nutrients are shown; they are not IFCT/INDB verified.",
   },
 ];
 
 export const TRUST_BADGES = [
-  "Powered by IFCT 2017",
+  "IFCT 2017 (ICMR–NIN)",
   "Indian Nutrient Databank",
   "Open Food Facts",
-  "OpenAI Vision",
-  "Research-backed Nutrition",
+  "Regional estimates labeled",
+  "Source labels on every result",
 ];
 
 export const SEARCH_PLACEHOLDERS = [
   "Search Chicken Biryani, Paneer, Masor Tenga, Idli...",
   "Try Butter Chicken, Rajma Chawal, or Poha",
-  "Explore IFCT 2017 + INDB Indian databases",
+  "Explore IFCT, INDB, and regional Indian foods",
   "Search dal, dosa, biryani, or fish curry",
 ];
 
