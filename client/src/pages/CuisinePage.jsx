@@ -80,7 +80,7 @@ export default function CuisinePage() {
           className="absolute inset-0 h-full w-full object-cover"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-ink-950 via-ink-950/70 to-ink-950/30" />
-        <div className="absolute inset-x-0 bottom-0 px-4 pb-10 sm:px-6">
+        <div className="fa-on-media absolute inset-x-0 bottom-0 px-4 pb-10 sm:px-6">
           <div className="mx-auto max-w-4xl">
             <Link
               to="/"
@@ -91,7 +91,7 @@ export default function CuisinePage() {
             <p className="inline-flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-[0.24em] text-saffron-300/90">
               <MapPin className="h-3.5 w-3.5" /> Regional cuisine
             </p>
-            <h1 className="mt-3 font-display text-4xl font-extrabold tracking-tight sm:text-5xl">
+            <h1 className="mt-3 font-display text-4xl font-extrabold tracking-tight text-white sm:text-5xl">
               {region.state}
             </h1>
             <p className="mt-3 max-w-xl text-base text-white/60 sm:text-lg">

@@ -17,7 +17,7 @@ function ShootingStarsAndStarsBackgroundDemo({
 }) {
   return (
     <div className="relative min-h-screen w-full overflow-x-clip bg-ink-950">
-      <div className="pointer-events-none absolute inset-0 opacity-50">
+      <div className="fa-stars-layer pointer-events-none absolute inset-0 opacity-50">
         <ShootingStars />
         <StarsBackground />
       </div>

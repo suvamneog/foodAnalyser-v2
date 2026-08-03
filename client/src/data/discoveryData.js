@@ -8,7 +8,7 @@ export const TRENDING_DISHES = [
     healthScore: 62,
     source: "INDB",
     image:
-      "https://images.unsplash.com/photo-1603894584372-c69caa91ef37?w=640&q=80&auto=format&fit=crop",
+      "/foods/butter-chicken.jpg",
   },
   {
     name: "Chicken Biryani",
@@ -17,7 +17,7 @@ export const TRENDING_DISHES = [
     healthScore: 58,
     source: "INDB",
     image:
-      "https://images.unsplash.com/photo-1563379091339-03b21ab4a4f8?w=640&q=80&auto=format&fit=crop",
+      "/foods/chicken-biryani.jpg",
   },
   {
     name: "Masala Dosa",
@@ -26,7 +26,7 @@ export const TRENDING_DISHES = [
     healthScore: 74,
     source: "INDB",
     image:
-      "https://images.unsplash.com/photo-1668236543090-82eba5eeab39?w=640&q=80&auto=format&fit=crop",
+      "/foods/masala-dosa.jpg",
   },
   {
     name: "Rajma Chawal",
@@ -35,7 +35,7 @@ export const TRENDING_DISHES = [
     healthScore: 78,
     source: "INDB",
     image:
-      "https://images.unsplash.com/photo-1585937421612-70a008356fbe?w=640&q=80&auto=format&fit=crop",
+      "/foods/rajma-chawal.jpg",
   },
   {
     name: "Paneer Butter Masala",
@@ -44,7 +44,7 @@ export const TRENDING_DISHES = [
     healthScore: 55,
     source: "INDB",
     image:
-      "https://images.unsplash.com/photo-1631452180519-c014fe946bcc?w=640&q=80&auto=format&fit=crop",
+      "/foods/paneer-butter-masala.jpg",
   },
   {
     name: "Chole Bhature",
@@ -53,7 +53,7 @@ export const TRENDING_DISHES = [
     healthScore: 42,
     source: "INDB",
     image:
-      "https://images.unsplash.com/photo-1626132647523-66f5bf380027?w=640&q=80&auto=format&fit=crop",
+      "/foods/chole-bhature.jpg",
   },
   {
     name: "Pav Bhaji",
@@ -62,7 +62,7 @@ export const TRENDING_DISHES = [
     healthScore: 48,
     source: "INDB",
     image:
-      "https://images.unsplash.com/photo-1606491956689-2ea866880067?w=640&q=80&auto=format&fit=crop",
+      "/foods/pav-bhaji.jpg",
   },
   {
     name: "Poha",
@@ -71,7 +71,7 @@ export const TRENDING_DISHES = [
     healthScore: 82,
     source: "IFCT",
     image:
-      "https://images.unsplash.com/photo-1601050690597-df0568f70950?w=640&q=80&auto=format&fit=crop",
+      "/foods/poha.jpg",
   },
   {
     name: "Idli",
@@ -80,7 +80,7 @@ export const TRENDING_DISHES = [
     healthScore: 88,
     source: "IFCT",
     image:
-      "https://images.unsplash.com/photo-1589301760014-d929f3979dbc?w=640&q=80&auto=format&fit=crop",
+      "/foods/idli.jpg",
   },
   {
     name: "Rogan Josh",
@@ -89,7 +89,7 @@ export const TRENDING_DISHES = [
     healthScore: 64,
     source: "INDB",
     image:
-      "https://images.unsplash.com/photo-1545247181-516566c33cbf?w=640&q=80&auto=format&fit=crop",
+      "/foods/rogan-josh.jpg",
   },
 ];
 
@@ -122,7 +122,7 @@ export const REGIONS = [
       { name: "Amritsari Kulcha", query: "kulcha" },
     ],
     image:
-      "https://images.unsplash.com/photo-1603894584372-c69caa91ef37?w=720&q=75&auto=format&fit=crop",
+      "/foods/butter-chicken.jpg",
   },
   {
     state: "Assam",
@@ -138,7 +138,7 @@ export const REGIONS = [
       { name: "Pitha", query: "pitha" },
     ],
     image:
-      "https://images.unsplash.com/photo-1519708227418-c8fd9a32b7a2?w=720&q=75&auto=format&fit=crop",
+      "/foods/fish-curry.jpg",
   },
   {
     state: "Kerala",
@@ -154,7 +154,7 @@ export const REGIONS = [
       { name: "Idiyappam", query: "idiyappam" },
     ],
     image:
-      "https://images.unsplash.com/photo-1596797038530-2c107229654b?w=720&q=75&auto=format&fit=crop",
+      "/foods/kerala-food.jpg",
   },
   {
     state: "Tamil Nadu",
@@ -171,7 +171,7 @@ export const REGIONS = [
       { name: "Vada", query: "vada" },
     ],
     image:
-      "https://images.unsplash.com/photo-1668236543090-82eba5eeab39?w=720&q=75&auto=format&fit=crop",
+      "/foods/masala-dosa.jpg",
   },
   {
     state: "West Bengal",
@@ -187,7 +187,7 @@ export const REGIONS = [
       { name: "Mishti Doi", query: "curd" },
     ],
     image:
-      "https://images.unsplash.com/photo-1589301760014-d929f3979dbc?w=720&q=75&auto=format&fit=crop",
+      "/foods/idli.jpg",
   },
   {
     state: "Gujarat",
@@ -203,7 +203,7 @@ export const REGIONS = [
       { name: "Khakhra", query: "khakhra" },
     ],
     image:
-      "https://images.unsplash.com/photo-1601050690117-94f5f6fa8bd0?w=720&q=75&auto=format&fit=crop",
+      "/foods/dhokla.jpg",
   },
   {
     state: "Maharashtra",
@@ -219,7 +219,7 @@ export const REGIONS = [
       { name: "Bhakri", query: "bhakri" },
     ],
     image:
-      "https://images.unsplash.com/photo-1606491956689-2ea866880067?w=720&q=75&auto=format&fit=crop",
+      "/foods/pav-bhaji.jpg",
   },
   {
     state: "Rajasthan",
@@ -235,7 +235,7 @@ export const REGIONS = [
       { name: "Bajra Roti", query: "bajra" },
     ],
     image:
-      "https://images.unsplash.com/photo-1546833999-b9f581a1996d?w=720&q=75&auto=format&fit=crop",
+      "/foods/indian-thali.jpg",
   },
   {
     state: "Kashmir",
@@ -251,7 +251,7 @@ export const REGIONS = [
       { name: "Modur Pulav", query: "pulao" },
     ],
     image:
-      "https://images.unsplash.com/photo-1545247181-516566c33cbf?w=720&q=75&auto=format&fit=crop",
+      "/foods/rogan-josh.jpg",
   },
   {
     state: "Odisha",
@@ -267,7 +267,7 @@ export const REGIONS = [
       { name: "Kanika", query: "rice" },
     ],
     image:
-      "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=720&q=75&auto=format&fit=crop",
+      "/foods/salad-bowl.jpg",
   },
 ];
 
@@ -276,27 +276,27 @@ export const getRegionBySlug = (slug) =>
 
 export const HERO_COLLAGE = [
   {
-    src: "https://images.unsplash.com/photo-1603894584372-c69caa91ef37?w=320&q=70&auto=format&fit=crop",
+    src: "/foods/butter-chicken.jpg",
     className: "left-[4%] top-[18%] h-28 w-28 sm:h-36 sm:w-36 rotate-[-8deg]",
   },
   {
-    src: "https://images.unsplash.com/photo-1563379091339-03b21ab4a4f8?w=320&q=70&auto=format&fit=crop",
+    src: "/foods/chicken-biryani.jpg",
     className: "right-[5%] top-[14%] h-32 w-32 sm:h-40 sm:w-40 rotate-[7deg]",
   },
   {
-    src: "https://images.unsplash.com/photo-1589301760014-d929f3979dbc?w=320&q=70&auto=format&fit=crop",
+    src: "/foods/idli.jpg",
     className: "left-[8%] bottom-[16%] h-24 w-24 sm:h-32 sm:w-32 rotate-[6deg]",
   },
   {
-    src: "https://images.unsplash.com/photo-1668236543090-82eba5eeab39?w=320&q=70&auto=format&fit=crop",
+    src: "/foods/masala-dosa.jpg",
     className: "right-[7%] bottom-[18%] h-28 w-28 sm:h-36 sm:w-36 rotate-[-5deg]",
   },
   {
-    src: "https://images.unsplash.com/photo-1631452180519-c014fe946bcc?w=320&q=70&auto=format&fit=crop",
+    src: "/foods/paneer-butter-masala.jpg",
     className: "left-[18%] top-[42%] hidden h-20 w-20 rotate-[-3deg] lg:block",
   },
   {
-    src: "https://images.unsplash.com/photo-1601050690117-94f5f6fa8bd0?w=320&q=70&auto=format&fit=crop",
+    src: "/foods/dhokla.jpg",
     className: "right-[16%] top-[48%] hidden h-20 w-20 rotate-[4deg] lg:block",
   },
 ];
@@ -323,7 +323,7 @@ export const FEATURED_DISHES = [
     healthScore: 74,
     source: "INDB",
     image:
-      "https://images.unsplash.com/photo-1668236543090-82eba5eeab39?w=1200&q=75&auto=format&fit=crop",
+      "/foods/masala-dosa.jpg",
   },
   {
     name: "Rajma Chawal",
@@ -338,7 +338,7 @@ export const FEATURED_DISHES = [
     healthScore: 78,
     source: "INDB",
     image:
-      "https://images.unsplash.com/photo-1585937421612-70a008356fbe?w=1200&q=75&auto=format&fit=crop",
+      "/foods/rajma-chawal.jpg",
   },
   {
     name: "Idli",
@@ -353,7 +353,7 @@ export const FEATURED_DISHES = [
     healthScore: 88,
     source: "IFCT",
     image:
-      "https://images.unsplash.com/photo-1589301760014-d929f3979dbc?w=1200&q=75&auto=format&fit=crop",
+      "/foods/idli.jpg",
   },
   {
     name: "Fish Curry",
@@ -368,7 +368,7 @@ export const FEATURED_DISHES = [
     healthScore: 81,
     source: "IFCT",
     image:
-      "https://images.unsplash.com/photo-1519708227418-c8fd9a32b7a2?w=1200&q=75&auto=format&fit=crop",
+      "/foods/fish-curry.jpg",
   },
 ];
 
@@ -383,7 +383,7 @@ export const CATEGORIES = [
     icon: "Dumbbell",
     accent: "from-ink-950/90 via-ink-950/55 to-rose-900/20",
     image:
-      "https://images.unsplash.com/photo-1532550907401-a5327ae9f0f4?w=640&q=80&auto=format&fit=crop",
+      "/foods/grilled-chicken.jpg",
   },
   {
     id: "weight-loss",
@@ -395,7 +395,7 @@ export const CATEGORIES = [
     icon: "Scale",
     accent: "from-ink-950/90 via-ink-950/55 to-emerald-900/25",
     image:
-      "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=640&q=80&auto=format&fit=crop",
+      "/foods/salad-bowl.jpg",
   },
   {
     id: "high-fibre",
@@ -407,7 +407,7 @@ export const CATEGORIES = [
     icon: "Wheat",
     accent: "from-ink-950/90 via-ink-950/55 to-lime-900/20",
     image:
-      "https://images.unsplash.com/photo-1546833999-b9f581a1996d?w=640&q=80&auto=format&fit=crop",
+      "/foods/indian-thali.jpg",
   },
   {
     id: "low-carb",
@@ -419,7 +419,7 @@ export const CATEGORIES = [
     icon: "Leaf",
     accent: "from-ink-950/90 via-ink-950/55 to-sky-900/25",
     image:
-      "https://images.unsplash.com/photo-1567188040759-fb8a4309951d?w=640&q=80&auto=format&fit=crop",
+      "/foods/paneer-tikka.jpg",
   },
   {
     id: "vegetarian",
@@ -431,7 +431,7 @@ export const CATEGORIES = [
     icon: "Salad",
     accent: "from-ink-950/90 via-ink-950/55 to-amber-900/20",
     image:
-      "https://images.unsplash.com/photo-1601050690117-94f5f6fa8bd0?w=640&q=80&auto=format&fit=crop",
+      "/foods/dhokla.jpg",
   },
   {
     id: "vegan",
@@ -443,7 +443,7 @@ export const CATEGORIES = [
     icon: "Sprout",
     accent: "from-ink-950/90 via-ink-950/55 to-green-900/25",
     image:
-      "https://images.unsplash.com/photo-1511690656900-d16d0e4fef6a?w=640&q=80&auto=format&fit=crop",
+      "/foods/veg-meal.jpg",
   },
   {
     id: "traditional",
@@ -455,7 +455,7 @@ export const CATEGORIES = [
     icon: "Utensils",
     accent: "from-ink-950/90 via-ink-950/55 to-orange-900/25",
     image:
-      "https://images.unsplash.com/photo-1585937421612-70a008356fbe?w=640&q=80&auto=format&fit=crop",
+      "/foods/rajma-chawal.jpg",
   },
   {
     id: "street-food",
@@ -467,7 +467,7 @@ export const CATEGORIES = [
     icon: "Store",
     accent: "from-ink-950/90 via-ink-950/55 to-yellow-900/20",
     image:
-      "https://images.unsplash.com/photo-1601050690597-df0568f70950?w=640&q=80&auto=format&fit=crop",
+      "/foods/poha.jpg",
   },
   {
     id: "breakfast",
@@ -479,7 +479,7 @@ export const CATEGORIES = [
     icon: "Coffee",
     accent: "from-ink-950/90 via-ink-950/55 to-cyan-900/20",
     image:
-      "https://images.unsplash.com/photo-1589301760014-d929f3979dbc?w=640&q=80&auto=format&fit=crop",
+      "/foods/idli.jpg",
   },
   {
     id: "snacks",
@@ -491,7 +491,7 @@ export const CATEGORIES = [
     icon: "Apple",
     accent: "from-ink-950/90 via-ink-950/55 to-stone-800/40",
     image:
-      "https://images.unsplash.com/photo-1599599810769-bcde5a160d32?w=640&q=80&auto=format&fit=crop",
+      "/foods/snacks-nuts.jpg",
   },
 ];
 

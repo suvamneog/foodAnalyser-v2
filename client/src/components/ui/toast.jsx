@@ -4,14 +4,17 @@
 /* eslint-disable react/prop-types */
 import * as React from "react";
 import { Toaster as Sonner } from "sonner";
+import { useTheme } from "../../utils/ThemeContext";
 
 // Create a context for toast functionality
 const ToastContext = React.createContext({ toast: () => {} });
 
 // Toaster component to render the toast notifications
 const Toaster = ({ ...props }) => {
+  const { resolved } = useTheme();
   return (
     <Sonner
+      theme={resolved === "light" ? "light" : "dark"}
       className="toaster group"
       toastOptions={{
         classNames: {

@@ -1,6 +1,7 @@
 import { useState } from "react"
 import { Routes, Route } from "react-router-dom"
 import { AuthProvider } from "./utils/AuthContext"
+import { ThemeProvider } from "./utils/ThemeContext"
 import { ReviewsProvider } from "./utils/ReviewsContext"
 import { ToastProvider } from "./components/ui/toast"
 import ShootingStarsAndStarsBackgroundDemo from "./pages/background"
@@ -31,6 +32,7 @@ function App() {
   const [originalQuery, setOriginalQuery] = useState(""); 
 
   return (
+    <ThemeProvider>
     <AuthProvider>
       <ToastProvider>
       <ReviewsProvider>
@@ -84,6 +86,7 @@ function App() {
       </ReviewsProvider>
       </ToastProvider>
     </AuthProvider>
+    </ThemeProvider>
   );
 }
 

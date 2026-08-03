@@ -635,10 +635,10 @@ function Home({
                   decoding="async"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-ink-950 via-ink-950/55 to-transparent" />
-                <div className="absolute left-4 top-4 rounded-full border border-white/10 bg-black/30 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider text-saffron-300/90 backdrop-blur-sm">
+                <div className="fa-on-media absolute left-4 top-4 rounded-full border border-white/10 bg-black/30 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider text-saffron-300/90 backdrop-blur-sm">
                   Regional
                 </div>
-                <div className="absolute inset-x-0 bottom-0 p-5 sm:p-6">
+                <div className="fa-on-media absolute inset-x-0 bottom-0 p-5 sm:p-6">
                   <Link to={`/cuisine/${region.slug}`} className="block">
                     <p className="font-display text-2xl font-bold text-white">{region.state}</p>
                     <p className="mt-2 text-sm leading-snug text-white/58">{region.tagline}</p>
@@ -698,7 +698,7 @@ function Home({
                     decoding="async"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-ink-800 to-transparent" />
-                  <span className="absolute left-3 top-3 rounded-full border border-white/15 bg-ink-950/75 px-2.5 py-1 text-[10px] font-semibold tracking-wide text-white/80 backdrop-blur-sm">
+                  <span className="fa-on-media absolute left-3 top-3 rounded-full border border-white/15 bg-ink-950/75 px-2.5 py-1 text-[10px] font-semibold tracking-wide text-white/80 backdrop-blur-sm">
                     {dish.source}
                   </span>
                 </div>
@@ -774,7 +774,7 @@ function Home({
                     decoding="async"
                   />
                   <div className={`absolute inset-0 bg-gradient-to-t ${cat.accent}`} />
-                  <div className="absolute inset-0 flex flex-col justify-between p-4">
+                  <div className="fa-on-media absolute inset-0 flex flex-col justify-between p-4">
                     <div className="inline-flex h-9 w-9 items-center justify-center rounded-xl border border-white/10 bg-black/35 text-saffron-300 backdrop-blur-sm">
                       <Icon className="h-4 w-4" aria-hidden="true" />
                     </div>

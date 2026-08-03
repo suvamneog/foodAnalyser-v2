@@ -6,6 +6,7 @@ import { Link, useNavigate } from "react-router-dom"
 import { useAuth } from "../utils/AuthContext"
 import { levelFromXp, loadProgress, streakStatus } from "../utils/progression"
 import { computeHealthScore } from "../utils/healthScore"
+import ThemeToggle from "../components/ThemeToggle"
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false)
@@ -98,10 +99,8 @@ const Navbar = () => {
 
   return (
     <nav
-      className={`fixed top-0 z-50 w-full transition-all duration-300 ${
-        scrolled
-          ? "border-b border-white/8 bg-ink-950/85 backdrop-blur-xl shadow-[0_8px_24px_rgba(0,0,0,0.35)]"
-          : "border-b border-transparent bg-ink-950/50 backdrop-blur-md"
+      className={`fa-nav fixed top-0 z-50 w-full backdrop-blur-xl transition-all duration-300 ${
+        scrolled ? "fa-nav-scrolled border-b" : "border-b border-transparent"
       }`}
     >
       <div className="mx-auto max-w-7xl px-3 sm:px-4 lg:px-8">
@@ -138,8 +137,9 @@ const Navbar = () => {
             ))}
           </div>
 
-          {/* Right — progression chips + auth */}
+          {/* Right — theme + progression chips + auth */}
           <div className="hidden items-center gap-2 md:flex">
+            <ThemeToggle />
             <Link
               to="/profile"
               className={`fa-chip-chunky ${streakChipClasses}`}
@@ -190,6 +190,7 @@ const Navbar = () => {
 
           {/* Mobile menu button */}
           <div className="flex items-center gap-2 md:hidden">
+            <ThemeToggle />
             <Link
               to="/profile"
               className={`fa-chip-chunky ${streakChipClasses} !py-1 !px-2`}
