@@ -9,6 +9,7 @@ import {
   HeartPulse,
   Sparkles,
 } from "lucide-react";
+import { Reveal, RevealMount } from "../components/PageTransition";
 import {
   addEntry,
   addWater,
@@ -152,14 +153,16 @@ export default function DailyTracker() {
   return (
     <div className="min-h-screen bg-ink-950 text-white">
       <div className="mx-auto max-w-5xl px-4 pb-16 pt-24 sm:px-6">
-        <Link
-          to="/"
-          className="inline-flex items-center gap-2 text-sm text-white/50 transition hover:text-white"
-        >
-          <ArrowLeft className="h-4 w-4" /> Home
-        </Link>
+        <RevealMount delay={0} y={10} duration={0.55}>
+          <Link
+            to="/"
+            className="inline-flex items-center gap-2 text-sm text-white/50 transition hover:text-white"
+          >
+            <ArrowLeft className="h-4 w-4" /> Home
+          </Link>
+        </RevealMount>
 
-        <header className="mt-6 flex items-start gap-3">
+        <RevealMount delay={0.08} className="mt-6 flex items-start gap-3">
           <div className="rounded-2xl border border-saffron-400/20 bg-saffron-500/10 p-3">
             <HeartPulse className="h-5 w-5 text-saffron-300" />
           </div>
@@ -183,15 +186,15 @@ export default function DailyTracker() {
               Set target →
             </Link>
           )}
-        </header>
+        </RevealMount>
 
         {/* Quick log */}
-        <section className="mt-6">
+        <Reveal className="mt-6">
           <QuickLogBox onLogged={onQuickLogged} />
-        </section>
+        </Reveal>
 
         {/* Health Score + Water + Activity */}
-        <section className="mt-6 grid gap-4 lg:grid-cols-[1.3fr,1fr]">
+        <Reveal delay={0.06} className="mt-6 grid gap-4 lg:grid-cols-[1.3fr,1fr]">
           <div className="space-y-3">
             <HealthScoreCard key={scoreTick} />
             <TrustBadge kind="health-score" />
@@ -209,11 +212,11 @@ export default function DailyTracker() {
             />
             <ActivityBox activity={activity} onChange={patchActivity} />
           </div>
-        </section>
+        </Reveal>
 
-        <section className="mt-6">
+        <Reveal delay={0.08} className="mt-6">
           <WeeklyView key={`week-${scoreTick}`} />
-        </section>
+        </Reveal>
 
         <SyncStatusBanner
           onPull={async () => {

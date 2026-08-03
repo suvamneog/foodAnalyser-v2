@@ -1,8 +1,7 @@
 "use client";
 import { useState, useEffect } from "react";
-import { motion } from "framer-motion";
-import { ShootingStars } from "../components/ui/shooting-stars";
-import { StarsBackground } from "../components/ui/stars-background";
+import { Calculator } from "lucide-react";
+import ToolPageShell from "../components/ToolPageShell";
 
 export default function CalorieCalculator() {
   // State management
@@ -442,53 +441,51 @@ export default function CalorieCalculator() {
   };
 
   return (
-    <div className="relative min-h-screen bg-black text-white flex items-center justify-center p-4 sm:p-6">
-      <div className="absolute inset-0 pointer-events-none">
-        <StarsBackground />
-        <ShootingStars />
-      </div>
-      <motion.div
-        initial={{ opacity: 0, scale: 0.9 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={{ duration: 0.5, ease: "easeOut" }}
-        className="w-full"
-      >
-        <div className="min-h-screen bg-black text-white p-4 sm:p-6 mt-16 sm:mt-20">
-          <div className="max-w-4xl mx-auto bg-zinc-900 border-zinc-800 rounded-lg">
-            <div className="border-b border-zinc-800 p-4 sm:p-6">
-              <h2 className="text-2xl sm:text-3xl font-bold tracking-tight">
-                FITNESS CALCULATOR
+    <ToolPageShell
+      eyebrow="Planning"
+      title="Calorie calculator"
+      subtitle="Estimate maintenance calories and a weekly plan from your metrics. Treat numbers as a starting point — metabolism varies."
+      icon={Calculator}
+      maxWidth="max-w-4xl"
+    >
+      <div className="fa-card overflow-hidden">
+            <div className="border-b border-white/10 p-4 sm:p-6">
+              <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-saffron-300/80">
+                Estimates only
+              </p>
+              <h2 className="mt-2 font-display text-xl font-bold tracking-tight sm:text-2xl">
+                Your metrics
               </h2>
-              <p className="text-zinc-400 text-sm sm:text-base">Precision Nutrition Planning</p>
+              <p className="mt-1 text-sm text-white/45">Enter details below, then calculate a weekly plan.</p>
               
               {/* Guide Buttons */}
               <div className="mt-4 flex flex-wrap gap-2">
                 <button
                   onClick={() => toggleGuide('howItWorks')}
-                  className="text-xs sm:text-sm bg-zinc-800 hover:bg-zinc-700 px-3 py-1 rounded-full transition-colors flex items-center"
+                  className="text-xs sm:text-sm bg-white/[0.04] hover:bg-white/[0.08] px-3 py-1.5 rounded-full border border-white/10 transition flex items-center text-white/70"
                 >
-                  <span className="mr-1">ℹ️</span> How It Works
+                  How it works
                 </button>
                 
                 <button
                   onClick={() => toggleGuide('recompGuide')}
-                  className="text-xs sm:text-sm bg-zinc-800 hover:bg-zinc-700 px-3 py-1 rounded-full transition-colors flex items-center"
+                  className="text-xs sm:text-sm bg-white/[0.04] hover:bg-white/[0.08] px-3 py-1.5 rounded-full border border-white/10 transition flex items-center text-white/70"
                 >
-                  <span className="mr-1">ℹ️</span> Recomposition Guide
+                  Recomposition
                 </button>
                 
                 <button
                   onClick={() => toggleGuide('usageGuide')}
-                  className="text-xs sm:text-sm bg-zinc-800 hover:bg-zinc-700 px-3 py-1 rounded-full transition-colors flex items-center"
+                  className="text-xs sm:text-sm bg-white/[0.04] hover:bg-white/[0.08] px-3 py-1.5 rounded-full border border-white/10 transition flex items-center text-white/70"
                 >
-                  <span className="mr-1">ℹ️</span> How To Use
+                  How to use
                 </button>
               </div>
               
               {/* Expanded Guides */}
               {expandedGuides.howItWorks && (
-                <div className="mt-3 p-3 bg-zinc-800/30 rounded-lg text-xs space-y-2">
-                  <h4 className="font-medium text-zinc-300">How This Calculator Works</h4>
+                <div className="mt-3 p-3 bg-white/[0.03] rounded-lg text-xs space-y-2">
+                  <h4 className="font-medium text-white/70">How This Calculator Works</h4>
                   <p>This tool calculates your personalized nutrition plan based on:</p>
                   <ul className="list-disc pl-4">
                     <li>Your current body metrics</li>
@@ -500,8 +497,8 @@ export default function CalorieCalculator() {
               )}
               
               {expandedGuides.recompGuide && (
-                <div className="mt-3 p-3 bg-zinc-800/30 rounded-lg text-xs space-y-2">
-                  <h4 className="font-medium text-zinc-300">What is Recomposition?</h4>
+                <div className="mt-3 p-3 bg-white/[0.03] rounded-lg text-xs space-y-2">
+                  <h4 className="font-medium text-white/70">What is Recomposition?</h4>
                   <p>Body recomposition means <strong>simultaneously losing fat and gaining muscle</strong>. This requires:</p>
                   <ul className="list-disc pl-4">
                     <li>Precise calorie control (small deficit/surplus)</li>
@@ -513,8 +510,8 @@ export default function CalorieCalculator() {
               )}
               
               {expandedGuides.usageGuide && (
-                <div className="mt-3 p-3 bg-zinc-800/30 rounded-lg text-xs space-y-2">
-                  <h4 className="font-medium text-zinc-300">How To Use This Calculator</h4>
+                <div className="mt-3 p-3 bg-white/[0.03] rounded-lg text-xs space-y-2">
+                  <h4 className="font-medium text-white/70">How To Use This Calculator</h4>
                   <ol className="list-decimal pl-4 space-y-1">
                     <li>Enter your <strong>current metrics</strong> accurately</li>
                     <li>Select your <strong>activity level</strong> (be honest!)</li>
@@ -533,25 +530,25 @@ export default function CalorieCalculator() {
             </div>
             
             {errors.general && (
-              <div className="mx-4 sm:mx-6 mt-4 p-3 bg-red-900/30 border border-red-800 rounded-lg text-red-300 text-sm">
+              <div className="mx-4 sm:mx-6 mt-4 p-3 rounded-xl border border-red-500/30 bg-red-950/40 text-red-200 text-sm">
                 {errors.general}
               </div>
             )}
             
             {calculationError && (
-              <div className="mx-4 sm:mx-6 mt-4 p-3 bg-red-900/30 border border-red-800 rounded-lg text-red-300 text-sm">
+              <div className="mx-4 sm:mx-6 mt-4 p-3 rounded-xl border border-red-500/30 bg-red-950/40 text-red-200 text-sm">
                 <strong className="font-medium">Error:</strong> {calculationError}
               </div>
             )}
 
             {showMifflinWarning && (
-              <div className="mx-4 sm:mx-6 mt-4 p-3 bg-yellow-900/30 border border-yellow-800 rounded-lg text-yellow-300 text-sm">
+              <div className="mx-4 sm:mx-6 mt-4 p-3 rounded-xl border border-saffron-400/30 bg-saffron-500/10 text-saffron-100 text-sm">
                 <strong>Note:</strong> Mifflin-St Jeor doesn&apos;t use body fat %. For more accuracy with your body fat data, switch to Katch-McArdle.
               </div>
             )}
 
             {showRecompWarning && (
-              <div className="mx-4 sm:mx-6 mt-4 p-3 bg-purple-900/30 border border-purple-800 rounded-lg text-purple-300 text-sm">
+              <div className="mx-4 sm:mx-6 mt-4 p-3 rounded-xl border border-saffron-400/25 bg-saffron-500/10 text-saffron-100 text-sm">
                 <strong>Recomp Mode:</strong> {inputData.calorieDeficit < 0 
                   ? "Attempting to lose fat while in calorie surplus (requires precise training/nutrition)" 
                   : "Attempting to gain muscle while in calorie deficit (requires precise training/nutrition)"}
@@ -566,7 +563,7 @@ export default function CalorieCalculator() {
                       <label key={option.value} className="inline-flex items-center cursor-pointer text-sm">
                         <input
                           type="radio"
-                          className="form-radio text-orange-500"
+                          className="form-radio text-saffron-300"
                           name="formula"
                           value={option.value}
                           checked={inputData.formula === option.value}
@@ -579,27 +576,27 @@ export default function CalorieCalculator() {
                   <button
                     type="button"
                     onClick={toggleUnit}
-                    className="text-xs sm:text-sm bg-zinc-800 hover:bg-zinc-700 px-2 sm:px-3 py-1 rounded-full transition-colors"
+                    className="text-xs sm:text-sm rounded-full border border-white/10 bg-white/[0.04] px-3 py-1.5 text-white/70 transition hover:bg-white/[0.08] hover:text-white"
                   >
                     {inputData.useMetric ? "Switch to Imperial (lbs/in)" : "Switch to Metric (kg/cm)"}
                   </button>
                 </div>
 
                 {/* Formula Explanations */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-2 text-xs text-zinc-400">
-                  <div className="p-2 bg-zinc-800/30 rounded-lg">
-                    <h4 className="font-medium text-zinc-300">Katch-McArdle</h4>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-2 text-xs text-white/45">
+                  <div className="p-2 bg-white/[0.03] rounded-lg">
+                    <h4 className="font-medium text-white/70">Katch-McArdle</h4>
                     <p>Most accurate if you know your body fat % - calculates based on lean mass.</p>
                     <p className="mt-1 italic">Formula: 370 + (21.6 × LBM)</p>
                   </div>
-                  <div className="p-2 bg-zinc-800/30 rounded-lg">
-                    <h4 className="font-medium text-zinc-300">Mifflin-St Jeor</h4>
+                  <div className="p-2 bg-white/[0.03] rounded-lg">
+                    <h4 className="font-medium text-white/70">Mifflin-St Jeor</h4>
                     <p>General estimate based on weight, height, age and gender.</p>
                     <p className="mt-1 italic">Men: (10 × kg) + (6.25 × cm) - (5 × age) + 5</p>
                   </div>
                 </div>
 
-                <div className="text-xs text-zinc-400 -mt-2">
+                <div className="text-xs text-white/45 -mt-2">
                   {inputData.formula === "katch-mcardle" ? (
                     <p>±5% accuracy with body fat data</p>
                   ) : (
@@ -625,7 +622,7 @@ export default function CalorieCalculator() {
                         step={field.id === "weight" || field.id === "height" ? "0.1" : "1"}
                         value={field.value}
                         onChange={(e) => handleInputChange(field.id, e.target.value)}
-                        className={`bg-zinc-800 border ${errors[field.id] ? 'border-red-500' : 'border-zinc-700'} w-full p-2 rounded text-sm sm:text-base`}
+                        className={`w-full rounded-xl border bg-white/[0.04] p-2.5 text-sm sm:text-base text-white focus:border-saffron-400/40 focus:outline-none focus:ring-1 focus:ring-saffron-400/25 ${errors[field.id] ? 'border-red-500/60' : 'border-white/12'}`}
                       />
                       {errors[field.id] && (
                         <p className="text-red-400 text-xs mt-1">{errors[field.id]}</p>
@@ -639,7 +636,7 @@ export default function CalorieCalculator() {
                     </label>
                     <select
                       id="activity"
-                      className="w-full bg-zinc-800 border-zinc-700 p-2 rounded text-sm sm:text-base"
+                      className="w-full rounded-xl border border-white/12 bg-white/[0.04] p-2.5 text-sm sm:text-base text-white focus:border-saffron-400/40 focus:outline-none"
                       value={inputData.activityMultiplier}
                       onChange={(e) =>
                         setInputData({
@@ -664,7 +661,7 @@ export default function CalorieCalculator() {
                     </label>
                     <select
                       id="gender"
-                      className="w-full bg-zinc-800 border-zinc-700 p-2 rounded text-sm sm:text-base"
+                      className="w-full rounded-xl border border-white/12 bg-white/[0.04] p-2.5 text-sm sm:text-base text-white focus:border-saffron-400/40 focus:outline-none"
                       value={inputData.gender}
                       onChange={(e) =>
                         setInputData({ ...inputData, gender: e.target.value })
@@ -679,7 +676,7 @@ export default function CalorieCalculator() {
                     <label htmlFor="proteinMultiplier">Protein Intake</label>
                     <select
                       id="proteinMultiplier"
-                      className="w-full bg-zinc-800 border-zinc-700 p-2 rounded"
+                      className="w-full rounded-xl border border-white/12 bg-white/[0.04] p-2.5 text-white focus:border-saffron-400/40 focus:outline-none"
                       value={inputData.proteinMultiplier}
                       onChange={(e) =>
                         setInputData({
@@ -698,13 +695,13 @@ export default function CalorieCalculator() {
                 </div>
 
                 {/* Goal Type Section */}
-                <div className="bg-zinc-800/50 p-3 sm:p-4 rounded-lg">
+                <div className="bg-white/[0.04] p-3 sm:p-4 rounded-lg">
                   <h3 className="font-medium mb-2 sm:mb-3 text-sm sm:text-base">Goal Type</h3>
                   <div className="flex flex-col sm:flex-row items-start sm:items-center space-y-2 sm:space-y-0 sm:space-x-4">
                     <label className="inline-flex items-center cursor-pointer text-sm sm:text-base">
                       <input
                         type="radio"
-                        className="form-radio text-orange-500"
+                        className="form-radio text-saffron-300"
                         name="goalType"
                         checked={inputData.calorieDeficit > 0}
                         onChange={() => setInputData({ ...inputData, calorieDeficit: 20 })}
@@ -714,7 +711,7 @@ export default function CalorieCalculator() {
                     <label className="inline-flex items-center cursor-pointer text-sm sm:text-base">
                       <input
                         type="radio"
-                        className="form-radio text-orange-500"
+                        className="form-radio text-saffron-300"
                         name="goalType"
                         checked={inputData.calorieDeficit <= 0}
                         onChange={() => setInputData({ ...inputData, calorieDeficit: -10 })}
@@ -741,9 +738,9 @@ export default function CalorieCalculator() {
                             calorieDeficit: Number(e.target.value),
                           })
                         }
-                        className="w-full h-2 bg-zinc-700 rounded-lg appearance-none cursor-pointer"
+                        className="w-full h-2 bg-white/10 rounded-lg appearance-none cursor-pointer"
                       />
-                      <div className="flex justify-between text-xs text-zinc-400">
+                      <div className="flex justify-between text-xs text-white/45">
                         <span>10% (Slow)</span>
                         <span>{inputData.calorieDeficit}%</span>
                         <span>30% (Aggressive)</span>
@@ -767,9 +764,9 @@ export default function CalorieCalculator() {
                             calorieDeficit: Number(e.target.value),
                           })
                         }
-                        className="w-full h-2 bg-zinc-700 rounded-lg appearance-none cursor-pointer"
+                        className="w-full h-2 bg-white/10 rounded-lg appearance-none cursor-pointer"
                       />
-                      <div className="flex justify-between text-xs text-zinc-400">
+                      <div className="flex justify-between text-xs text-white/45">
                         <span>20% (Aggressive)</span>
                         <span>{Math.abs(inputData.calorieDeficit)}%</span>
                         <span>5% (Lean)</span>
@@ -780,7 +777,7 @@ export default function CalorieCalculator() {
 
                 {/* Pre-calculation disclaimer */}
                 {!isCalculating && !result && (
-                  <div className="mt-4 p-3 bg-zinc-800/30 rounded-lg text-xs text-zinc-400">
+                  <div className="mt-4 p-3 bg-white/[0.03] rounded-lg text-xs text-white/45">
                     <p className="font-medium mb-1">Important Disclaimer:</p>
                     <ul className="list-disc pl-4 space-y-1">
                       <li>Results are estimates - actual needs vary by ±15% due to individual metabolism</li>
@@ -792,10 +789,10 @@ export default function CalorieCalculator() {
                 <button
                   type="submit"
                   disabled={isCalculating}
-                  className={`w-full py-2 px-4 rounded-lg transition-colors text-sm sm:text-base ${
+                  className={`fa-btn w-full text-sm sm:text-base ${
                     isCalculating 
-                      ? 'bg-orange-700 cursor-not-allowed' 
-                      : 'bg-orange-500 hover:bg-orange-600'
+                      ? 'fa-btn-primary opacity-60 cursor-not-allowed' 
+                      : 'fa-btn-primary'
                   }`}
                 >
                   {isCalculating ? 'Calculating...' : 'Calculate'}
@@ -803,9 +800,9 @@ export default function CalorieCalculator() {
               </form>
 
               {result && (
-                <div className="pt-4 sm:pt-6 border-t border-zinc-800 mt-4 sm:mt-6">
+                <div className="pt-4 sm:pt-6 border-t border-white/10 mt-4 sm:mt-6">
                   {/* Results disclaimer */}
-                  <div className="mb-4 p-3 bg-blue-900/20 border border-blue-800 rounded-lg text-xs text-blue-300">
+                  <div className="mb-4 p-3 rounded-xl border border-white/10 bg-white/[0.03] text-xs text-white/55">
                     <h4 className="font-medium">Getting Best Results:</h4>
                     <ul className="list-disc pl-4 mt-1 space-y-1">
                       <li>Weigh yourself <strong>weekly at the same time</strong> (morning after bathroom)</li>
@@ -814,22 +811,22 @@ export default function CalorieCalculator() {
                     </ul>
                   </div>
                   
-                  <div className="text-xs text-zinc-400 mb-4">
+                  <div className="text-xs text-white/45 mb-4">
                     <div className="flex items-center">
                       <span className="font-semibold">Calculations based on:</span>
-                      <span className="ml-2 px-2 py-1 bg-zinc-800 rounded-full">
+                      <span className="ml-2 px-2 py-1 bg-white/[0.06] rounded-full">
                         {result.formulaUsed}
                       </span>
                       {result.isRecomp && (
-                        <span className="ml-2 px-2 py-1 bg-purple-800 rounded-full text-purple-300">
+                        <span className="ml-2 px-2 py-1 rounded-full bg-saffron-500/20 text-saffron-200">
                           Recomp Mode
                         </span>
                       )}
                     </div>
                   </div>
                   
-                  <h3 className="text-lg font-semibold mb-3 sm:mb-4 text-orange-500">
-                    YOUR PERSONALIZED PLAN
+                  <h3 className="mb-3 font-display text-xl font-bold text-white sm:mb-4">
+                    Your plan
                   </h3>
                   
                   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
@@ -839,13 +836,13 @@ export default function CalorieCalculator() {
                       { label: "Daily Calorie Goal", value: `${result.dailyCalories} kcal` },
                       { label: "Daily Protein Goal", value: `${result.proteinGoal} g` },
                     ].map((item, index) => (
-                      <div key={index} className="p-3 sm:p-4 border border-orange-500 rounded-lg relative">
-                        <p className="text-xs sm:text-sm text-zinc-400">{item.label}</p>
+                      <div key={index} className="p-3 sm:p-4 border border-saffron-400/40 rounded-lg relative">
+                        <p className="text-xs sm:text-sm text-white/45">{item.label}</p>
                         <p className="text-lg font-bold">{item.value}</p>
                         {item.label.includes("Goal Weight") && (
                           <div className="absolute top-1 right-1 group">
                             <span className="text-xs">ℹ️</span>
-                            <div className="hidden group-hover:block absolute right-0 w-48 p-2 bg-zinc-800 border border-zinc-700 rounded-lg text-xs z-10">
+                            <div className="hidden group-hover:block absolute right-0 w-48 p-2 bg-white/[0.06] border border-white/12 rounded-lg text-xs z-10">
                               Goal weight estimates don&apos;t account for water/glycogen changes. 
                               Visible results may appear at different weights.
                             </div>
@@ -857,19 +854,19 @@ export default function CalorieCalculator() {
 
                   <div className="mt-6 sm:mt-8">
                     <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-3 sm:mb-4">
-                      <h3 className="text-lg font-semibold text-orange-500 flex items-center">
+                      <h3 className="text-lg font-semibold text-saffron-300 flex items-center">
                         <span className={`inline-block w-3 h-3 rounded-full mr-2 ${
                           result.planType === "Deficit" ? "bg-green-500" : 
-                          result.planType === "Surplus" ? "bg-blue-500" : "bg-purple-500"
+                          result.planType === "Surplus" ? "bg-leaf-400" : "bg-saffron-400"
                         }`}></span>
                         {result.planType.toUpperCase()} PLAN
                       </h3>
-                      <span className="text-xs sm:text-sm text-zinc-400 bg-zinc-800 px-2 sm:px-3 py-1 rounded-full mt-2 sm:mt-0">
+                      <span className="text-xs sm:text-sm text-white/45 bg-white/[0.06] px-2 sm:px-3 py-1 rounded-full mt-2 sm:mt-0">
                         {result.totalWeeks}-Week Program
                       </span>
                     </div>
 
-                    <div className="bg-zinc-800/50 rounded-lg p-3 sm:p-4 mb-3 sm:mb-4">
+                    <div className="bg-white/[0.04] rounded-lg p-3 sm:p-4 mb-3 sm:mb-4">
                       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4 text-center">
                         {[
                           { label: "Starting Weight", value: `${inputData.weight} ${inputData.useMetric ? "kg" : "lbs"}` },
@@ -878,17 +875,17 @@ export default function CalorieCalculator() {
                           { label: "Goal BF%", value: `${inputData.goalBodyfat}%` },
                         ].map((item, index) => (
                           <div key={index}>
-                            <p className="text-xs sm:text-sm text-zinc-400">{item.label}</p>
+                            <p className="text-xs sm:text-sm text-white/45">{item.label}</p>
                             <p className="text-sm sm:text-base font-semibold">{item.value}</p>
                           </div>
                         ))}
                       </div>
                     </div>
 
-                    <div className="overflow-x-auto bg-zinc-800/30 rounded-lg">
+                    <div className="overflow-x-auto bg-white/[0.03] rounded-lg">
                       <table className="w-full text-xs sm:text-sm">
                         <thead>
-                          <tr className="border-b border-zinc-700 text-zinc-400">
+                          <tr className="border-b border-white/12 text-white/45">
                             <th className="text-left p-2 sm:p-3 font-medium">Week</th>
                             <th className="text-left p-2 sm:p-3 font-medium">Weight</th>
                             <th className="text-left p-2 sm:p-3 font-medium">BF%</th>
@@ -902,12 +899,12 @@ export default function CalorieCalculator() {
                           {result.weeklyCaloriePlan.map((week, index) => (
                             <tr
                               key={index}
-                              className={`border-b border-zinc-800 hover:bg-zinc-700/30 transition-colors ${index % 4 === 0 ? 'bg-zinc-800/20' : ''}`}
+                              className={`border-b border-white/10 hover:bg-white/[0.04] transition-colors ${index % 4 === 0 ? 'bg-white/[0.02]' : ''}`}
                             >
                               <td className="p-2 sm:p-3 font-medium">Week {week.week}</td>
                               <td className="p-2 sm:p-3">{result.weeklyProgress[index].weight} {inputData.useMetric ? "kg" : "lbs"}</td>
                               <td className="p-2 sm:p-3">{result.weeklyProgress[index].bodyfat}%</td>
-                              <td className="p-2 sm:p-3 font-medium text-orange-400">{week.calories}</td>
+                              <td className="p-2 sm:p-3 font-medium text-saffron-300">{week.calories}</td>
                               <td className="p-2 sm:p-3">{week.protein}g</td>
                               <td className="p-2 sm:p-3">{week.carbs}g</td>
                               <td className="p-2 sm:p-3">{week.fats}g</td>
@@ -915,24 +912,24 @@ export default function CalorieCalculator() {
                           ))}
                         </tbody>
                       </table>
-                      <div className="p-2 text-xs text-zinc-500 italic">
+                      <div className="p-2 text-xs text-white/35 italic">
                         Note: Weekly projections assume perfect adherence. Real-world results may vary 
                         by 1-2 weeks due to water retention, training intensity, and lifestyle factors.
                       </div>
                     </div>
 
-                    <div className="mt-3 sm:mt-4 text-xs text-zinc-400 flex flex-wrap gap-2 sm:gap-4">
+                    <div className="mt-3 sm:mt-4 text-xs text-white/45 flex flex-wrap gap-2 sm:gap-4">
                       <div className="flex items-center">
-                        <span className="inline-block w-3 h-3 rounded-full bg-orange-400 mr-1"></span>
+                        <span className="inline-block w-3 h-3 rounded-full bg-saffron-400 mr-1"></span>
                         <span>Calories: Daily intake</span>
                       </div>
                       <div className="flex items-center">
-                        <span className="inline-block w-3 h-3 rounded-full bg-zinc-400 mr-1"></span>
+                        <span className="inline-block w-3 h-3 rounded-full bg-white/40 mr-1"></span>
                         <span>Macros: Protein/Carbs/Fats in grams</span>
                       </div>
                     </div>
 
-                    <div className="mt-3 sm:mt-4 p-2 sm:p-3 bg-zinc-800/30 rounded-lg text-xs sm:text-sm text-zinc-400">
+                    <div className="mt-3 sm:mt-4 p-2 sm:p-3 bg-white/[0.03] rounded-lg text-xs sm:text-sm text-white/45">
                       <p className="mb-1"><strong>Note:</strong> This plan accounts for metabolic adaptation and adjusts weekly.</p>
                       {result.planType === "Recomp" ? (
                         <p>For recomposition, progress will be slower. Focus on strength gains and body measurements.</p>
@@ -945,8 +942,6 @@ export default function CalorieCalculator() {
               )}
             </div>
           </div>
-        </div>
-      </motion.div>
-    </div>
+    </ToolPageShell>
   );
 }

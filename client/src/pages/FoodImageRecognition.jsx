@@ -1,8 +1,7 @@
 import { useState, useRef, useEffect, useCallback } from 'react';
 import { Camera, Upload, X, Check, AlertTriangle, Zap } from 'lucide-react';
-import { ShootingStars } from "../components/ui/shooting-stars";
-import { StarsBackground } from "../components/ui/stars-background";
 import { motion, AnimatePresence } from "framer-motion";
+import ToolPageShell from "../components/ToolPageShell";
 import { API_ENDPOINTS } from "../utils/apiConfig";
 import PortionCustomizer, { computeCustomNutrition } from "../components/PortionCustomizer";
 import { defaultCustomizeState } from "../utils/portionCustomize";
@@ -308,29 +307,26 @@ const FoodScanner = () => {
   const getRemainingAnalyses = () => Math.max(0, 10 - analysisCount);
 
   return (
-    <div className="relative min-h-screen bg-black text-white flex items-center justify-center p-4">
-      <div className="absolute inset-0 pointer-events-none">
-        <StarsBackground />
-        <ShootingStars />
-      </div>
-      
-      <motion.div
-        initial={{ opacity: 0, scale: 0.9 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={{ duration: 0.4, ease: "easeOut" }}
-        className="w-full max-w-md"
-      >
-        <div className="bg-zinc-900 rounded-xl shadow-2xl overflow-hidden p-6">
-          <div className="text-center mb-6">
-            <h2 className="text-2xl font-bold bg-gradient-to-r from-green-400 to-blue-500 bg-clip-text text-transparent">
-              Food Scanner
-            </h2>
-            <p className="text-gray-400 text-sm mt-2">
-              Scan food images for instant nutrition insights
-            </p>
-            <div className="text-xs text-gray-500 mt-1">
-              {getRemainingAnalyses()} analyses remaining today
+    <ToolPageShell
+      eyebrow="Scan"
+      title="Food image scan"
+      subtitle="Snap or upload a meal photo. We match it to Indian food tables and let you adjust the portion."
+      icon={Camera}
+      maxWidth="max-w-lg"
+    >
+      <div className="fa-card overflow-hidden p-5 sm:p-6">
+          <div className="mb-6 flex items-start justify-between gap-3 border-b border-white/10 pb-5">
+            <div>
+              <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-saffron-300/80">
+                Vision · IFCT match
+              </p>
+              <p className="mt-1 text-sm text-white/45">
+                Photograph a plate, then refine portion before logging.
+              </p>
             </div>
+            <span className="shrink-0 rounded-full border border-white/10 bg-white/[0.04] px-2.5 py-1 text-[11px] text-white/50">
+              {getRemainingAnalyses()} left today
+            </span>
           </div>
 
           <div className="space-y-4">
@@ -338,14 +334,14 @@ const FoodScanner = () => {
               {!showCamera && !previewUrl ? (
                 <button
                   onClick={startCamera}
-                  className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-all duration-200 active:scale-95"
+                  className="fa-btn fa-btn-secondary px-4 py-2 text-sm"
                 >
                   <Camera className="w-4 h-4" />
                   Camera
                 </button>
               ) : (
                 <button
-                  className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg opacity-50 cursor-not-allowed"
+                  className="fa-btn fa-btn-secondary px-4 py-2 text-sm opacity-50 cursor-not-allowed"
                   disabled
                 >
                   <Camera className="w-4 h-4" />
@@ -356,10 +352,10 @@ const FoodScanner = () => {
               <button
                 onClick={handleUpload}
                 disabled={showCamera}
-                className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-all duration-200 active:scale-95 ${
+                className={`fa-btn px-4 py-2 text-sm ${
                   showCamera 
-                    ? 'bg-gray-600 opacity-50 cursor-not-allowed' 
-                    : 'bg-green-600 hover:bg-green-700 text-white'
+                    ? 'fa-btn-secondary opacity-50 cursor-not-allowed' 
+                    : 'fa-btn-primary'
                 }`}
               >
                 <Upload className="w-4 h-4" />
@@ -369,7 +365,7 @@ const FoodScanner = () => {
               {(previewUrl || showCamera) && (
                 <button
                   onClick={handleClear}
-                  className="flex items-center gap-2 bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-lg transition-all duration-200 active:scale-95"
+                  className="flex items-center gap-2 bg-gray-600 hover:bg-white/15 text-white px-4 py-2 rounded-lg transition-all duration-200 active:scale-95"
                 >
                   <X className="w-4 h-4" />
                   Clear
@@ -391,7 +387,7 @@ const FoodScanner = () => {
                   initial={{ opacity: 0, scale: 0.9 }}
                   animate={{ opacity: 1, scale: 1 }}
                   exit={{ opacity: 0, scale: 0.9 }}
-                  className="relative bg-black rounded-lg overflow-hidden"
+                  className="relative bg-ink-950 rounded-lg overflow-hidden"
                 >
                   <video 
                     ref={videoRef} 
@@ -401,7 +397,7 @@ const FoodScanner = () => {
                   />
                   <button
                     onClick={capturePhoto}
-                    className="absolute bottom-4 left-1/2 transform -translate-x-1/2 bg-white text-blue-600 p-3 rounded-full shadow-lg hover:bg-blue-50 transition-colors active:scale-95"
+                    className="absolute bottom-4 left-1/2 transform -translate-x-1/2 bg-saffron-400 text-ink-950 p-3 rounded-full shadow-lg hover:brightness-105 transition-colors active:scale-95"
                   >
                     <Camera className="w-6 h-6" />
                   </button>
@@ -425,22 +421,22 @@ const FoodScanner = () => {
                       onClick={() => !isAnalyzing && analyzeImage(false)}
                     />
                    {isAnalyzing && (
-  <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center rounded-lg">
+  <div className="absolute inset-0 bg-ink-950 bg-opacity-50 flex items-center justify-center rounded-lg">
     <div className="text-center">
-      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-green-500 mx-auto mb-2"></div>
+      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-saffron-400 mx-auto mb-2"></div>
       <div className="text-white text-sm">
         {isQuickMode ? 'Quick Analysis...' : (
           <>
             <div>Full Analysis in Progress...</div>
-            <div className="text-xs text-gray-300 mt-1">
+            <div className="text-xs text-white/60 mt-1">
               This may take 30-50 seconds
               <br />
-              <span className="text-yellow-300">Processing image, analyzing nutrition, and finding healthier alternatives</span>
+              <span className="text-saffron-200">Processing image, analyzing nutrition, and finding healthier alternatives</span>
             </div>
           </>
         )}
         <br/>
-        <span className="text-xs text-gray-300">
+        <span className="text-xs text-white/60">
           {processingTime > 0 ? `${Math.round(processingTime)}ms` : 'Processing'}
         </span>
       </div>
@@ -454,14 +450,14 @@ const FoodScanner = () => {
                     <div className="grid grid-cols-2 gap-3">
                       <button
                         onClick={() => analyzeImage(true)}
-                        className="flex items-center justify-center gap-2 bg-purple-600 hover:bg-purple-700 text-white px-4 py-3 rounded-lg transition-all duration-200 active:scale-95"
+                        className="fa-btn fa-btn-secondary w-full py-3 text-sm"
                       >
                         <Zap className="w-4 h-4" />
                         Quick Scan
                       </button>
                       <button
                         onClick={() => analyzeImage(false)}
-                        className="flex items-center justify-center gap-2 bg-green-600 hover:bg-green-700 text-white px-4 py-3 rounded-lg transition-all duration-200 active:scale-95"
+                        className="fa-btn fa-btn-primary w-full py-3 text-sm"
                       >
                         <Check className="w-4 h-4" />
                         Full Analysis
@@ -489,18 +485,18 @@ const FoodScanner = () => {
                 initial={{ opacity: 0, height: 0 }}
                 animate={{ opacity: 1, height: 'auto' }}
                 exit={{ opacity: 0, height: 0 }}
-                className="mt-6 border-t border-zinc-700 pt-4 space-y-4"
+                className="mt-6 border-t border-white/10 pt-4 space-y-4"
               >
                 <div className="flex items-start justify-between gap-3">
                   <div>
-                    <h3 className="text-xl font-semibold">{results.foodName}</h3>
+                    <h3 className="font-display text-xl font-bold">{results.foodName}</h3>
                     {results.ifctName && results.ifctName !== results.foodName && (
-                      <p className="text-xs text-gray-400 mt-0.5">IFCT match: {results.ifctName}</p>
+                      <p className="text-xs text-white/45 mt-0.5">IFCT match: {results.ifctName}</p>
                     )}
                     {results.scientificName && (
-                      <p className="text-sm text-gray-400 italic">{results.scientificName}</p>
+                      <p className="text-sm text-white/45 italic">{results.scientificName}</p>
                     )}
-                    <p className="text-xs text-gray-500 mt-1">
+                    <p className="text-xs text-white/40 mt-1">
                       Source: {results.source || 'Unknown'}
                       {results.confidence != null && (
                         <> · Confidence {results.confidence}% ({results.confidenceDetail?.label || 'n/a'})</>
@@ -535,10 +531,10 @@ const FoodScanner = () => {
                 </div>
 
                 {results.portion && (
-                  <div className="rounded-lg border border-zinc-700 bg-zinc-800/60 px-3 py-2 text-sm">
-                    <span className="text-gray-400">Vision estimate: </span>
+                  <div className="rounded-xl border border-white/10 bg-white/[0.03] px-3 py-2 text-sm">
+                    <span className="text-white/45">Vision estimate: </span>
                     <span className="font-medium">{results.portion.label}</span>
-                    <span className="text-gray-500"> ({results.portion.grams} g) — adjust below</span>
+                    <span className="text-white/40"> ({results.portion.grams} g) — adjust below</span>
                   </div>
                 )}
 
@@ -556,25 +552,25 @@ const FoodScanner = () => {
                     />
 
                     <div className="grid grid-cols-2 gap-3">
-                      <div className="bg-zinc-800 p-3 rounded-lg">
-                        <div className="text-sm text-gray-400">Your plate</div>
+                      <div className="rounded-xl border border-white/10 bg-white/[0.03] p-3">
+                        <div className="text-sm text-white/45">Your plate</div>
                         <div className="text-lg font-semibold">{Math.round(plate.calories)} kcal</div>
                         {plate.oilCalories > 0 && (
-                          <div className="text-[10px] text-amber-300/80 mt-0.5">
+                          <div className="text-[10px] text-saffron-300/80 mt-0.5">
                             +{Math.round(plate.oilCalories)} from fat
                           </div>
                         )}
                       </div>
-                      <div className="bg-zinc-800 p-3 rounded-lg">
-                        <div className="text-sm text-gray-400">Protein</div>
+                      <div className="rounded-xl border border-white/10 bg-white/[0.03] p-3">
+                        <div className="text-sm text-white/45">Protein</div>
                         <div className="text-lg font-semibold">{plate.protein_g.toFixed(1)}g</div>
                       </div>
-                      <div className="bg-zinc-800 p-3 rounded-lg">
-                        <div className="text-sm text-gray-400">Carbs</div>
+                      <div className="rounded-xl border border-white/10 bg-white/[0.03] p-3">
+                        <div className="text-sm text-white/45">Carbs</div>
                         <div className="text-lg font-semibold">{plate.carbohydrates_total_g.toFixed(1)}g</div>
                       </div>
-                      <div className="bg-zinc-800 p-3 rounded-lg">
-                        <div className="text-sm text-gray-400">Fats</div>
+                      <div className="rounded-xl border border-white/10 bg-white/[0.03] p-3">
+                        <div className="text-sm text-white/45">Fats</div>
                         <div className="text-lg font-semibold">{plate.fat_total_g.toFixed(1)}g</div>
                       </div>
                     </div>
@@ -591,11 +587,11 @@ const FoodScanner = () => {
                       source={results.source}
                     />
                     {results.nutritionBasis && (
-                      <p className="text-[11px] text-gray-500 leading-relaxed">{results.nutritionBasis}</p>
+                      <p className="text-[11px] text-white/40 leading-relaxed">{results.nutritionBasis}</p>
                     )}
 
                     <div>
-                      <div className="flex justify-between text-sm text-gray-400 mb-2">
+                      <div className="flex justify-between text-sm text-white/45 mb-2">
                         <span>Glycemic Index</span>
                         <span>
                           {results.gi != null
@@ -604,39 +600,39 @@ const FoodScanner = () => {
                         </span>
                       </div>
                       {results.gi != null ? (
-                        <div className="w-full bg-gray-700 rounded-full h-2">
+                        <div className="w-full bg-white/15 rounded-full h-2">
                           <div 
                             className={`h-2 rounded-full ${
-                              results.gi <= 55 ? 'bg-green-500' : 
-                              results.gi <= 69 ? 'bg-yellow-500' : 'bg-red-500'
+                              results.gi <= 55 ? 'bg-leaf-400' : 
+                              results.gi <= 69 ? 'bg-saffron-400' : 'bg-red-500'
                             }`}
                             style={{ width: `${Math.min(100, results.gi)}%` }}
                           ></div>
                         </div>
                       ) : (
-                        <p className="text-xs text-gray-500">
+                        <p className="text-xs text-white/40">
                           No published GI match for this dish in our verified table.
                         </p>
                       )}
-                      <p className="mt-2 text-[11px] text-gray-500 leading-relaxed">
-                        Status: <span className="text-gray-300">{results.giStatus || 'unavailable'}</span>
+                      <p className="mt-2 text-[11px] text-white/40 leading-relaxed">
+                        Status: <span className="text-white/60">{results.giStatus || 'unavailable'}</span>
                         {results.giLabel ? ` · ${results.giLabel}` : ''}
                         {results.giNote ? ` — ${results.giNote}` : ''}
                       </p>
                       {results.giCitation && (
-                        <p className="mt-1 text-[10px] text-gray-600 leading-relaxed">{results.giCitation}</p>
+                        <p className="mt-1 text-[10px] text-white/35 leading-relaxed">{results.giCitation}</p>
                       )}
                     </div>
 
                     {results.confidenceDetail?.explanation && (
-                      <p className="text-[11px] text-gray-500 leading-relaxed">
+                      <p className="text-[11px] text-white/40 leading-relaxed">
                         {results.confidenceDetail.explanation}
                       </p>
                     )}
 
                     {results.alternatives && results.alternatives.length > 0 && (
                       <div>
-                        <h4 className="font-semibold mb-3 text-green-400">Lower-energy IFCT alternatives</h4>
+                        <h4 className="font-semibold mb-3 text-leaf-300">Lower-energy IFCT alternatives</h4>
                         <div className="space-y-2">
                           {results.alternatives.map((alt, index) => (
                             <motion.div
@@ -644,16 +640,16 @@ const FoodScanner = () => {
                               initial={{ opacity: 0, x: -20 }}
                               animate={{ opacity: 1, x: 0 }}
                               transition={{ delay: index * 0.1 }}
-                              className="flex items-start p-3 bg-zinc-800 rounded-lg"
+                              className="flex items-start rounded-xl border border-white/10 bg-white/[0.03] p-3"
                             >
-                              <Check className="w-4 h-4 text-green-500 mt-1 mr-3 flex-shrink-0" />
+                              <Check className="w-4 h-4 text-leaf-400 mt-1 mr-3 flex-shrink-0" />
                               <div className="flex-1">
                                 <div className="font-medium">{alt.name}</div>
-                                <div className="text-sm text-gray-400">
+                                <div className="text-sm text-white/45">
                                   {alt.calories} kcal / 100g
                                   {alt.gi != null ? ` · GI: ${alt.gi}` : ' · GI: n/a'}
                                 </div>
-                                <div className="text-xs text-green-300 mt-1">{alt.reason}</div>
+                                <div className="text-xs text-leaf-300 mt-1">{alt.reason}</div>
                               </div>
                             </motion.div>
                           ))}
@@ -662,7 +658,7 @@ const FoodScanner = () => {
                     )}
 
                     {results.disclaimer && (
-                      <p className="text-[10px] text-gray-600 leading-relaxed border-t border-zinc-800 pt-3">
+                      <p className="text-[10px] text-white/35 leading-relaxed border-t border-white/10 pt-3">
                         {results.disclaimer}
                       </p>
                     )}
@@ -673,10 +669,10 @@ const FoodScanner = () => {
                 {isQuickMode && (
                   <div className="space-y-2 text-sm">
                     <p>
-                      <span className="text-gray-400">Calories (est. portion): </span>
+                      <span className="text-white/45">Calories (est. portion): </span>
                       {results.calories} kcal
                     </p>
-                    <p className="text-xs text-gray-500">
+                    <p className="text-xs text-white/40">
                       Source: {results.source} · Confidence {results.confidence}%
                       {results.gi != null ? ` · GI ${results.gi} (${results.giStatus})` : ' · GI unavailable'}
                     </p>
@@ -684,7 +680,7 @@ const FoodScanner = () => {
                 )}
 
                 {processingTime > 0 && (
-                  <div className="text-xs text-gray-500 text-center">
+                  <div className="text-xs text-white/40 text-center">
                     Analysis completed in {Math.round(processingTime)}ms
                     {isQuickMode && ' (Quick Mode)'}
                   </div>
@@ -693,8 +689,7 @@ const FoodScanner = () => {
             )}
           </AnimatePresence>
         </div>
-      </motion.div>
-    </div>
+    </ToolPageShell>
   );
 };
 

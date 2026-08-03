@@ -35,7 +35,9 @@
     --scrollbar: rgba(255, 255, 255, 0.12);
     --ease: cubic-bezier(0.22, 1, 0.36, 1);
     --ease-pop: cubic-bezier(0.34, 1.56, 0.64, 1);
-    --duration: 300ms;
+    --duration: 380ms;
+    --duration-page: 650ms;
+    --duration-section: 700ms;
   }
 
   html[data-theme="light"] {
@@ -68,6 +70,10 @@
 
   html {
     scroll-behavior: smooth;
+    /* Prevent right-edge jump when scrollbar appears/disappears on route change */
+    scrollbar-gutter: stable;
+    overflow-y: scroll;
+    overflow-x: clip;
   }
 
   @media (prefers-reduced-motion: reduce) {
@@ -84,6 +90,22 @@
     }
   }
 
+  /* Soft momentum feel on touch devices */
+  @media (hover: none) and (pointer: coarse) {
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      -webkit-overflow-scrolling: touch;
+    }
+  }
+
+  .fa-page-transition {
+    /* Opacity-only transitions — no transform (avoids layout/compositor jitter) */
+    backface-visibility: hidden;
+  }
+
   body {
     font-family: "Figtree", system-ui, sans-serif;
     color: var(--text);
@@ -92,6 +114,8 @@
       radial-gradient(ellipse 90% 60% at 50% -10%, var(--glow-top), transparent 55%),
       radial-gradient(ellipse 50% 40% at 100% 20%, var(--glow-side), transparent 50%);
     min-height: 100vh;
+    overflow-x: clip;
+    width: 100%;
     -webkit-font-smoothing: antialiased;
     transition: background-color 280ms var(--ease), color 280ms var(--ease);
   }
@@ -201,6 +225,93 @@
   .fa-collage-mask {
     -webkit-mask-image: radial-gradient(ellipse 70% 70% at 50% 50%, #000 20%, transparent 75%);
     mask-image: radial-gradient(ellipse 70% 70% at 50% 50%, #000 20%, transparent 75%);
+  }
+
+  /* Floating GravityGallery-style food tiles */
+  .fa-collage-tile {
+    border-radius: 1.35rem;
+    border: none;
+    box-shadow:
+      0 22px 48px rgba(0, 0, 0, 0.32),
+      0 4px 14px rgba(0, 0, 0, 0.18);
+    -webkit-mask-image: none;
+    mask-image: none;
+    cursor: default;
+    will-change: transform;
+  }
+
+  .fa-collage-img {
+    opacity: 0.7;
+    filter: none;
+  }
+
+  .fa-collage-back .fa-collage-img {
+    opacity: 0.42;
+    filter: blur(3.5px) saturate(1.05);
+    transform: scale(1.06);
+  }
+
+  .fa-collage-mid .fa-collage-img {
+    opacity: 0.62;
+    filter: blur(1.2px) saturate(1.08);
+  }
+
+  .fa-collage-front .fa-collage-img {
+    opacity: 0.82;
+    filter: none;
+  }
+
+  .fa-collage-glass {
+    background: linear-gradient(
+      160deg,
+      rgba(255, 255, 255, 0.12) 0%,
+      transparent 45%,
+      rgba(7, 8, 12, 0.18) 100%
+    );
+    pointer-events: none;
+  }
+
+  .fa-collage-back {
+    z-index: 1;
+  }
+  .fa-collage-mid {
+    z-index: 2;
+  }
+  .fa-collage-front {
+    z-index: 3;
+  }
+
+  /* Mobile: keep tiles small + soft so they never fight hero type */
+  @media (max-width: 639px) {
+    .fa-collage-tile {
+      border-radius: 1rem;
+      box-shadow:
+        0 10px 24px rgba(0, 0, 0, 0.22),
+        0 2px 8px rgba(0, 0, 0, 0.12);
+    }
+
+    .fa-collage-back .fa-collage-img {
+      opacity: 0.28;
+      filter: blur(5px) saturate(1.05);
+    }
+
+    .fa-collage-mid .fa-collage-img {
+      opacity: 0.34;
+      filter: blur(3.5px) saturate(1.05);
+    }
+
+    .fa-collage-front .fa-collage-img {
+      opacity: 0.4;
+      filter: blur(2.5px) saturate(1.05);
+    }
+
+    .fa-collage-glass {
+      background: linear-gradient(
+        160deg,
+        rgba(7, 8, 12, 0.15) 0%,
+        rgba(7, 8, 12, 0.35) 100%
+      );
+    }
   }
 
   .fa-input,
@@ -658,5 +769,78 @@ html[data-theme="light"] .fa-search-shell {
   box-shadow:
     0 16px 40px rgba(40, 28, 10, 0.1),
     inset 0 1px 0 rgba(255, 255, 255, 0.9) !important;
+}
+
+/* Hero food tiles — GravityGallery floating stack in light mode */
+html[data-theme="light"] .fa-collage-tile {
+  border: none;
+  background: transparent;
+  box-shadow:
+    0 24px 50px rgba(40, 28, 10, 0.1),
+    0 6px 16px rgba(40, 28, 10, 0.05);
+}
+
+html[data-theme="light"] .fa-collage-back .fa-collage-img {
+  opacity: 0.55;
+  filter: blur(4px) saturate(1.1);
+}
+
+html[data-theme="light"] .fa-collage-mid .fa-collage-img {
+  opacity: 0.82;
+  filter: blur(1px) saturate(1.12);
+}
+
+html[data-theme="light"] .fa-collage-front .fa-collage-img {
+  opacity: 1;
+  filter: none;
+}
+
+html[data-theme="light"] .fa-collage-glass {
+  background: linear-gradient(
+    160deg,
+    rgba(255, 255, 255, 0.2) 0%,
+    transparent 50%,
+    rgba(255, 248, 240, 0.08) 100%
+  );
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+
+@media (max-width: 639px) {
+  html[data-theme="light"] .fa-collage-tile {
+    box-shadow:
+      0 10px 22px rgba(40, 28, 10, 0.08),
+      0 2px 8px rgba(40, 28, 10, 0.04);
+  }
+
+  html[data-theme="light"] .fa-collage-back .fa-collage-img {
+    opacity: 0.32;
+    filter: blur(5px) saturate(1.05);
+  }
+
+  html[data-theme="light"] .fa-collage-mid .fa-collage-img {
+    opacity: 0.4;
+    filter: blur(3.5px) saturate(1.08);
+  }
+
+  html[data-theme="light"] .fa-collage-front .fa-collage-img {
+    opacity: 0.48;
+    filter: blur(2.5px) saturate(1.08);
+  }
+
+html[data-theme="light"] .fa-collage-glass {
+  background: linear-gradient(
+    160deg,
+    rgba(255, 255, 255, 0.35) 0%,
+    rgba(255, 248, 240, 0.2) 100%
+  );
+}
+
+/* Testimonials wall cards — soft surface in light mode */
+html[data-theme="light"] .fa-testimonial-card {
+  border-color: rgba(22, 24, 31, 0.1) !important;
+  background: rgba(255, 255, 255, 0.92) !important;
+  box-shadow: 0 16px 36px rgba(40, 28, 10, 0.08) !important;
+}
 }
 

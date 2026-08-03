@@ -1,13 +1,12 @@
 import { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
 import { Card } from "../components/ui/card";
 import { Badge } from "../components/ui/badge";
 import { Button } from "../components/ui/button";
 import { ScrollArea } from "../components/ui/scroll-area";
-import { ShootingStars } from "../components/ui/shooting-stars";
-import { StarsBackground } from "../components/ui/stars-background";
 import { motion } from "framer-motion";
 import { Alert, AlertDescription } from "../components/ui/alert";
-import { Trash2, Check, Calendar, Search, RefreshCw } from "lucide-react";
+import { Trash2, Check, Calendar, Search, RefreshCw, ArrowLeft, History as HistoryIcon } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -17,6 +16,8 @@ import {
   DialogTitle,
 } from "../components/ui/dialog";
 import { API_ENDPOINTS } from "../utils/apiConfig";
+import { ShootingStars } from "../components/ui/shooting-stars";
+import { StarsBackground } from "../components/ui/stars-background";
 
 const History = () => {
   const [searchHistory, setSearchHistory] = useState([]);
@@ -312,8 +313,8 @@ const handleBulkDelete = async () => {
   const renderNutritionData = (food) => {
     if (!food.result || food.result.length === 0 || !food.result[0]) {
       return (
-        <div className="bg-neutral-900 p-4 rounded-lg text-center">
-          <p className="text-neutral-400 text-sm">No nutrition data available</p>
+        <div className="bg-white/[0.04] p-4 rounded-lg text-center">
+          <p className="text-white/45 text-sm">No nutrition data available</p>
         </div>
       );
     }
@@ -321,20 +322,20 @@ const handleBulkDelete = async () => {
     const result = food.result[0];
     return (
       <div className="grid grid-cols-3 gap-4 mb-6">
-        <div className="bg-neutral-900 p-3 rounded-lg text-center">
-          <p className="text-sm text-neutral-400">Protein</p>
+        <div className="bg-white/[0.04] p-3 rounded-lg text-center">
+          <p className="text-sm text-white/45">Protein</p>
           <p className="text-lg font-semibold">
             {result.protein_g?.toFixed(1) || '0'}g
           </p>
         </div>
-        <div className="bg-neutral-900 p-3 rounded-lg text-center">
-          <p className="text-sm text-neutral-400">Carbs</p>
+        <div className="bg-white/[0.04] p-3 rounded-lg text-center">
+          <p className="text-sm text-white/45">Carbs</p>
           <p className="text-lg font-semibold">
             {result.carbohydrates_total_g?.toFixed(1) || '0'}g
           </p>
         </div>
-        <div className="bg-neutral-900 p-3 rounded-lg text-center">
-          <p className="text-sm text-neutral-400">Fats</p>
+        <div className="bg-white/[0.04] p-3 rounded-lg text-center">
+          <p className="text-sm text-white/45">Fats</p>
           <p className="text-lg font-semibold">
             {result.fat_total_g?.toFixed(1) || '0'}g
           </p>
@@ -375,9 +376,9 @@ const handleBulkDelete = async () => {
     if (searchHistory.length === 0) {
       return (
         <div className="text-center mt-10 space-y-4">
-          <Search className="w-16 h-16 text-neutral-600 mx-auto" />
-          <h3 className="text-xl font-semibold text-neutral-400">No Search History</h3>
-          <p className="text-neutral-500">
+          <Search className="w-16 h-16 text-white/25 mx-auto" />
+          <h3 className="font-display text-xl font-semibold text-white">No search history</h3>
+          <p className="text-white/40">
             Your food searches will appear here. Start searching to build your history!
           </p>
         </div>
@@ -391,17 +392,17 @@ const handleBulkDelete = async () => {
           <motion.div
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
-            className="bg-neutral-800 rounded-lg p-4 flex items-center justify-between border border-neutral-700"
+            className="bg-white/[0.04] rounded-lg p-4 flex items-center justify-between border border-white/10"
           >
             <div className="flex items-center gap-4">
               <Button
                 variant="outline"
                 onClick={selectAllItems}
-                className="text-white border-neutral-600 hover:bg-neutral-700"
+                className="text-white border-white/15 hover:bg-white/[0.08]"
               >
                 {selectedItems.size === searchHistory.length ? "Deselect All" : "Select All"}
               </Button>
-              <span className="text-neutral-400 text-sm">
+              <span className="text-white/45 text-sm">
                 {selectedItems.size} item{selectedItems.size !== 1 ? 's' : ''} selected
               </span>
             </div>
@@ -412,7 +413,7 @@ const handleBulkDelete = async () => {
                   setBulkDeleteMode(false);
                   setSelectedItems(new Set());
                 }}
-                className="text-white border-neutral-600 hover:bg-neutral-700"
+                className="text-white border-white/15 hover:bg-white/[0.08]"
               >
                 Cancel
               </Button>
@@ -438,10 +439,10 @@ const handleBulkDelete = async () => {
                 transition={{ delay: index * 0.1 }}
               >
                 <Card
-                  className={`bg-neutral-800 text-white border-neutral-700 hover:border-neutral-600 transition-all relative ${
-                    bulkDeleteMode ? 'cursor-pointer hover:bg-neutral-750' : ''
+                  className={`bg-white/[0.04] text-white border-white/10 hover:border-white/15 transition-all relative ${
+                    bulkDeleteMode ? 'cursor-pointer hover:bg-white/[0.06]' : ''
                   } ${
-                    selectedItems.has(food._id) ? 'ring-2 ring-blue-500 border-blue-500 bg-neutral-750' : ''
+                    selectedItems.has(food._id) ? 'ring-2 ring-saffron-400/50 border-saffron-400/40 bg-white/[0.06]' : ''
                   }`}
                   onClick={() => bulkDeleteMode && toggleItemSelection(food._id)}
                 >
@@ -451,7 +452,7 @@ const handleBulkDelete = async () => {
                       <div className={`w-6 h-6 rounded border-2 flex items-center justify-center transition-colors ${
                         selectedItems.has(food._id) 
                           ? 'bg-blue-500 border-blue-500' 
-                          : 'border-neutral-500 bg-neutral-800'
+                          : 'border-white/20 bg-white/[0.04]'
                       }`}>
                         {selectedItems.has(food._id) && (
                           <Check className="w-4 h-4 text-white" />
@@ -465,7 +466,7 @@ const handleBulkDelete = async () => {
                     <Button
                       variant="ghost"
                       size="sm"
-                      className="absolute top-4 right-4 text-neutral-400 hover:text-red-400 hover:bg-red-950/50 z-10"
+                      className="absolute top-4 right-4 text-white/45 hover:text-red-400 hover:bg-red-950/50 z-10"
                       onClick={(e) => {
                         e.stopPropagation();
                         setDeleteDialog({
@@ -493,7 +494,7 @@ const handleBulkDelete = async () => {
 
                     {renderNutritionData(food)}
 
-                    <div className="mt-4 pt-4 border-t border-neutral-700 flex items-center text-sm text-neutral-400">
+                    <div className="mt-4 pt-4 border-t border-white/10 flex items-center text-sm text-white/45">
                       <Calendar className="w-4 h-4 mr-2" />
                       <span>{formatDate(food.searchedAt)}</span>
                     </div>
@@ -508,46 +509,61 @@ const handleBulkDelete = async () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-neutral-900 to-neutral-950 mt-10">
-      <div className="container mx-auto py-8 px-4">
-        <div className="absolute inset-0 pointer-events-none">
-          <StarsBackground />
-          <ShootingStars />
-        </div>
-        
+    <div className="relative min-h-screen overflow-x-clip bg-ink-950 text-white">
+      <div className="fa-stars-layer pointer-events-none absolute inset-0 opacity-40">
+        <StarsBackground />
+        <ShootingStars />
+      </div>
+
+      <div className="relative z-10 mx-auto max-w-5xl px-4 pb-16 pt-24 sm:px-6">
+        <Link
+          to="/"
+          className="inline-flex items-center gap-2 text-sm text-white/50 transition hover:text-white"
+        >
+          <ArrowLeft className="h-4 w-4" /> Home
+        </Link>
+
         {/* Header with Actions */}
         <motion.div
-          initial={{ opacity: 0, y: -20 }}
+          initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, ease: "easeOut" }}
-          className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 gap-4"
+          transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
+          className="mt-6 mb-8 flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center"
         >
-          <div>
-            <h1 className="text-4xl font-bold text-white text-center sm:text-left">
-              Food Search History
-            </h1>
-            <p className="text-neutral-400 mt-2 text-center sm:text-left">
-              {searchHistory.length} search{searchHistory.length !== 1 ? 'es' : ''} recorded
-            </p>
+          <div className="flex items-start gap-3">
+            <div className="rounded-2xl border border-saffron-400/20 bg-saffron-500/10 p-3">
+              <HistoryIcon className="h-5 w-5 text-saffron-300" />
+            </div>
+            <div>
+              <p className="text-[11px] font-semibold uppercase tracking-[0.24em] text-saffron-300/90">
+                Account
+              </p>
+              <h1 className="mt-1 font-display text-3xl font-extrabold tracking-tight sm:text-4xl">
+                Search history
+              </h1>
+              <p className="mt-2 text-sm text-white/50">
+                {searchHistory.length} search{searchHistory.length !== 1 ? "es" : ""} recorded
+              </p>
+            </div>
           </div>
           
           {searchHistory.length > 0 && !bulkDeleteMode && (
-            <div className="flex gap-2 flex-wrap">
+            <div className="flex flex-wrap gap-2">
               <Button
                 variant="outline"
                 onClick={() => setBulkDeleteMode(true)}
-                className="text-white border-neutral-600 hover:bg-neutral-700"
+                className="border-white/15 bg-white/[0.04] text-white hover:bg-white/[0.08]"
               >
-                <Trash2 className="w-4 h-4 mr-2" />
-                Select Items
+                <Trash2 className="mr-2 h-4 w-4" />
+                Select
               </Button>
               <Button
                 variant="destructive"
                 onClick={clearAllHistory}
                 disabled={deleteLoading}
               >
-                <Trash2 className="w-4 h-4 mr-2" />
-                {deleteLoading ? "Clearing..." : "Clear All"}
+                <Trash2 className="mr-2 h-4 w-4" />
+                {deleteLoading ? "Clearing…" : "Clear all"}
               </Button>
             </div>
           )}
@@ -557,18 +573,18 @@ const handleBulkDelete = async () => {
 
         {/* Delete Confirmation Dialog */}
         <Dialog open={deleteDialog.open} onOpenChange={(open) => !open && setDeleteDialog({ open: false, itemId: null, query: "" })}>
-          <DialogContent className="bg-neutral-800 text-white border-neutral-700">
+          <DialogContent className="border-white/10 bg-ink-900 text-white">
             <DialogHeader>
-              <DialogTitle>Delete Search History</DialogTitle>
-              <DialogDescription className="text-neutral-400">
-                Are you sure you want to delete the search for &quot;<span className="text-white font-medium">{deleteDialog.query}</span>&quot;? This action cannot be undone.
+              <DialogTitle className="font-display">Delete search</DialogTitle>
+              <DialogDescription className="text-white/50">
+                Remove the search for &quot;<span className="font-medium text-white">{deleteDialog.query}</span>&quot;? This cannot be undone.
               </DialogDescription>
             </DialogHeader>
             <DialogFooter className="flex gap-2 sm:gap-0">
               <Button
                 variant="outline"
                 onClick={() => setDeleteDialog({ open: false, itemId: null, query: "" })}
-                className="text-white border-neutral-600 hover:bg-neutral-700"
+                className="border-white/15 bg-white/[0.04] text-white hover:bg-white/[0.08]"
               >
                 Cancel
               </Button>

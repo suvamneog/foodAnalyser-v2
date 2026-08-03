@@ -1,9 +1,8 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useState, useEffect } from 'react';
-import { ShootingStars } from "../components/ui/shooting-stars";
-import { StarsBackground } from "../components/ui/stars-background";
-import { motion } from "framer-motion";
+import { ClipboardList } from 'lucide-react';
 import axios from 'axios';
+import ToolPageShell from "../components/ToolPageShell";
 
 function LogMeals() {
   const [meals, setMeals] = useState([]);
@@ -428,37 +427,38 @@ function LogMeals() {
   };
 
   return (
-    <div className="relative min-h-screen bg-black text-white flex items-center justify-center p-6">
-      <div className="absolute inset-0 pointer-events-none">
-        <StarsBackground />
-        <ShootingStars />
-      </div>
-      <motion.div
-        initial={{ opacity: 0, scale: 0.9 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={{ duration: 0.5, ease: "easeOut" }}
-      >
-        <div className="min-h-screen p-8 mt-20">
-          <div className="max-w-4xl mx-auto">
+    <ToolPageShell
+      eyebrow="Tracking"
+      title="Log a meal"
+      subtitle="Build a meal from database matches and save it to your account."
+      icon={ClipboardList}
+      maxWidth="max-w-4xl"
+    >
             {error && (
-              <div className="bg-red-600 text-white p-4 rounded-lg mb-6 shadow-lg">
+              <div className="mb-6 rounded-xl border border-red-500/30 bg-red-950/50 p-4 text-red-100">
                 <p>{error}</p>
               </div>
             )}
             
             {success && (
-              <div className="bg-green-600 text-white p-4 rounded-lg mb-6 shadow-lg">
+              <div className="mb-6 rounded-xl border border-leaf-400/30 bg-leaf-500/15 p-4 text-leaf-100">
                 <p>{success}</p>
               </div>
             )}
             
-            <div className="bg-zinc-900 rounded-lg p-6 mb-8">
-              <h2 className="text-2xl font-bold mb-2">Log Your Meal</h2>
-              <p className="text-gray-400 mb-4">Track your daily nutrition intake using smart food database search</p>
+            <div className="fa-card mb-8 p-5 sm:p-6">
+              <div className="mb-5 border-b border-white/10 pb-5">
+                <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-saffron-300/80">
+                  Meal log
+                </p>
+                <p className="mt-1 text-sm text-white/45">
+                  Search Indian food databases and save a meal to your account history.
+                </p>
+              </div>
               
               <form onSubmit={handleSubmit} className="space-y-4">
                 <div>
-                  <label htmlFor="meal-name" className="block text-sm font-medium text-gray-300 mb-1">
+                  <label htmlFor="meal-name" className="block text-sm font-medium text-white/60 mb-1">
                     Meal Name
                   </label>
                   <input
@@ -468,7 +468,7 @@ function LogMeals() {
                     placeholder="e.g., Breakfast, Lunch, Dinner"
                     value={mealName}
                     onChange={(e) => setMealName(e.target.value)}
-                    className="w-full bg-zinc-800 rounded-lg p-3 border border-zinc-700 text-white"
+                    className="w-full rounded-xl border border-white/12 bg-white/[0.04] p-3 text-white placeholder:text-white/30 focus:border-saffron-400/40 focus:outline-none"
                     required
                   />
                   <datalist id="meal-options">
@@ -479,7 +479,7 @@ function LogMeals() {
                 </div>
 
                 {foodItems.map((item, index) => (
-                  <div key={`food-item-${index}`} className="space-y-4 p-4 bg-zinc-800 rounded-lg">
+                  <div key={`food-item-${index}`} className="space-y-4 rounded-xl border border-white/10 bg-white/[0.03] p-4">
                     <div className="flex justify-between items-center">
                       <h3 className="text-lg font-semibold">Food Item {index + 1}</h3>
                       {foodItems.length > 1 && (
@@ -494,7 +494,7 @@ function LogMeals() {
                     </div>
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                       <div>
-                        <label htmlFor={`food-name-${index}`} className="block text-sm font-medium text-gray-300 mb-1">
+                        <label htmlFor={`food-name-${index}`} className="block text-sm font-medium text-white/60 mb-1">
                           Food Name
                         </label>
                         <input
@@ -504,7 +504,7 @@ function LogMeals() {
                           placeholder="e.g., Roti, Rice, Dal"
                           value={item.name}
                           onChange={(e) => handleFoodItemChange(index, 'name', e.target.value)}
-                          className="w-full bg-zinc-700 rounded-lg p-3 border border-zinc-600 text-white"
+                          className="w-full bg-white/[0.04] rounded-lg p-3 border border-white/10 text-white"
                           required
                         />
                         <datalist id="indian-foods">
@@ -514,7 +514,7 @@ function LogMeals() {
                         </datalist>
                       </div>
                       <div>
-                        <label htmlFor={`food-quantity-${index}`} className="block text-sm font-medium text-gray-300 mb-1">
+                        <label htmlFor={`food-quantity-${index}`} className="block text-sm font-medium text-white/60 mb-1">
                           Quantity
                         </label>
                         <input
@@ -523,21 +523,21 @@ function LogMeals() {
                           placeholder={`Amount in ${item.unit}`}
                           value={item.quantity}
                           onChange={(e) => handleFoodItemChange(index, 'quantity', e.target.value)}
-                          className="bg-zinc-700 rounded-lg p-3 border border-zinc-600 w-full text-white"
+                          className="bg-white/[0.04] rounded-lg p-3 border border-white/10 w-full text-white"
                           min="0"
                           step="any"
                           required
                         />
                       </div>
                       <div>
-                        <label htmlFor={`food-unit-${index}`} className="block text-sm font-medium text-gray-300 mb-1">
+                        <label htmlFor={`food-unit-${index}`} className="block text-sm font-medium text-white/60 mb-1">
                           Unit
                         </label>
                         <select
                           id={`food-unit-${index}`}
                           value={item.unit}
                           onChange={(e) => handleFoodItemChange(index, 'unit', e.target.value)}
-                          className="bg-zinc-700 rounded-lg p-3 border border-zinc-600 w-full text-white"
+                          className="bg-white/[0.04] rounded-lg p-3 border border-white/10 w-full text-white"
                         >
                           <option value="g">grams (g)</option>
                           <option value="pcs">pieces (pcs)</option>
@@ -550,7 +550,7 @@ function LogMeals() {
                 <button
                   type="button"
                   onClick={addFoodItem}
-                  className="w-full bg-zinc-700 text-white px-6 py-3 rounded-lg font-semibold hover:bg-zinc-600 transition-colors mb-4"
+                  className="w-full bg-white/[0.04] text-white px-6 py-3 rounded-lg font-semibold hover:bg-zinc-600 transition-colors mb-4"
                 >
                   Add Another Food Item
                 </button>
@@ -566,39 +566,39 @@ function LogMeals() {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-              <div className="bg-zinc-900 rounded-lg p-6">
+              <div className="fa-card rounded-lg p-6">
                 <h2 className="text-2xl font-bold mb-2">Today&apos;s Intake</h2>
-                <p className="text-gray-400 mb-4">Your nutrition summary for today</p>
+                <p className="text-white/45 mb-4">Your nutrition summary for today</p>
                 
                 <div className="grid grid-cols-2 gap-4">
-                  <div className="bg-zinc-800 p-4 rounded-lg">
-                    <p className="text-gray-400">Calories</p>
+                  <div className="bg-white/[0.06] p-4 rounded-lg">
+                    <p className="text-white/45">Calories</p>
                     <p className="text-2xl font-bold">{formatNumber(totals.calories)} kcal</p>
                   </div>
-                  <div className="bg-zinc-800 p-4 rounded-lg">
-                    <p className="text-gray-400">Protein</p>
+                  <div className="bg-white/[0.06] p-4 rounded-lg">
+                    <p className="text-white/45">Protein</p>
                     <p className="text-2xl font-bold">{formatNumber(totals.protein_g)} g</p>
                   </div>
-                  <div className="bg-zinc-800 p-4 rounded-lg">
-                    <p className="text-gray-400">Carbs</p>
+                  <div className="bg-white/[0.06] p-4 rounded-lg">
+                    <p className="text-white/45">Carbs</p>
                     <p className="text-2xl font-bold">{formatNumber(totals.carbohydrates_g)} g</p>
                   </div>
-                  <div className="bg-zinc-800 p-4 rounded-lg">
-                    <p className="text-gray-400">Fat</p>
+                  <div className="bg-white/[0.06] p-4 rounded-lg">
+                    <p className="text-white/45">Fat</p>
                     <p className="text-2xl font-bold">{formatNumber(totals.fat_g)} g</p>
                   </div>
                 </div>
               </div>
 
-              <div className="bg-zinc-900 rounded-lg p-6">
+              <div className="fa-card rounded-lg p-6">
                 <h2 className="text-2xl font-bold mb-2">Meal History</h2>
-                <p className="text-gray-400 mb-4">Your logged meals by date</p>
+                <p className="text-white/45 mb-4">Your logged meals by date</p>
                 
                 <div className="space-y-6 max-h-[500px] overflow-y-auto">
                   {groupedMeals.length > 0 ? (
                     groupedMeals.map(([date, dateMeals]) => (
                       <div key={date} className="space-y-2">
-                        <h3 className="font-semibold text-gray-300">
+                        <h3 className="font-semibold text-white/60">
                           {date === 'Unknown Date' ? date : new Date(date).toLocaleDateString('en-US', {
                             weekday: 'long',
                             year: 'numeric',
@@ -608,7 +608,7 @@ function LogMeals() {
                         </h3>
                         <div className="space-y-2">
                           {dateMeals.map((meal) => (
-                            <div key={meal._id} className="bg-zinc-800 p-4 rounded-lg">
+                            <div key={meal._id} className="bg-white/[0.06] p-4 rounded-lg">
                               <div className="flex justify-between items-center mb-3">
                                 <h4 className="font-bold text-lg">{meal.mealName}</h4>
                                 <button
@@ -620,9 +620,9 @@ function LogMeals() {
                                 </button>
                               </div>
                               {meal.foodItems.map((food, foodIndex) => (
-                                <div key={`${meal._id}-food-${foodIndex}`} className="mt-3 p-3 bg-zinc-700 rounded-lg">
+                                <div key={`${meal._id}-food-${foodIndex}`} className="mt-3 p-3 bg-white/[0.04] rounded-lg">
                                   <div className="flex items-center justify-between mb-2">
-                                    <p className="text-gray-300 font-medium">
+                                    <p className="text-white/60 font-medium">
                                       {food.name} - {food.quantity}{food.unit}
                                     </p>
                                     {food.source && (
@@ -639,8 +639,8 @@ function LogMeals() {
                                   </div>
                                 </div>
                               ))}
-                              <div className="mt-4 pt-3 border-t border-zinc-600">
-                                <p className="font-semibold text-gray-300 mb-2">Meal Total:</p>
+                              <div className="mt-4 pt-3 border-t border-white/10">
+                                <p className="font-semibold text-white/60 mb-2">Meal Total:</p>
                                 <div className="grid grid-cols-4 gap-2 text-sm font-medium">
                                   <p>🔥 {formatNumber(meal.totalCalories)} kcal</p>
                                   <p>🥩 {formatNumber(meal.totalProtein)} g</p>
@@ -654,17 +654,14 @@ function LogMeals() {
                       </div>
                     ))
                   ) : (
-                    <div className="text-center text-gray-400 py-8">
+                    <div className="text-center text-white/45 py-8">
                       <p>No meals logged yet. Start by logging your first meal above!</p>
                     </div>
                   )}
                 </div>
               </div>
             </div>
-          </div>
-        </div>
-      </motion.div>
-    </div>
+    </ToolPageShell>
   );
 }
 

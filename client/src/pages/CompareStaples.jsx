@@ -15,8 +15,7 @@ import { computeCustomNutrition } from "../utils/portionCustomize";
 import { fetchFoodData } from "../utils/fetchFoodData";
 import TrustBadge from "../components/TrustBadge";
 import AddToTrackerButton from "../components/AddToTrackerButton";
-
-const EASE = [0.22, 1, 0.36, 1];
+import { IOS_EASE, MOTION } from "../utils/motion";
 
 function plateForVariant(variant, liveFood) {
   const { food: fallbackFood, customize } = estimateVariantFromFallback(variant);
@@ -170,9 +169,9 @@ export default function CompareStaples() {
             return (
               <motion.article
                 key={variant.id}
-                initial={reduceMotion ? false : { opacity: 0, y: 12 }}
+                initial={reduceMotion ? false : { opacity: 0, y: MOTION.ySm }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: Math.min(i * 0.05, 0.35), ease: EASE }}
+                transition={{ delay: Math.min(i * MOTION.stagger, 0.45), duration: MOTION.section.duration, ease: IOS_EASE }}
                 className="rounded-2xl border border-white/10 bg-white/[0.03] p-5"
               >
                 <div className="flex items-start justify-between gap-3">

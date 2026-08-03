@@ -7,6 +7,8 @@ import { addEntry } from "../utils/dailyTracker";
 import { recordMealLogged, recordRecipeAnalyzed } from "../utils/progression";
 import TrustBadge from "../components/TrustBadge";
 import AddToTrackerButton from "../components/AddToTrackerButton";
+import { Reveal, RevealMount } from "../components/PageTransition";
+import { IOS_EASE, MOTION } from "../utils/motion";
 
 const EXAMPLE = `250 g paneer
 2 tbsp mustard oil
@@ -74,14 +76,16 @@ export default function RecipeAnalyzer() {
   return (
     <div className="min-h-screen bg-ink-950 text-white">
       <div className="mx-auto max-w-4xl px-4 pb-16 pt-24 sm:px-6">
-        <Link
-          to="/"
-          className="inline-flex items-center gap-2 text-sm text-white/50 transition hover:text-white"
-        >
-          <ArrowLeft className="h-4 w-4" /> Home
-        </Link>
+        <RevealMount delay={0} y={10} duration={0.55}>
+          <Link
+            to="/"
+            className="inline-flex items-center gap-2 text-sm text-white/50 transition hover:text-white"
+          >
+            <ArrowLeft className="h-4 w-4" /> Home
+          </Link>
+        </RevealMount>
 
-        <header className="mt-6 flex items-start gap-3">
+        <RevealMount delay={0.08} className="mt-6 flex items-start gap-3">
           <div className="rounded-2xl border border-saffron-400/20 bg-saffron-500/10 p-3">
             <ChefHat className="h-5 w-5 text-saffron-300" />
           </div>
@@ -97,9 +101,9 @@ export default function RecipeAnalyzer() {
               g / kg / ml / tsp / tbsp / cup / katori / bowl, and pieces (small/medium/large).
             </p>
           </div>
-        </header>
+        </RevealMount>
 
-        <section className="mt-8 grid gap-6 lg:grid-cols-2">
+        <Reveal className="mt-8 grid gap-6 lg:grid-cols-2">
           <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-5">
             <label className="text-[11px] font-semibold uppercase tracking-wider text-white/45">
               Ingredients
@@ -139,8 +143,9 @@ export default function RecipeAnalyzer() {
           <div>
             {result ? (
               <motion.div
-                initial={reduce ? false : { opacity: 0, y: 12 }}
+                initial={reduce ? false : { opacity: 0, y: MOTION.ySm }}
                 animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: MOTION.section.duration, ease: IOS_EASE }}
                 className="rounded-2xl border border-white/10 bg-white/[0.03] p-5"
               >
                 <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-saffron-300/80">
@@ -225,7 +230,7 @@ export default function RecipeAnalyzer() {
               </div>
             )}
           </div>
-        </section>
+        </Reveal>
 
         <p className="mt-8 text-[11px] leading-relaxed text-white/35">
           Estimate only. Individual ingredient composition varies; household cooking losses

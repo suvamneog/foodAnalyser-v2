@@ -9,6 +9,7 @@ import {
   Dumbbell,
   HeartPulse,
 } from "lucide-react";
+import { Reveal, RevealMount } from "../components/PageTransition";
 import {
   ACTIVITY_LEVELS,
   DIET_TYPES,
@@ -94,14 +95,16 @@ export default function DietPlan() {
   return (
     <div className="min-h-screen bg-ink-950 text-white">
       <div className="mx-auto max-w-5xl px-4 pb-16 pt-24 sm:px-6">
-        <Link
-          to="/"
-          className="inline-flex items-center gap-2 text-sm text-white/50 transition hover:text-white"
-        >
-          <ArrowLeft className="h-4 w-4" /> Home
-        </Link>
+        <RevealMount delay={0} y={10} duration={0.55}>
+          <Link
+            to="/"
+            className="inline-flex items-center gap-2 text-sm text-white/50 transition hover:text-white"
+          >
+            <ArrowLeft className="h-4 w-4" /> Home
+          </Link>
+        </RevealMount>
 
-        <header className="mt-6 flex items-start gap-3">
+        <RevealMount delay={0.08} className="mt-6 flex items-start gap-3">
           <div className="rounded-2xl border border-saffron-400/20 bg-saffron-500/10 p-3">
             <Sparkles className="h-5 w-5 text-saffron-300" />
           </div>
@@ -117,10 +120,10 @@ export default function DietPlan() {
               templates. All numbers are ranges — refine each plate with the customiser.
             </p>
           </div>
-        </header>
+        </RevealMount>
 
         {/* Form */}
-        <section className="mt-8 rounded-3xl border border-white/8 bg-white/[0.03] p-5 sm:p-6">
+        <Reveal className="mt-8 rounded-3xl border border-white/8 bg-white/[0.03] p-5 sm:p-6">
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
             <Field label="Sex">
               <select
@@ -216,10 +219,10 @@ export default function DietPlan() {
               </select>
             </Field>
           </div>
-        </section>
+        </Reveal>
 
         {/* Target card */}
-        <section className="mt-8 grid gap-4 sm:grid-cols-4">
+        <Reveal delay={0.06} className="mt-8 grid gap-4 sm:grid-cols-4">
           <TargetCard label="BMR" value={`${Math.round(derived.bmr)}`} unit="kcal" />
           <TargetCard label="Maintenance (TDEE)" value={`${Math.round(derived.tdee)}`} unit="kcal" />
           <TargetCard
@@ -233,9 +236,9 @@ export default function DietPlan() {
             value={`${derived.target.macros.proteinG}`}
             unit="g"
           />
-        </section>
+        </Reveal>
 
-        <div className="mt-4 flex flex-wrap items-center gap-2 rounded-2xl border border-white/8 bg-white/[0.03] px-4 py-3 text-sm text-white/60">
+        <Reveal delay={0.08} className="mt-4 flex flex-wrap items-center gap-2 rounded-2xl border border-white/8 bg-white/[0.03] px-4 py-3 text-sm text-white/60">
           <TargetIcon className="h-4 w-4 text-saffron-300" />
           <span>
             <strong className="text-white">{persona.label}</strong> · protein{" "}
@@ -249,7 +252,7 @@ export default function DietPlan() {
           >
             {saved ? "Saved for tracker ✓" : "Use as tracker target"}
           </button>
-        </div>
+        </Reveal>
 
         <p className="mt-3 text-[11px] leading-relaxed text-white/40">
           {persona.note} — estimates; not medical advice. See a registered dietitian for

@@ -7,8 +7,7 @@ import {
   getRegionBySlug,
 } from "../data/discoveryData";
 import { fetchFoodData, fetchFoodById } from "../utils/fetchFoodData";
-
-const EASE = [0.22, 1, 0.36, 1];
+import { IOS_EASE, MOTION } from "../utils/motion";
 
 export default function CuisinePage() {
   const { slug } = useParams();
@@ -126,9 +125,9 @@ export default function CuisinePage() {
               type="button"
               disabled={loading}
               onClick={() => analyseDish(dish)}
-              initial={reduceMotion ? false : { opacity: 0, y: 12 }}
+              initial={reduceMotion ? false : { opacity: 0, y: MOTION.ySm }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: Math.min(i * 0.04, 0.3), ease: EASE }}
+              transition={{ delay: Math.min(i * MOTION.stagger, 0.45), duration: MOTION.section.duration, ease: IOS_EASE }}
               className="group flex items-center justify-between rounded-2xl border border-white/10 bg-white/[0.03] px-5 py-4 text-left transition hover:border-saffron-400/35 hover:bg-white/[0.06] disabled:opacity-50"
             >
               <div>

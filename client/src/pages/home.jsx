@@ -30,7 +30,6 @@ import {
   ChevronUp,
   ChevronLeft,
   ChevronRight,
-  Github,
   Lightbulb,
   GitCompareArrows,
   Flame,
@@ -52,6 +51,7 @@ import {
   CREDIBILITY_STATS,
   POPULAR_SEARCHES,
 } from "../data/discoveryData";
+import { fadeUpProps, IOS_EASE, MOTION } from "../utils/motion";
 
 const QUICK_ICONS = {
   "Diet plan": Sparkles,
@@ -95,23 +95,11 @@ const STAT_ICONS = {
   GraduationCap,
 };
 
-const EASE = [0.22, 1, 0.36, 1];
-
 function useFadeUp(reduceMotion) {
-  if (reduceMotion) {
-    return {
-      initial: false,
-      whileInView: { opacity: 1 },
-      viewport: { once: true },
-      transition: { duration: 0 },
-    };
-  }
-  return {
-    initial: { opacity: 0, y: 20 },
-    whileInView: { opacity: 1, y: 0 },
-    viewport: { once: true, margin: "-40px" },
-    transition: { duration: 0.45, ease: EASE },
-  };
+  return fadeUpProps(reduceMotion, {
+    y: MOTION.y,
+    duration: MOTION.section.duration,
+  });
 }
 
 function scoreTone(score) {
@@ -408,7 +396,7 @@ function Home({
         <motion.div
           initial={{ y: -72, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
-          transition={{ duration: 0.22, ease: EASE }}
+          transition={{ duration: 0.45, ease: IOS_EASE }}
           className="fixed top-14 sm:top-16 inset-x-0 z-40 px-3 sm:px-4"
         >
           <div className="mx-auto max-w-3xl rounded-2xl border border-white/10 bg-ink-900/92 px-3 py-2 shadow-glow backdrop-blur-xl">
@@ -451,22 +439,35 @@ function Home({
           {HERO_COLLAGE.map((item, i) => (
             <motion.div
               key={item.src + i}
-              className={`absolute overflow-hidden rounded-[1.4rem] fa-collage-mask ${item.className}`}
+              className={`fa-collage-tile fa-collage-${item.depth || "mid"} pointer-events-auto absolute overflow-hidden ${item.className}`}
+              whileHover={
+                reduceMotion
+                  ? undefined
+                  : { scale: 1.05, rotate: 0, zIndex: 20 }
+              }
               animate={
                 reduceMotion
                   ? undefined
-                  : { y: [0, i % 2 === 0 ? -8 : 8, 0], opacity: [0.45, 0.6, 0.45] }
+                  : { y: [0, i % 2 === 0 ? -10 : 10, 0] }
               }
-              transition={{ duration: 10 + i, repeat: Infinity, ease: "easeInOut" }}
+              transition={{
+                y: {
+                  duration: 9 + i * 0.7,
+                  repeat: Infinity,
+                  ease: "easeInOut",
+                },
+                scale: { type: "spring", stiffness: 280, damping: 20 },
+                rotate: { type: "spring", stiffness: 220, damping: 18 },
+              }}
             >
               <img
                 src={item.src}
                 alt=""
-                className="h-full w-full scale-110 object-cover opacity-[0.28] blur-[2px]"
+                className="fa-collage-img h-full w-full object-cover"
                 loading="eager"
                 decoding="async"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-ink-950/80 via-ink-950/20 to-ink-950/50" />
+              <div className="fa-collage-glass absolute inset-0" aria-hidden="true" />
             </motion.div>
           ))}
           {!reduceMotion &&
@@ -493,7 +494,7 @@ function Home({
           <motion.h1
             initial={reduceMotion ? false : { opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.55, delay: 0.04, ease: EASE }}
+            transition={{ duration: 0.75, delay: 0.06, ease: IOS_EASE }}
             className="max-w-3xl text-center font-display text-[2.15rem] font-extrabold leading-[1.06] tracking-tight text-white sm:text-5xl md:text-[3.35rem]"
           >
             Discover the Nutrition Behind India&apos;s Favourite Foods
@@ -502,7 +503,7 @@ function Home({
           <motion.p
             initial={reduceMotion ? false : { opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.1, ease: EASE }}
+            transition={{ duration: 0.7, delay: 0.14, ease: IOS_EASE }}
             className="mt-6 max-w-lg text-center text-[15px] leading-[1.7] text-white/52 sm:mt-7 sm:text-lg sm:leading-relaxed"
           >
             Explore authentic Indian foods, analyze nutrition from IFCT, INDB, and
@@ -513,7 +514,7 @@ function Home({
             ref={heroSearchRef}
             initial={reduceMotion ? false : { opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.16, ease: EASE }}
+            transition={{ duration: 0.7, delay: 0.22, ease: IOS_EASE }}
             className="mt-11 w-full max-w-2xl sm:mt-12"
           >
             <PlaceholdersAndVanishInputDemo
@@ -550,7 +551,7 @@ function Home({
           <motion.div
             initial={reduceMotion ? false : { opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.45, delay: 0.24, ease: EASE }}
+            transition={{ duration: 0.7, delay: 0.32, ease: IOS_EASE }}
             className="mt-8 flex w-full max-w-2xl flex-wrap items-center justify-center gap-2.5 sm:mt-9"
             role="navigation"
             aria-label="Quick actions"
@@ -716,7 +717,7 @@ function Home({
             fadeUp={fadeUp}
             eyebrow="Discover"
             title="Trending Across India"
-            subtitle="Explore India's most searched dishes and compare nutrition at a glance."
+            subtitle="Explore India's most searched dishes. Values shown per 100 g from IFCT / INDB."
           />
           <HorizontalRail className="mt-12" ariaLabel="Trending dishes">
             {TRENDING_DISHES.map((dish, i) => (
@@ -751,9 +752,16 @@ function Home({
                 </div>
                 <div className="space-y-3.5 p-5">
                   <div className="flex items-start justify-between gap-3">
-                    <h3 className="font-display text-lg font-bold leading-snug text-white">
-                      {dish.name}
-                    </h3>
+                    <div className="min-w-0">
+                      <h3 className="font-display text-lg font-bold leading-snug text-white">
+                        {dish.name}
+                      </h3>
+                      {dish.note && (
+                        <p className="mt-1 text-[11px] leading-snug text-white/40">
+                          {dish.note}
+                        </p>
+                      )}
+                    </div>
                     <span
                       className={`shrink-0 rounded-full border px-2.5 py-1 text-[11px] font-bold ${scoreTone(
                         dish.healthScore
@@ -769,12 +777,12 @@ function Home({
                     </div>
                     <div className="rounded-xl bg-white/[0.04] px-3 py-2.5">
                       <p className="text-[10px] uppercase tracking-wider text-white/40">Protein</p>
-                      <p className="mt-1 font-semibold text-white/90">{dish.protein}g</p>
+                      <p className="mt-1 font-semibold text-white/90">{dish.protein} g</p>
                     </div>
                   </div>
                   <div className="flex items-center justify-between border-t border-white/[0.06] pt-3">
                     <span className="text-[11px] font-medium text-white/40">
-                      Health score · {dish.healthScore}/100
+                      per 100 g · score {dish.healthScore}/100
                     </span>
                     <span className="text-[11px] font-medium text-white/30 transition group-hover:text-saffron-300">
                       Analyse →
@@ -894,10 +902,10 @@ function Home({
               </div>
               <div className="mt-7 grid grid-cols-2 gap-2.5 sm:grid-cols-4">
                 {[
-                  ["Calories", `${featured.calories}`],
-                  ["Protein", `${featured.protein}g`],
-                  ["Carbs", `${featured.carbs}g`],
-                  ["Fat", `${featured.fat}g`],
+                  ["Calories", `${featured.calories} kcal`],
+                  ["Protein", `${featured.protein} g`],
+                  ["Carbs", `${featured.carbs} g`],
+                  ["Fat", `${featured.fat} g`],
                 ].map(([label, value]) => (
                   <div
                     key={label}
@@ -908,13 +916,19 @@ function Home({
                   </div>
                 ))}
               </div>
-              <div className="mt-5">
+              <p className="mt-3 text-[11px] text-white/40">
+                Per 100 g · {featured.source} verified match
+              </p>
+              <div className="mt-5 flex flex-wrap items-center gap-3">
                 <span
                   className={`rounded-full border px-3 py-1.5 text-xs font-bold ${scoreTone(
                     featured.healthScore
                   )}`}
                 >
-                  Health {featured.healthScore}/100
+                  Health score {featured.healthScore}/100
+                </span>
+                <span className="text-[11px] text-white/40">
+                  computed from IFCT/INDB macros
                 </span>
               </div>
               <div className="mt-8 flex flex-wrap gap-3">
@@ -930,23 +944,19 @@ function Home({
                   disabled={loading}
                   className="fa-btn fa-btn-primary disabled:opacity-60"
                 >
-                  Explore Nutrition
+                  Explore nutrition
                   <ArrowRight className="h-4 w-4" aria-hidden="true" />
                 </button>
-                <button
-                  type="button"
-                  onClick={() =>
-                    runExactFood({
-                      match: featured.match,
-                      label: featured.name,
-                      query: featured.name,
-                    })
+                <Link
+                  to={
+                    featured.cuisineSlug
+                      ? `/cuisine/${featured.cuisineSlug}`
+                      : "/"
                   }
-                  disabled={loading}
-                  className="fa-btn fa-btn-secondary disabled:opacity-60"
+                  className="fa-btn fa-btn-secondary"
                 >
-                  Learn More
-                </button>
+                  Learn more
+                </Link>
               </div>
             </div>
           </motion.div>
@@ -1062,15 +1072,6 @@ function Home({
               regional estimates — with clear source labels so nothing is oversold.
             </p>
             <div className="mt-6 flex items-center gap-3">
-              <a
-                href="https://github.com/suvamneog/foodAnalyser-v2"
-                target="_blank"
-                rel="noreferrer"
-                className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-white/10 text-white/50 transition duration-300 hover:border-saffron-400/30 hover:text-saffron-300"
-                aria-label="GitHub repository"
-              >
-                <Github className="h-4 w-4" />
-              </a>
               <span className="text-xs text-white/35">Made in India</span>
             </div>
           </div>

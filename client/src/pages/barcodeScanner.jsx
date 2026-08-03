@@ -3,11 +3,9 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { Html5QrcodeScanner } from 'html5-qrcode';
 import axios from 'axios';
-import { AlertCircle, Check, AlertTriangle, Utensils, Leaf, Camera, RotateCcw, Upload, Image as ImageIcon, Frown } from 'lucide-react';
-import { ShootingStars } from "../components/ui/shooting-stars";
-import { StarsBackground } from "../components/ui/stars-background";
-import { motion } from "framer-motion";
+import { AlertCircle, Check, AlertTriangle, Utensils, Leaf, Camera, RotateCcw, Upload, Image as ImageIcon, Frown, ScanBarcode } from 'lucide-react';
 import { API_ENDPOINTS } from "../utils/apiConfig";
+import ToolPageShell from "../components/ToolPageShell";
 
 const BarcodeScanner = () => {
   const [scanResult, setScanResult] = useState(null);
@@ -472,28 +470,23 @@ const BarcodeScanner = () => {
     if (!productNotFound) return null;
 
     return (
-      <div className="bg-orange-600 border border-orange-500 p-6 rounded-lg text-center">
+      <div className="fa-card border-saffron-400/30 p-6 text-center">
         <div className="flex flex-col items-center justify-center">
-          <Frown className="w-16 h-16 text-orange-200 mb-4" />
-          <h2 className="text-2xl font-bold text-white mb-2">Food Not Found</h2>
-          <p className="text-orange-100 text-lg mb-4">
-            Sorry, we couldn&apos;t find information for this product in our database.
+          <Frown className="mb-4 h-12 w-12 text-saffron-300/80" />
+          <h2 className="mb-2 font-display text-2xl font-bold text-white">Product not found</h2>
+          <p className="mb-4 text-base text-white/60">
+            We couldn&apos;t find this barcode in Open Food Facts yet.
           </p>
-          <div className="bg-orange-700 p-4 rounded-lg mb-4">
-            <p className="text-orange-200">
-              <strong>Scanned Barcode:</strong> {scanResult}
+          <div className="mb-4 rounded-xl bg-saffron-500/15 px-4 py-3">
+            <p className="text-sm text-saffron-200">
+              <strong>Scanned:</strong> {scanResult}
             </p>
           </div>
-          <p className="text-orange-200 mb-4">
-            This product might not be available in the database yet, 
-            or the barcode might be for a very new product.
-          </p>
-          <div className="space-y-2 text-orange-100 text-sm">
-            <p>💡 <strong>Try these solutions:</strong></p>
-            <p>• Scan a different product</p>
-            <p>• Check if the barcode is correct</p>
-            <p>• Try searching manually for the product</p>
-            <p>• This might be a very new product not yet in our database</p>
+          <div className="space-y-1 text-sm text-white/55">
+            <p className="font-medium text-white/70">Try next</p>
+            <p>
+              Scan another product, confirm the barcode is fully visible, or search by name on the home page.
+            </p>
           </div>
         </div>
       </div>
@@ -504,13 +497,13 @@ const BarcodeScanner = () => {
     if (!indianInsights) return null;
 
     return (
-      <div className="bg-blue-600 border border-blue-500 p-4 rounded-lg mb-4">
+      <div className="rounded-2xl border border-saffron-400/25 bg-saffron-500/10 p-4 rounded-lg mb-4">
         <div className="flex items-center mb-3">
-          <Utensils className="w-5 h-5 text-blue-300 mr-2" />
-          <h3 className="text-lg font-semibold text-white">Indian Food Insights</h3>
+          <Utensils className="w-5 h-5 text-saffron-300 mr-2" />
+          <h3 className="font-display text-lg font-bold text-white">Indian food match</h3>
         </div>
         
-        <div className="space-y-2 text-blue-100">
+        <div className="space-y-2 text-white/70">
           <p><strong className="text-white">Source:</strong> {indianInsights.source} • {indianInsights.matchType} match</p>
           <p><strong className="text-white">Indian Name:</strong> {indianInsights.name}</p>
           
@@ -538,30 +531,30 @@ const BarcodeScanner = () => {
     if (indianAlternatives.length === 0) return null;
 
     return (
-      <div className="bg-green-600 border border-green-500 p-4 rounded-lg mb-4">
+      <div className="rounded-2xl border border-leaf-400/30 bg-leaf-500/10 p-4 rounded-lg mb-4">
         <div className="flex items-center mb-3">
-          <Leaf className="w-5 h-5 text-green-300 mr-2" />
-          <h3 className="text-lg font-semibold text-white">Indian Healthy Alternatives</h3>
+          <Leaf className="w-5 h-5 text-leaf-300 mr-2" />
+          <h3 className="font-display text-lg font-bold text-white">Indian alternatives</h3>
         </div>
         
         <div className="space-y-3">
           {indianAlternatives.map((alt, index) => (
-            <div key={index} className="bg-green-700 p-3 rounded border border-green-600">
+            <div key={index} className="rounded-xl border border-leaf-400/20 bg-white/[0.04] p-3">
               <div className="flex justify-between items-start">
                 <div>
                   <h4 className="font-semibold text-white">{alt.name}</h4>
-                  <p className="text-sm text-green-200">{alt.benefits}</p>
+                  <p className="text-sm text-leaf-200">{alt.benefits}</p>
                   {alt.traditional && (
-                    <span className="inline-block bg-green-800 text-green-200 text-xs px-2 py-1 rounded mt-1">
+                    <span className="inline-block bg-leaf-500/20 text-leaf-200 text-xs px-2 py-1 rounded mt-1">
                       Traditional
                     </span>
                   )}
-                  <span className="inline-block bg-green-800 text-green-200 text-xs px-2 py-1 rounded mt-1 ml-2">
+                  <span className="inline-block bg-leaf-500/20 text-leaf-200 text-xs px-2 py-1 rounded mt-1 ml-2">
                     {alt.source}
                   </span>
                 </div>
                 {alt.nutrition && (
-                  <div className="text-right text-sm text-green-200">
+                  <div className="text-right text-sm text-leaf-200">
                     <p>Calories: {alt.nutrition.calories}</p>
                     <p>Protein: {alt.nutrition.protein}g</p>
                     {alt.nutrition.fiber && <p>Fiber: {alt.nutrition.fiber}g</p>}
@@ -579,28 +572,28 @@ const BarcodeScanner = () => {
     if (!healthScore) return null;
 
     return (
-      <div className="bg-zinc-800 p-4 rounded-lg mb-4">
+      <div className="bg-white/[0.06] p-4 rounded-lg mb-4">
         <h3 className="text-lg font-medium mb-3 text-white">Health Score</h3>
         <div className="flex items-center">
           {renderHealthScoreIcon(healthScore.color)}
           <div className="ml-3">
-            <div className="h-4 w-40 bg-zinc-700 rounded-full overflow-hidden">
+            <div className="h-4 w-40 bg-white/10 rounded-full overflow-hidden">
               <div 
                 className={`h-full ${
-                  healthScore.color === 'green' ? 'bg-green-500' : 
-                  healthScore.color === 'yellow' ? 'bg-yellow-500' : 'bg-red-500'
+                  healthScore.color === 'green' ? 'bg-leaf-400' : 
+                  healthScore.color === 'yellow' ? 'bg-saffron-400' : 'bg-red-500'
                 }`} 
                 style={{ width: `${healthScore.score}%` }}
               ></div>
             </div>
-            <p className="text-sm mt-1 text-gray-300">
+            <p className="text-sm mt-1 text-white/60">
               {healthScore.label} ({healthScore.score}/100)
             </p>
           </div>
         </div>
         {product?.nutriscore_grade && (
           <div className="mt-2">
-            <p className="text-sm text-gray-400">
+            <p className="text-sm text-white/45">
               Nutri-Score: {product.nutriscore_grade.toUpperCase()}
               {product.nutriscore_score && ` (${product.nutriscore_score})`}
             </p>
@@ -611,57 +604,53 @@ const BarcodeScanner = () => {
   };
 
   return (
-    <div className="relative min-h-screen bg-black text-white flex items-center justify-center p-6">
-      <div className="absolute inset-0 pointer-events-none">
-        <StarsBackground />
-        <ShootingStars />
-      </div>
-      <motion.div
-        initial={{ opacity: 0, scale: 0.9 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={{ duration: 0.5, ease: "easeOut" }}
-      >
-        <div className="min-h-screen p-8 mt-20">
-          <div className="max-w-4xl mx-auto">
-            <div className="bg-zinc-900 rounded-lg p-6 mb-8">
-              <div className="flex items-center justify-between mb-4">
+    <ToolPageShell
+      eyebrow="Scan"
+      title="Barcode scanner"
+      subtitle="Read packaged-food barcodes for nutrition labels, then see Indian alternatives when we have a match."
+      icon={ScanBarcode}
+      maxWidth="max-w-4xl"
+    >
+            <div className="fa-card mb-8 p-5 sm:p-6">
+              <div className="mb-5 flex flex-col gap-3 border-b border-white/10 pb-5 sm:flex-row sm:items-start sm:justify-between">
                 <div>
-                  <h2 className="text-2xl font-bold mb-2">Food Scanner</h2>
-                  <p className="text-gray-400">
-                    Scan barcodes or upload QR code images to get nutrition info
+                  <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-saffron-300/80">
+                    Packaged foods
+                  </p>
+                  <p className="mt-1 text-sm text-white/45">
+                    Scan a barcode or upload a clear photo. Nutrition comes from Open Food Facts plus Indian matches when available.
                   </p>
                 </div>
-                <div className="flex items-center gap-2 text-gray-400">
-                  <Camera className="w-5 h-5" />
-                  <span>Powered by Open Food Facts</span>
-                </div>
+                <span className="shrink-0 rounded-full border border-white/10 bg-white/[0.04] px-2.5 py-1 text-[11px] text-white/45">
+                  Open Food Facts
+                </span>
               </div>
 
               {/* Tab Selection */}
-              <div className="flex gap-2 mb-6" data-testid="scan-mode-tabs">
+              <div className="mb-6 flex gap-2" data-testid="scan-mode-tabs">
                 <button
                   onClick={() => switchScanMode('camera')}
-                  className={`flex-1 py-3 px-4 rounded-lg font-medium transition-all ${
+                  className={`fa-btn flex-1 py-3 text-sm ${
                     scanMode === 'camera'
-                      ? 'bg-green-600 text-white'
-                      : 'bg-zinc-800 text-gray-400 hover:bg-zinc-700'
+                      ? 'fa-btn-primary'
+                      : 'fa-btn-secondary'
                   }`}
                   data-testid="camera-scan-tab"
                 >
-                  <Camera className="w-5 h-5 inline mr-2" />
-                  Scan with Camera
+                  <Camera className="mr-2 inline h-4 w-4" />
+                  Camera
                 </button>
                 <button
                   onClick={() => switchScanMode('upload')}
-                  className={`flex-1 py-3 px-4 rounded-lg font-medium transition-all ${
+                  className={`fa-btn flex-1 py-3 text-sm ${
                     scanMode === 'upload'
-                      ? 'bg-green-600 text-white'
-                      : 'bg-zinc-800 text-gray-400 hover:bg-zinc-700'
+                      ? 'fa-btn-primary'
+                      : 'fa-btn-secondary'
                   }`}
                   data-testid="upload-image-tab"
                 >
-                  <Upload className="w-5 h-5 inline mr-2" />
-                  Upload Image
+                  <Upload className="mr-2 inline h-4 w-4" />
+                  Upload
                 </button>
               </div>
 
@@ -669,24 +658,22 @@ const BarcodeScanner = () => {
               {!scanResult && scanMode === 'camera' && (
                 <div className="w-full max-w-md mx-auto">
                   <div id="reader" className="w-full" data-testid="camera-scanner"></div>
-                  <div className="mt-4 text-center text-gray-400 text-sm">
-                    <p>📷 Point camera at barcode</p>
-                    <p>💡 Ensure good lighting</p>
-                    <p>⚡ Hold steady for best results</p>
-                    <p className="text-xs mt-2 text-gray-500">
-                      Scanner may show errors while searching - this is normal
+                  <div className="mt-4 space-y-1 text-center text-sm text-white/45">
+                    <p>Point the camera at the barcode and hold steady.</p>
+                    <p className="text-xs text-white/35">
+                      Brief “not found” messages while searching are normal.
                     </p>
                   </div>
                   
                   {cameraError && (
-                    <div className="bg-red-600 text-white p-4 rounded-lg my-4">
+                    <div className="rounded-xl border border-red-500/30 bg-red-950/50 text-white p-4 rounded-lg my-4">
                       <div className="flex items-center">
                         <AlertCircle className="h-5 w-5 text-red-200 mr-3 flex-shrink-0" />
                         <p>{cameraError}</p>
                       </div>
                       <button 
                         onClick={resetScanner}
-                        className="mt-2 bg-red-700 hover:bg-red-800 text-white font-medium py-2 px-4 rounded transition duration-200"
+                        className="mt-2 bg-red-900/60 hover:bg-red-900/80 text-white font-medium py-2 px-4 rounded transition duration-200"
                       >
                         Retry Camera
                       </button>
@@ -703,15 +690,15 @@ const BarcodeScanner = () => {
                   onDrop={handleDrop}
                   data-testid="upload-area"
                 >
-                  <div className="border-2 border-dashed border-zinc-700 rounded-lg p-8 text-center hover:border-green-500 transition-colors cursor-pointer"
+                  <div className="rounded-2xl border border-dashed border-white/15 bg-white/[0.02] p-8 text-center transition hover:border-saffron-400/40 hover:bg-white/[0.04] transition-colors cursor-pointer"
                     onClick={() => fileInputRef.current?.click()}
                   >
-                    <ImageIcon className="w-16 h-16 mx-auto mb-4 text-gray-400" />
+                    <ImageIcon className="w-16 h-16 mx-auto mb-4 text-white/45" />
                     <p className="text-lg font-medium mb-2">Upload Barcode or QR Code Image</p>
-                    <p className="text-sm text-gray-400 mb-4">
+                    <p className="text-sm text-white/45 mb-4">
                       Drag and drop an image here, or click to browse
                     </p>
-                    <p className="text-xs text-gray-500">
+                    <p className="text-xs text-white/40">
                       Supports: JPG, PNG, GIF, WebP (EAN-13 barcodes)
                     </p>
                     <input
@@ -739,14 +726,14 @@ const BarcodeScanner = () => {
               
               {loading && (
                 <div className="text-center py-8">
-                  <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-500 mx-auto mb-4"></div>
-                  <p className="text-gray-400">Analyzing product with Indian food databases...</p>
-                  <p className="text-sm text-gray-500 mt-2">May take some time!</p>
+                  <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-saffron-400/40 mx-auto mb-4"></div>
+                  <p className="text-white/45">Analyzing product with Indian food databases...</p>
+                  <p className="text-sm text-white/40 mt-2">May take some time!</p>
                 </div>
               )}
               
               {error && !productNotFound && (
-                <div className="bg-red-600 text-white p-4 rounded-lg my-4">
+                <div className="rounded-xl border border-red-500/30 bg-red-950/50 text-white p-4 rounded-lg my-4">
                   <div className="flex items-center">
                     <AlertCircle className="h-5 w-5 text-red-200 mr-3 flex-shrink-0" />
                     <p>{error}</p>
@@ -763,7 +750,7 @@ const BarcodeScanner = () => {
                 <div className="text-center">
                   <button 
                     onClick={resetScanner}
-                    className="bg-green-600 hover:bg-green-700 text-white font-medium py-3 px-8 rounded-lg transition duration-200 flex items-center justify-center mx-auto"
+                    className="fa-btn fa-btn-primary mx-auto"
                   >
                     <RotateCcw className="w-5 h-5 mr-2" />
                     Scan Another Product
@@ -777,7 +764,7 @@ const BarcodeScanner = () => {
               <div className="space-y-6">
                 <IndianInsightsSection />
                 
-                <div className="bg-zinc-900 p-6 rounded-lg">
+                <div className="fa-card p-6 rounded-lg">
                   <div className="flex flex-col md:flex-row gap-6">
                     <div className="md:w-1/3">
                       {product.image_url && (
@@ -790,11 +777,11 @@ const BarcodeScanner = () => {
                     </div>
                     
                     <div className="md:w-2/3">
-                      <h2 className="text-2xl font-semibold mb-4">{product.product_name}</h2>
+                      <h2 className="mb-4 font-display text-2xl font-bold">{product.product_name}</h2>
                       
                       <div className="mb-4">
-                        <h3 className="text-lg font-medium mb-2 text-gray-300">Product Information</h3>
-                        <div className="space-y-1 text-gray-400">
+                        <h3 className="text-lg font-medium mb-2 text-white/60">Product Information</h3>
+                        <div className="space-y-1 text-white/45">
                           <p><strong>Brand:</strong> {product.brands || 'Unknown'}</p>
                           <p><strong>Quantity:</strong> {product.quantity || 'Not specified'}</p>
                           {product.categories && (
@@ -810,8 +797,8 @@ const BarcodeScanner = () => {
 
                       {product.nutriments && (
                         <div className="mb-4">
-                          <h3 className="text-lg font-medium mb-2 text-gray-300">Nutrition Facts (per 100g)</h3>
-                          <div className="grid grid-cols-2 gap-2 text-gray-400">
+                          <h3 className="text-lg font-medium mb-2 text-white/60">Nutrition Facts (per 100g)</h3>
+                          <div className="grid grid-cols-2 gap-2 text-white/45">
                             <p><strong>Energy:</strong> {product.nutriments.energy_100g || 0} kcal</p>
                             <p><strong>Fat:</strong> {product.nutriments.fat_100g || 0}g</p>
                             <p><strong>Saturated Fat:</strong> {product.nutriments.saturated_fat_100g || 0}g</p>
@@ -830,14 +817,14 @@ const BarcodeScanner = () => {
                 <IndianAlternativesSection />
 
                 {healthyAlternative && (
-                  <div className="bg-green-600 p-6 rounded-lg">
-                    <h2 className="text-xl font-semibold mb-4 text-white">Healthier Alternative</h2>
+                  <div className="fa-card border-leaf-400/25 p-6">
+                    <h2 className="mb-4 font-display text-xl font-bold text-white">Healthier alternative</h2>
                     <div className="flex flex-col md:flex-row items-center">
                       <div className="md:w-1/2 mb-4 md:mb-0 md:pr-6">
                         <h3 className="text-lg font-medium mb-2 text-white">{healthyAlternative.name}</h3>
                         <div className="mb-3">
-                          <h4 className="font-medium text-green-200">Nutrition Facts:</h4>
-                          <ul className="list-disc list-inside text-green-100 ml-2">
+                          <h4 className="font-medium text-leaf-200">Nutrition Facts:</h4>
+                          <ul className="list-disc list-inside text-leaf-100 ml-2">
                             <li>Calories: {healthyAlternative.nutrition.calories}</li>
                             <li>Fat: {healthyAlternative.nutrition.fat}</li>
                             <li>Carbs: {healthyAlternative.nutrition.carbs}</li>
@@ -846,21 +833,21 @@ const BarcodeScanner = () => {
                           </ul>
                         </div>
                         <div>
-                          <h4 className="font-medium text-green-200">Benefits:</h4>
-                          <p className="text-green-100">{healthyAlternative.benefits}</p>
+                          <h4 className="font-medium text-leaf-200">Benefits:</h4>
+                          <p className="text-leaf-100">{healthyAlternative.benefits}</p>
                         </div>
                       </div>
                       
                       <div className="md:w-1/2 flex justify-center">
-                        <div className="bg-green-700 p-4 rounded-lg">
+                        <div className="bg-leaf-600/40 p-4 rounded-lg">
                           <div className="flex items-center justify-center">
                             <div className="text-center px-4">
-                              <p className="text-sm text-green-200">Current Choice</p>
+                              <p className="text-sm text-leaf-200">Current Choice</p>
                               <p className="font-medium text-red-300">{product.product_name}</p>
                             </div>
-                            <div className="text-green-300 mx-2">→</div>
+                            <div className="text-leaf-300 mx-2">→</div>
                             <div className="text-center px-4">
-                              <p className="text-sm text-green-200">Healthier Option</p>
+                              <p className="text-sm text-leaf-200">Healthier Option</p>
                               <p className="font-medium text-white">{healthyAlternative.name}</p>
                             </div>
                           </div>
@@ -873,7 +860,7 @@ const BarcodeScanner = () => {
                 <div className="text-center">
                   <button 
                     onClick={resetScanner}
-                    className="bg-green-600 hover:bg-green-700 text-white font-medium py-3 px-8 rounded-lg transition duration-200 flex items-center justify-center mx-auto"
+                    className="fa-btn fa-btn-primary mx-auto"
                   >
                     <RotateCcw className="w-5 h-5 mr-2" />
                     Scan Another Product
@@ -881,10 +868,7 @@ const BarcodeScanner = () => {
                 </div>
               </div>
             )}
-          </div>
-        </div>
-      </motion.div>
-    </div>
+    </ToolPageShell>
   );
 };
 

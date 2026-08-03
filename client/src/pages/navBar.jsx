@@ -99,7 +99,7 @@ const Navbar = () => {
 
   return (
     <nav
-      className={`fa-nav fixed top-0 z-50 w-full backdrop-blur-xl transition-all duration-300 ${
+      className={`fa-nav fixed inset-x-0 top-0 z-50 backdrop-blur-xl transition-[background-color,border-color,box-shadow] duration-300 ${
         scrolled ? "fa-nav-scrolled border-b" : "border-b border-transparent"
       }`}
     >

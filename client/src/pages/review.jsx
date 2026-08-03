@@ -1,11 +1,13 @@
 import { useState } from "react";
-import { useReviews } from "../utils/ReviewsContext";
-import { motion } from "framer-motion";
-import { Star, Send, CheckCircle, ArrowLeft, AlertCircle } from "lucide-react";
 import { Link } from "react-router-dom";
+import { motion } from "framer-motion";
+import { Star, Send, CheckCircle, AlertCircle, MessageSquareHeart } from "lucide-react";
+import { useReviews } from "../utils/ReviewsContext";
+import ToolPageShell from "../components/ToolPageShell";
+import TestimonialsSection from "../components/ui/testimonials-6";
 
 export default function ReviewPage() {
-  const { addReview } = useReviews();
+  const { addReview, reviews } = useReviews();
   const [formData, setFormData] = useState({
     name: "",
     description: "",
@@ -18,26 +20,18 @@ export default function ReviewPage() {
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: value
-    }));
-    // Clear error when user starts typing
+    setFormData((prev) => ({ ...prev, [name]: value }));
     if (error) setError("");
   };
 
   const handleRatingChange = (rating) => {
-    setFormData(prev => ({
-      ...prev,
-      rating
-    }));
-    // Clear error when user selects rating
+    setFormData((prev) => ({ ...prev, rating }));
     if (error) setError("");
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     if (!formData.name || !formData.description || formData.rating === 0) {
       setError("Please fill in all required fields and provide a rating.");
       return;
@@ -70,76 +64,76 @@ export default function ReviewPage() {
 
   if (isSubmitted) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-neutral-900 to-black flex items-center justify-center p-4">
-        <motion.div
-          initial={{ opacity: 0, scale: 0.8 }}
-          animate={{ opacity: 1, scale: 1 }}
-          className="text-center bg-neutral-800/50 backdrop-blur-sm rounded-3xl p-8 border border-green-500/30 max-w-md w-full"
-        >
-          <CheckCircle className="w-16 h-16 text-green-500 mx-auto mb-4" />
-          <h2 className="text-2xl font-bold text-white mb-2">Thank You!</h2>
-          <p className="text-neutral-400 mb-6">Your review has been submitted successfully.</p>
-          <Link
-            to="/about"
-            className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-6 py-3 rounded-lg font-medium hover:from-blue-700 hover:to-purple-700 transition-all duration-200 inline-flex items-center gap-2"
-          >
-            View All Reviews
+      <ToolPageShell
+        eyebrow="Feedback"
+        title="Thank you"
+        subtitle="Your review was submitted. It helps other people decide whether FoodAnalyser fits them."
+        icon={CheckCircle}
+        backTo="/about"
+        backLabel="About"
+        maxWidth="max-w-xl"
+      >
+        <div className="fa-card p-8 text-center">
+          <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl border border-leaf-400/30 bg-leaf-500/15">
+            <CheckCircle className="h-7 w-7 text-leaf-300" />
+          </div>
+          <p className="font-display text-xl font-bold text-white">Review received</p>
+          <p className="mt-2 text-sm text-white/50">
+            Thanks for taking a moment to share how the app worked for you.
+          </p>
+          <Link to="/about" className="fa-btn fa-btn-primary mt-6 inline-flex">
+            View reviews
           </Link>
-        </motion.div>
-      </div>
+        </div>
+      </ToolPageShell>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-neutral-900 to-black py-12 px-4">
-      <div className="max-w-2xl mx-auto">
-        {/* Back Button */}
-        <Link
-          to="/about"
-          className="inline-flex items-center gap-2 text-neutral-400 hover:text-white mb-8 transition-colors"
-        >
-          <ArrowLeft className="w-4 h-4" />
-          Back to About
-        </Link>
+    <ToolPageShell
+      eyebrow="Feedback"
+      title="Reviews"
+      subtitle="See what others say, then leave your own note. Honest feedback shapes the next fixes."
+      icon={MessageSquareHeart}
+      backTo="/about"
+      backLabel="About"
+      maxWidth="max-w-5xl"
+    >
+      <TestimonialsSection
+        reviews={reviews}
+        showHeader={false}
+        compact
+        className="py-0"
+      />
 
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="text-center mb-8"
-        >
-          <h1 className="text-4xl font-bold text-white mb-4">
-            Share Your Experience
-          </h1>
-          <p className="text-neutral-400 text-lg">
-            Help us improve by sharing your thoughts about Food Analyzer x fit
+      <div className="mx-auto mt-10 max-w-2xl">
+        <div className="mb-6 text-center">
+          <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-saffron-300/90">
+            Leave yours
           </p>
-        </motion.div>
+          <h2 className="mt-2 font-display text-2xl font-bold text-white">
+            Share your experience
+          </h2>
+        </div>
 
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.1 }}
-          className="bg-neutral-800/50 backdrop-blur-sm rounded-3xl p-8 border border-neutral-700"
-        >
-          {/* Error Message */}
+        <div className="fa-card p-6 sm:p-8">
           {error && (
             <motion.div
-              initial={{ opacity: 0, y: -10 }}
+              initial={{ opacity: 0, y: -8 }}
               animate={{ opacity: 1, y: 0 }}
-              className="mb-6 p-4 bg-red-500/20 border border-red-500/30 rounded-xl flex items-center gap-3"
+              className="mb-6 flex items-start gap-3 rounded-xl border border-red-500/30 bg-red-950/40 px-4 py-3"
             >
-              <AlertCircle className="w-5 h-5 text-red-400 flex-shrink-0" />
-              <p className="text-red-200 text-sm">{error}</p>
+              <AlertCircle className="mt-0.5 h-5 w-5 shrink-0 text-red-300" />
+              <p className="text-sm text-red-200">{error}</p>
             </motion.div>
           )}
 
-          <form onSubmit={handleSubmit} className="space-y-8">
-            {/* Rating Section */}
+          <form onSubmit={handleSubmit} className="space-y-7">
             <div>
-              <label className="block text-white text-lg font-semibold mb-4 text-center">
-                How would you rate your experience? *
+              <label className="block text-center text-sm font-medium text-white/80">
+                How was your experience?
               </label>
-              <div className="flex gap-2 justify-center mb-2">
+              <div className="mt-4 flex justify-center gap-1.5">
                 {[1, 2, 3, 4, 5].map((star) => (
                   <button
                     key={star}
@@ -147,93 +141,91 @@ export default function ReviewPage() {
                     onClick={() => handleRatingChange(star)}
                     onMouseEnter={() => setHoverRating(star)}
                     onMouseLeave={() => setHoverRating(0)}
-                    className="p-2 transition-all duration-200 hover:scale-110 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-neutral-800 rounded-full"
+                    className="rounded-xl p-2 transition hover:scale-105 focus:outline-none focus-visible:ring-2 focus-visible:ring-saffron-400/50"
+                    aria-label={`${star} star${star > 1 ? "s" : ""}`}
                   >
                     <Star
-                      className={`w-12 h-12 transition-colors duration-200 ${
+                      className={`h-10 w-10 transition-colors ${
                         star <= (hoverRating || formData.rating)
-                          ? "text-yellow-400 fill-yellow-400"
-                          : "text-neutral-500"
+                          ? "fill-saffron-400 text-saffron-400"
+                          : "text-white/20"
                       }`}
                     />
                   </button>
                 ))}
               </div>
-              <p className="text-center text-neutral-400 text-sm">
-                {formData.rating === 0 ? "Select your rating" : `You rated: ${formData.rating} star${formData.rating > 1 ? 's' : ''}`}
+              <p className="mt-2 text-center text-xs text-white/40">
+                {formData.rating === 0
+                  ? "Tap a star to rate"
+                  : `${formData.rating} of 5`}
               </p>
             </div>
 
-            {/* Name Input */}
             <div>
-              <label className="block text-white text-sm font-medium mb-3">
-                Your Name *
+              <label htmlFor="review-name" className="mb-2 block text-sm font-medium text-white/70">
+                Your name
               </label>
               <input
+                id="review-name"
                 type="text"
                 name="name"
                 value={formData.name}
                 onChange={handleInputChange}
-                className="w-full px-4 py-4 bg-neutral-900 border border-neutral-700 rounded-xl text-white placeholder-neutral-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all text-lg"
-                placeholder="Enter your name"
+                className="w-full rounded-xl border border-white/10 bg-white/[0.04] px-4 py-3.5 text-white placeholder:text-white/30 focus:border-saffron-400/40 focus:outline-none focus:ring-1 focus:ring-saffron-400/30"
+                placeholder="How should we credit you?"
                 required
                 maxLength={50}
               />
             </div>
 
-            {/* Review Text */}
             <div>
-              <label className="block text-white text-sm font-medium mb-3">
-                Your Review *
+              <label htmlFor="review-body" className="mb-2 block text-sm font-medium text-white/70">
+                Your review
               </label>
               <textarea
+                id="review-body"
                 name="description"
                 value={formData.description}
                 onChange={handleInputChange}
-                rows="6"
-                className="w-full px-4 py-4 bg-neutral-900 border border-neutral-700 rounded-xl text-white placeholder-neutral-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all resize-none text-lg"
-                placeholder="Tell us about your experience with Food Analyzer x fit... What did you like? What could be improved?"
+                rows={5}
+                className="w-full resize-none rounded-xl border border-white/10 bg-white/[0.04] px-4 py-3.5 text-white placeholder:text-white/30 focus:border-saffron-400/40 focus:outline-none focus:ring-1 focus:ring-saffron-400/30"
+                placeholder="What did you try? What felt useful? What should improve?"
                 required
                 maxLength={500}
               />
-              <div className="text-right text-neutral-500 text-sm mt-2">
-                {formData.description.length}/500 characters
+              <div className="mt-2 text-right text-xs text-white/35">
+                {formData.description.length}/500
               </div>
             </div>
 
-            {/* Submit Button */}
             <button
               type="submit"
               disabled={isSubmitting}
-              className="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white py-4 px-6 rounded-xl font-semibold hover:from-blue-700 hover:to-purple-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-neutral-900 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-3 text-lg"
+              className="fa-btn fa-btn-primary w-full disabled:cursor-not-allowed disabled:opacity-50"
             >
               {isSubmitting ? (
                 <>
-                  <div className="w-6 h-6 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                  Submitting...
+                  <span className="h-4 w-4 animate-spin rounded-full border-2 border-ink-950 border-t-transparent" />
+                  Submitting…
                 </>
               ) : (
                 <>
-                  <Send className="w-6 h-6" />
-                  Submit Review
+                  <Send className="h-4 w-4" />
+                  Submit review
                 </>
               )}
             </button>
           </form>
-        </motion.div>
+        </div>
 
-        {/* Info Section */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.2 }}
-          className="mt-8 text-center text-neutral-400 bg-neutral-800/30 rounded-2xl p-6 border border-neutral-700/50"
-        >
-          <h3 className="text-white font-semibold mb-3">Why Your Review Matters</h3>
-          <p className="mb-4">Your feedback helps us improve the web app and helps other users discover how Food Analyzer x fit can benefit them.</p>
-          <p className="text-sm">Thank you for contributing to our community! 💫</p>
-        </motion.div>
+        <div className="mt-6 rounded-2xl border border-white/8 bg-white/[0.02] px-5 py-5 text-sm text-white/45">
+          <p className="font-medium text-white/70">Why this helps</p>
+          <p className="mt-2 leading-relaxed">
+            Reviews surface real usage patterns — search accuracy, portion tools, regional coverage —
+            so we know what to fix next.
+          </p>
+        </div>
       </div>
-    </div>
+    </ToolPageShell>
   );
 }

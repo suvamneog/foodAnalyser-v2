@@ -1,12 +1,22 @@
 /** Homepage discovery content */
 
+/**
+ * All nutrition numbers below come from real IFCT 2017 / INDB per-100g rows.
+ * Fetched with GET /api/food/by-id?source=INDB&code=<code>.
+ * See scripts / audit in commit history when values need refreshing.
+ * Values are per 100 g of the prepared dish (except where noted).
+ */
+
 export const TRENDING_DISHES = [
   {
     name: "Butter Chicken",
     match: { source: "INDB", code: "ASC242" },
-    calories: 290,
-    protein: 23,
-    healthScore: 62,
+    calories: 137,
+    protein: 11,
+    carbs: 4,
+    fat: 9,
+    fiber: 1,
+    healthScore: 71,
     source: "INDB",
     image:
       "/foods/butter-chicken.jpg",
@@ -14,10 +24,13 @@ export const TRENDING_DISHES = [
   {
     name: "Chicken Biryani",
     match: { source: "INDB", code: "BFP142" },
-    note: "Closest INDB match: Chicken pulao",
-    calories: 320,
-    protein: 18,
-    healthScore: 58,
+    note: "Nutrition matched via chicken pulao (INDB)",
+    calories: 108,
+    protein: 6,
+    carbs: 11,
+    fat: 8,
+    fiber: 2,
+    healthScore: 66,
     source: "INDB",
     image:
       "/foods/chicken-biryani.jpg",
@@ -25,9 +38,12 @@ export const TRENDING_DISHES = [
   {
     name: "Masala Dosa",
     match: { source: "INDB", code: "ASC146" },
-    calories: 210,
-    protein: 6,
-    healthScore: 74,
+    calories: 165,
+    protein: 3,
+    carbs: 20,
+    fat: 8,
+    fiber: 3,
+    healthScore: 65,
     source: "INDB",
     image:
       "/foods/masala-dosa.jpg",
@@ -35,10 +51,13 @@ export const TRENDING_DISHES = [
   {
     name: "Rajma Chawal",
     match: { source: "INDB", code: "ASC165" },
-    note: "Rajmah curry (pair with rice)",
-    calories: 250,
-    protein: 12,
-    healthScore: 78,
+    note: "Rajma curry only — rice adds ~120 kcal per 100 g",
+    calories: 144,
+    protein: 6,
+    carbs: 16,
+    fat: 6,
+    fiber: 6,
+    healthScore: 80,
     source: "INDB",
     image:
       "/foods/rajma-chawal.jpg",
@@ -46,9 +65,12 @@ export const TRENDING_DISHES = [
   {
     name: "Paneer Butter Masala",
     match: { source: "INDB", code: "ASC222" },
-    calories: 310,
-    protein: 14,
-    healthScore: 55,
+    calories: 146,
+    protein: 7,
+    carbs: 10,
+    fat: 9,
+    fiber: 2,
+    healthScore: 67,
     source: "INDB",
     image:
       "/foods/paneer-butter-masala.jpg",
@@ -56,10 +78,13 @@ export const TRENDING_DISHES = [
   {
     name: "Chole Bhature",
     match: { source: "INDB", code: "BFP185" },
-    note: "Kabuli channa curry — add bhatura separately",
-    calories: 420,
-    protein: 11,
-    healthScore: 42,
+    note: "Kabuli chana curry only — bhatura adds ~330 kcal per 100 g",
+    calories: 69,
+    protein: 3,
+    carbs: 8,
+    fat: 3,
+    fiber: 1,
+    healthScore: 62,
     source: "INDB",
     image:
       "/foods/chole-bhature.jpg",
@@ -67,9 +92,13 @@ export const TRENDING_DISHES = [
   {
     name: "Pav Bhaji",
     match: { source: "INDB", code: "OSR112" },
-    calories: 280,
-    protein: 8,
-    healthScore: 48,
+    note: "Bhaji only — pav adds ~275 kcal per 100 g",
+    calories: 97,
+    protein: 3,
+    carbs: 12,
+    fat: 4,
+    fiber: 2,
+    healthScore: 64,
     source: "INDB",
     image:
       "/foods/pav-bhaji.jpg",
@@ -77,29 +106,38 @@ export const TRENDING_DISHES = [
   {
     name: "Poha",
     match: { source: "INDB", code: "BFP044" },
-    calories: 180,
-    protein: 4,
-    healthScore: 82,
-    source: "IFCT",
+    calories: 295,
+    protein: 6,
+    carbs: 35,
+    fat: 14,
+    fiber: 4,
+    healthScore: 53,
+    source: "INDB",
     image:
       "/foods/poha.jpg",
   },
   {
     name: "Idli",
     match: { source: "INDB", code: "ASC144" },
-    calories: 60,
-    protein: 2,
-    healthScore: 88,
-    source: "IFCT",
+    calories: 138,
+    protein: 5,
+    carbs: 28,
+    fat: 0,
+    fiber: 2,
+    healthScore: 67,
+    source: "INDB",
     image:
       "/foods/idli.jpg",
   },
   {
     name: "Rogan Josh",
     match: { source: "INDB", code: "ASC227" },
-    calories: 270,
-    protein: 22,
-    healthScore: 64,
+    calories: 140,
+    protein: 10,
+    carbs: 5,
+    fat: 9,
+    fiber: 2,
+    healthScore: 71,
     source: "INDB",
     image:
       "/foods/rogan-josh.jpg",
@@ -347,36 +385,48 @@ export const getRegionBySlug = (slug) =>
 export const HERO_COLLAGE = [
   {
     src: "/foods/butter-chicken.jpg",
-    className: "left-[4%] top-[18%] h-28 w-28 sm:h-36 sm:w-36 rotate-[-8deg]",
+    depth: "mid",
+    className:
+      "left-[1%] top-[14%] h-20 w-16 rotate-[-7deg] sm:left-[2%] sm:top-[16%] sm:h-36 sm:w-28 md:h-44 md:w-36 lg:left-[4%]",
   },
   {
     src: "/foods/chicken-biryani.jpg",
-    className: "right-[5%] top-[14%] h-32 w-32 sm:h-40 sm:w-40 rotate-[7deg]",
+    depth: "front",
+    className:
+      "right-[1%] top-[10%] h-24 w-20 rotate-[6deg] sm:right-[2%] sm:top-[12%] sm:h-40 sm:w-32 md:h-48 md:w-40 lg:right-[4%]",
   },
   {
     src: "/foods/idli.jpg",
-    className: "left-[8%] bottom-[16%] h-24 w-24 sm:h-32 sm:w-32 rotate-[6deg]",
+    depth: "back",
+    className:
+      "left-[2%] bottom-[10%] h-16 w-20 rotate-[5deg] sm:left-[6%] sm:bottom-[12%] sm:h-28 sm:w-36 md:h-36 md:w-44 lg:left-[8%]",
   },
   {
     src: "/foods/masala-dosa.jpg",
-    className: "right-[7%] bottom-[18%] h-28 w-28 sm:h-36 sm:w-36 rotate-[-5deg]",
+    depth: "mid",
+    className:
+      "right-[2%] bottom-[11%] h-20 w-24 rotate-[-4deg] sm:right-[5%] sm:bottom-[14%] sm:h-32 sm:w-40 md:h-40 md:w-48 lg:right-[7%]",
   },
   {
     src: "/foods/paneer-butter-masala.jpg",
-    className: "left-[18%] top-[42%] hidden h-20 w-20 rotate-[-3deg] lg:block",
+    depth: "back",
+    className:
+      "left-[20%] top-[40%] hidden h-28 w-24 rotate-[-10deg] lg:block",
   },
   {
     src: "/foods/dhokla.jpg",
-    className: "right-[16%] top-[48%] hidden h-20 w-20 rotate-[4deg] lg:block",
+    depth: "front",
+    className:
+      "right-[18%] top-[44%] hidden h-24 w-32 rotate-[8deg] lg:block",
   },
 ];
 
 export const CREDIBILITY_STATS = [
-  { label: "Foods Indexed", value: "1500+", icon: "Utensils" },
+  { label: "Foods Indexed", value: "1600+", icon: "Utensils" },
   { label: "IFCT Foods", value: "542", icon: "Database" },
   { label: "INDB Recipes", value: "1000+", icon: "Leaf" },
   { label: "AI Recognition", value: "Vision", icon: "Camera" },
-  { label: "Research", value: "IEEE", icon: "GraduationCap" },
+  { label: "Regional", value: "47", icon: "GraduationCap" },
 ];
 
 export const FEATURED_DISHES = [
@@ -384,30 +434,34 @@ export const FEATURED_DISHES = [
     name: "Masala Dosa",
     match: { source: "INDB", code: "ASC146" },
     state: "Tamil Nadu",
+    cuisineSlug: "tamil-nadu",
     description:
       "A crisp fermented rice-lentil crepe filled with spiced potato — light, satisfying, and rooted in South Indian breakfast culture.",
     insight: "Naturally fermented, easy to digest and relatively low in fat when cooked with less oil.",
-    calories: 210,
-    protein: 6,
-    carbs: 34,
-    fat: 6,
-    healthScore: 74,
+    calories: 165,
+    protein: 3,
+    carbs: 20,
+    fat: 8,
+    fiber: 3,
+    healthScore: 65,
     source: "INDB",
     image:
       "/foods/masala-dosa.jpg",
   },
   {
-    name: "Rajma Chawal",
+    name: "Rajma Curry",
     match: { source: "INDB", code: "ASC165" },
     state: "North India",
+    cuisineSlug: "punjab",
     description:
-      "Kidney beans simmered with onion-tomato masala over steamed rice — everyday comfort with solid plant protein.",
-    insight: "A fibre-rich vegetarian plate that pairs complex carbs with plant protein for steady energy.",
-    calories: 250,
-    protein: 12,
-    carbs: 42,
-    fat: 5,
-    healthScore: 78,
+      "Kidney beans simmered with an onion-tomato masala — a fibre-rich vegetarian plate typically served with steamed rice.",
+    insight: "High in fibre and plant protein from the beans; rice adds carbs when served as rajma-chawal.",
+    calories: 144,
+    protein: 6,
+    carbs: 16,
+    fat: 6,
+    fiber: 6,
+    healthScore: 80,
     source: "INDB",
     image:
       "/foods/rajma-chawal.jpg",
@@ -416,15 +470,17 @@ export const FEATURED_DISHES = [
     name: "Idli",
     match: { source: "INDB", code: "ASC144" },
     state: "South India",
+    cuisineSlug: "tamil-nadu",
     description:
-      "Steamed rice cakes that are soft, low-oil, and easy to digest — a classic healthy Indian breakfast staple.",
+      "Steamed rice cakes that are soft, low-oil, and easy to digest — a classic South Indian breakfast staple.",
     insight: "Steamed, not fried — naturally fermented and one of the lightest traditional Indian breakfasts.",
-    calories: 60,
-    protein: 2,
-    carbs: 12,
+    calories: 138,
+    protein: 5,
+    carbs: 28,
     fat: 0,
-    healthScore: 88,
-    source: "IFCT",
+    fiber: 2,
+    healthScore: 67,
+    source: "INDB",
     image:
       "/foods/idli.jpg",
   },
@@ -432,15 +488,17 @@ export const FEATURED_DISHES = [
     name: "Fish Curry",
     match: { source: "INDB", code: "ASC246" },
     state: "Assam / Coastal India",
+    cuisineSlug: "assam",
     description:
       "Tangy, spice-forward fish preparations that deliver lean protein with regional character from river and coast.",
     insight: "Lean protein with regional spices — a strong choice when cooked with restrained oil.",
-    calories: 180,
-    protein: 22,
-    carbs: 6,
-    fat: 8,
-    healthScore: 81,
-    source: "IFCT",
+    calories: 111,
+    protein: 9,
+    carbs: 4,
+    fat: 7,
+    fiber: 2,
+    healthScore: 71,
+    source: "INDB",
     image:
       "/foods/fish-curry.jpg",
   },
@@ -650,14 +708,6 @@ export const FOOTER_LINKS = {
   ],
   resources: [
     { label: "Reviews", path: "/review" },
-    {
-      label: "Research Publication",
-      href: "https://github.com/suvamneog/foodAnalyser-v2",
-    },
-    {
-      label: "GitHub",
-      href: "https://github.com/suvamneog/foodAnalyser-v2",
-    },
     { label: "Contact", href: "mailto:hello@foodanalyser.app" },
   ],
 };

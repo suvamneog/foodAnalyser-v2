@@ -25,8 +25,7 @@ import HealthScoreCard from "../components/HealthScoreCard";
 import WeeklyView from "../components/WeeklyView";
 import TrustBadge from "../components/TrustBadge";
 import { isLoggedInForSync, lastSyncAt, pullFromCloud } from "../utils/cloudSync";
-
-const EASE = [0.22, 1, 0.36, 1];
+import { IOS_EASE, MOTION } from "../utils/motion";
 
 export default function Profile() {
   const reduce = useReducedMotion();
@@ -68,7 +67,7 @@ export default function Profile() {
         <motion.header
           initial={reduce ? false : { opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ ease: EASE }}
+          transition={{ duration: MOTION.hero.duration, ease: IOS_EASE }}
           className="fa-sticker fa-dots relative mt-6 overflow-hidden p-5 sm:p-6"
         >
           <div className="relative flex flex-wrap items-center gap-4">
@@ -132,7 +131,7 @@ export default function Profile() {
               <motion.div
                 initial={{ width: 0 }}
                 animate={{ width: `${lvl.pct}%` }}
-                transition={{ ease: EASE, duration: reduce ? 0 : 0.9 }}
+                transition={{ ease: IOS_EASE, duration: reduce ? 0 : 1.1 }}
                 className="fa-shine relative h-full rounded-full"
                 style={{
                   background:
