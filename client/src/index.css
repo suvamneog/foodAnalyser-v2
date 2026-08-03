@@ -106,6 +106,33 @@
     backface-visibility: hidden;
   }
 
+  /* Text shimmer sweep — used on brand marks */
+  @keyframes fa-text-shimmer {
+    0% {
+      background-position: 100% center;
+    }
+    100% {
+      background-position: 0% center;
+    }
+  }
+
+  .fa-text-shimmer {
+    background-size: 250% 100%, auto;
+    background-repeat: no-repeat, padding-box;
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: transparent;
+    animation: fa-text-shimmer var(--shimmer-duration, 1.8s) linear infinite;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .fa-text-shimmer {
+      animation: none;
+      background-position: 50% center;
+    }
+  }
+
   body {
     font-family: "Figtree", system-ui, sans-serif;
     color: var(--text);

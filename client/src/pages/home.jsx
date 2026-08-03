@@ -2,6 +2,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { motion, useReducedMotion } from "framer-motion";
+import { TextShimmer } from "../components/ui/text-shimmer";
 import {
   Camera,
   ScanLine,
@@ -483,13 +484,19 @@ function Home({
         </div>
 
         <div className="relative mx-auto flex min-h-[calc(100svh-3.5rem)] max-w-3xl flex-col items-center justify-center py-20 sm:min-h-[calc(100vh-4rem)] sm:py-28">
-          <motion.p
+          <motion.div
             initial={reduceMotion ? false : { opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
-            className="mb-5 font-display text-[10px] font-semibold uppercase tracking-[0.32em] text-saffron-300/90 sm:text-[11px]"
+            className="mb-5 sm:mb-6"
           >
-            Food Analyser × Fit
-          </motion.p>
+            <TextShimmer
+              as="p"
+              duration={1.8}
+              className="font-display text-base font-bold tracking-[0.08em] sm:text-xl md:text-2xl [--base-color:#d4892a] [--base-gradient-color:#fff6e8]"
+            >
+              FoodAnalyser × Fit
+            </TextShimmer>
+          </motion.div>
 
           <motion.h1
             initial={reduceMotion ? false : { opacity: 0, y: 16 }}

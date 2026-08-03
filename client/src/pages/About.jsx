@@ -1,601 +1,504 @@
-import { motion } from "framer-motion";
-import { StarsBackground } from "../components/ui/stars-background";
-import { ShootingStars } from "../components/ui/shooting-stars";
-import { Brain, LineChart, Database, Scan, Target, MessageSquare, Camera, Calculator, Utensils, Barcode } from "lucide-react";
+import { useRef } from "react";
+import {
+  motion,
+  useReducedMotion,
+  useScroll,
+  useTransform,
+} from "framer-motion";
 import { Link } from "react-router-dom";
+import {
+  ArrowUpRight,
+  Camera,
+  Barcode,
+  Calculator,
+  Utensils,
+  MessageSquare,
+} from "lucide-react";
 import { useReviews } from "../utils/ReviewsContext";
 import TestimonialsSection from "../components/ui/testimonials-6";
+import { IOS_EASE, MOTION } from "../utils/motion";
+
+/**
+ * Editorial About page — anchored on the group hero image and the manifesto
+ * "We should know what's going inside us." No emoji, restrained accents,
+ * long slow motion so it never reads as auto-generated.
+ */
+
+const HERO_IMG = "/images/about-hero.jpg";
+
+const fadeUp = (delay = 0, y = 24, duration = 0.85) => ({
+  initial: { opacity: 0, y },
+  whileInView: { opacity: 1, y: 0 },
+  viewport: { once: true, amount: 0.25, margin: "-8% 0px -6% 0px" },
+  transition: { duration, delay, ease: IOS_EASE },
+});
+
+const VALUES = [
+  {
+    label: "Awareness",
+    body:
+      "Food is the most repeated decision of your life. Knowing what's inside it isn't a diet trend — it's basic self-respect.",
+  },
+  {
+    label: "Honesty",
+    body:
+      "No inflated accuracy claims. Every number carries its source — IFCT, INDB, regional, or third-party fallback — right on the card.",
+  },
+  {
+    label: "Indian-first",
+    body:
+      "Roti, dal, sabji, sambar, thali. The app is built around how people actually eat here, not translated from a US calorie tracker.",
+  },
+];
+
+const METHOD = [
+  {
+    num: "01",
+    icon: Camera,
+    title: "Scan the plate.",
+    body:
+      "Photograph any meal. The model recognises the dish, estimates portion, and returns macros with a health score you can trust.",
+    to: "/image",
+    cta: "Try image scan",
+  },
+  {
+    num: "02",
+    icon: Barcode,
+    title: "Read the label.",
+    body:
+      "Point the camera at a barcode and get an honest reading of what's inside — ingredients, sugar, sodium, and safer swaps.",
+    to: "/scan",
+    cta: "Open scanner",
+  },
+  {
+    num: "03",
+    icon: Calculator,
+    title: "Know your numbers.",
+    body:
+      "A calorie and macro target that respects your body and your goal — maintenance, deficit, or slow lean gain. No crash targets.",
+    to: "/calculator",
+    cta: "Calculate",
+  },
+  {
+    num: "04",
+    icon: Utensils,
+    title: "Log the day.",
+    body:
+      "Log meals fast, see running totals, watch the week take shape. Fewer numbers. More clarity.",
+    to: "/logmeals",
+    cta: "Log meals",
+  },
+];
+
+const SOURCES = [
+  {
+    id: "IFCT 2017",
+    origin: "ICMR–NIN",
+    note: "Lab-measured Indian foods — the backbone of every core dish.",
+  },
+  {
+    id: "INDB",
+    origin: "Indian Nutrient Databank",
+    note: "Recipe-level composition for cooked Indian preparations.",
+  },
+  {
+    id: "Regional",
+    origin: "Assam / Northeast estimates",
+    note: "Community estimates for regional dishes — labelled separately, never merged with IFCT.",
+  },
+  {
+    id: "Fallback",
+    origin: "CalorieNinjas · Open Food Facts",
+    note: "Only used when the food is not in the primary sets — clearly marked.",
+  },
+];
 
 const About = () => {
   const { reviews } = useReviews();
-  
-  const fadeInUp = {
-    initial: { opacity: 0, y: 28 },
-    animate: { opacity: 1, y: 0 },
-    transition: { duration: 0.75, ease: [0.22, 1, 0.36, 1] }
-  };
+  const reduce = useReducedMotion();
+  const heroRef = useRef(null);
 
-  const staggerChildren = {
-    animate: {
-      transition: {
-        staggerChildren: 0.12,
-        delayChildren: 0.08,
-      }
-    }
-  };
+  const { scrollYProgress } = useScroll({
+    target: heroRef,
+    offset: ["start start", "end start"],
+  });
+  const imageY = useTransform(scrollYProgress, [0, 1], [0, reduce ? 0 : 90]);
+  const imageScale = useTransform(scrollYProgress, [0, 1], [1, reduce ? 1 : 1.08]);
+  const heroTextY = useTransform(scrollYProgress, [0, 1], [0, reduce ? 0 : -40]);
 
-  // Calculate live statistics
   const totalReviews = reviews.length;
-  const averageRating = totalReviews > 0 
-    ? (reviews.reduce((sum, review) => sum + review.rating, 0) / totalReviews).toFixed(1)
-    : "0.0";
+  const averageRating =
+    totalReviews > 0
+      ? (
+          reviews.reduce((sum, r) => sum + r.rating, 0) / totalReviews
+        ).toFixed(1)
+      : "0.0";
 
   return (
-    <div className="relative min-h-screen overflow-hidden bg-ink-950 text-white">
-      {/* Background */}
-      <div className="fa-stars-layer pointer-events-none absolute inset-0 opacity-40">
-        <StarsBackground />
-        <ShootingStars />
+    <div className="relative min-h-screen overflow-x-clip bg-ink-950 text-white">
+      {/* Ambient background wash */}
+      <div className="pointer-events-none absolute inset-0 -z-10">
+        <div className="absolute inset-x-0 top-0 h-[80vh] bg-[radial-gradient(ellipse_80%_60%_at_20%_10%,rgba(232,168,74,0.10),transparent_60%)]" />
+        <div className="absolute inset-x-0 top-[40vh] h-[80vh] bg-[radial-gradient(ellipse_60%_50%_at_90%_30%,rgba(79,154,98,0.06),transparent_60%)]" />
       </div>
 
-      {/* Content */}
-      <div className="relative z-20 flex min-h-screen items-center justify-center px-4 py-24">
-        <div className="mx-auto w-full max-w-6xl">
-          <motion.div
-            initial="initial"
-            animate="animate"
-            variants={staggerChildren}
-            className="space-y-14"
-          >
-            {/* Hero Section */}
-            <motion.div
-              variants={fadeInUp}
-              className="text-center"
+      {/* ─────────────────── HERO ─────────────────── */}
+      <section
+        ref={heroRef}
+        className="relative mx-auto max-w-7xl px-5 pb-24 pt-28 sm:px-8 sm:pt-32 lg:pb-32 lg:pt-40"
+      >
+        <div className="grid gap-12 lg:grid-cols-[1.05fr_1fr] lg:items-center lg:gap-16">
+          {/* Copy */}
+          <motion.div style={{ y: heroTextY }}>
+            <motion.p
+              {...fadeUp(0, 12, 0.7)}
+              className="mb-6 flex items-center gap-3 text-[11px] font-semibold uppercase tracking-[0.28em] text-saffron-300/90"
             >
-              <p className="mb-5 text-[11px] font-semibold uppercase tracking-[0.24em] text-saffron-300/90">
-                About the product
-              </p>
+              <span className="inline-block h-px w-8 bg-saffron-300/60" />
+              A quiet manifesto
+            </motion.p>
 
-              <h1 className="font-display text-4xl font-extrabold tracking-tight sm:text-5xl md:text-6xl">
-                FoodAnalyser
-              </h1>
-              
-              <p className="mx-auto mt-5 max-w-2xl text-base leading-relaxed text-white/55 sm:text-lg">
-                An Indian nutrition analysis tool built to make food data clearer —
-                with honest source labels, not inflated accuracy claims.
-              </p>
+            <motion.h1
+              {...fadeUp(0.08, 22, 0.95)}
+              className="font-display text-[2.65rem] font-extrabold leading-[1.02] tracking-[-0.03em] text-white sm:text-5xl md:text-6xl lg:text-[4.25rem]"
+            >
+              We should know
+              <br />
+              <span className="text-white/60">what&apos;s going</span>
+              <br />
+              <span className="italic text-saffron-200">inside us.</span>
+            </motion.h1>
+
+            <motion.p
+              {...fadeUp(0.2, 18, 0.85)}
+              className="mt-7 max-w-xl text-base leading-relaxed text-white/55 sm:text-lg"
+            >
+              FoodAnalyser is a slow, careful attempt at giving Indian food the
+              honest nutrition data it deserves. No inflated claims, no
+              guesswork disguised as science — just clear numbers, labelled
+              sources, and a calm interface built for daily use.
+            </motion.p>
+
+            <motion.div
+              {...fadeUp(0.3, 14, 0.8)}
+              className="mt-9 flex flex-wrap items-center gap-3"
+            >
+              <Link
+                to="/image"
+                className="fa-btn fa-btn-primary group"
+              >
+                Start with a photo
+                <ArrowUpRight className="h-4 w-4 transition-transform duration-500 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+              </Link>
+              <Link
+                to="/calculator"
+                className="fa-btn fa-btn-secondary"
+              >
+                Find my numbers
+              </Link>
             </motion.div>
 
-            {/* Story Section */}
+            {/* small trust row */}
             <motion.div
-              variants={fadeInUp}
-              className="group"
+              {...fadeUp(0.42, 12, 0.8)}
+              className="mt-10 flex flex-wrap items-center gap-x-8 gap-y-3 text-xs text-white/40"
             >
-              <div className="border border-white/10 bg-white/[0.03] rounded-3xl p-8 h-full">
-                <div className="flex items-center gap-4 mb-6">
-                  <div className="p-3 bg-saffron-500/15 rounded-2xl">
-                    <Brain className="w-8 h-8 text-saffron-300" />
-                  </div>
-                  <div>
-                    <h2 className="font-display text-2xl font-bold text-white md:text-3xl">
-                      Our Story
-                    </h2>
-                    <div className="w-16 h-1 bg-saffron-400 rounded-full mt-2"></div>
-                  </div>
-                </div>
-                
-                <div className="space-y-4 text-white/60 leading-relaxed">
-                  <p>
-                    Most nutrition apps are built for Western foods. Indian foods like 
-                    <span className="text-saffron-200 font-semibold"> roti, dal, chicken, chawal, paneer, sabji, rajma, and curries</span> often 
-                    do not exist in global databases or are estimated incorrectly.
-                  </p>
-                  
-                  <p>
-                    I wanted to build something that truly understands Indian meals. 
-                    Something accurate, fast, and helpful — especially for people tracking 
-                    fitness, health, or diet goals.
-                  </p>
-                </div>
-              </div>
-            </motion.div>
-
-            {/* Problem & Solution Cards */}
-            <div className="grid lg:grid-cols-2 gap-8">
-              {/* Problem Card */}
-              <motion.div
-                variants={fadeInUp}
-                className="group"
-              >
-                <div className="border border-white/10 bg-white/[0.03] rounded-3xl p-8 h-full">
-                  <div className="flex items-center gap-4 mb-6">
-                    <div className="p-3 bg-red-500/20 rounded-2xl">
-                      <Target className="w-8 h-8 text-red-400" />
-                    </div>
-                    <div>
-                      <h2 className="font-display text-2xl font-bold text-white md:text-3xl">
-                        The Problem
-                      </h2>
-                      <div className="w-16 h-1 bg-red-400 rounded-full mt-2"></div>
-                    </div>
-                  </div>
-                  
-                  <div className="space-y-4">
-                    <p className="text-lg text-white/60 leading-relaxed">
-                      Most popular apps rely on global nutrition datasets. This creates problems:
-                    </p>
-                    
-                    <div className="space-y-3">
-                      {[
-                        "Indian foods are missing",
-                        "Data is not verified from Indian sources", 
-                        "Nutritional values vary drastically from Indian cooking styles",
-                        "No single 'Indian-first' food database exists"
-                      ].map((item, index) => (
-                        <motion.div
-                          key={item}
-                          initial={{ opacity: 0, x: -20 }}
-                          animate={{ opacity: 1, x: 0 }}
-                          transition={{ delay: 0.8 + index * 0.1 }}
-                          className="flex items-center gap-3 text-red-200"
-                        >
-                          <div className="w-2 h-2 bg-red-400 rounded-full flex-shrink-0"></div>
-                          <span>{item}</span>
-                        </motion.div>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-              </motion.div>
-
-              {/* Solution Card */}
-              <motion.div
-                variants={fadeInUp}
-                className="group"
-              >
-                <div className="border border-saffron-400/20 bg-white/[0.03] rounded-3xl p-8 h-full">
-                  <div className="flex items-center gap-4 mb-6">
-                    <div className="p-3 bg-saffron-500/15 rounded-2xl">
-                      <Database className="w-8 h-8 text-saffron-300" />
-                    </div>
-                    <div>
-                      <h2 className="font-display text-2xl font-bold text-white md:text-3xl">
-                        Our Solution
-                      </h2>
-                      <div className="w-16 h-1 bg-saffron-400 rounded-full mt-2"></div>
-                    </div>
-                  </div>
-                  
-                  <div className="space-y-4">
-                    <p className="text-lg text-white/60 leading-relaxed">
-                      FoodAnalyser × Fit is built to surface honest Indian nutrition data — with clear sources, not inflated claims.
-                    </p>
-                    
-                    <p className="text-saffron-200 font-medium">
-                      Primary datasets:
-                    </p>
-                    
-                    <div className="space-y-3">
-                      {[
-                        "IFCT 2017 (ICMR-NIN) — lab-measured Indian foods",
-                        "INDB (Indian Nutrient Databank) — Indian recipe compositions",
-                        "Regional Assam / Northeast estimates — labeled separately from IFCT/INDB",
-                        "CalorieNinjas / Open Food Facts — third-party fallback only when needed"
-                      ].map((item, index) => (
-                        <motion.div
-                          key={item}
-                          initial={{ opacity: 0, x: -20 }}
-                          animate={{ opacity: 1, x: 0 }}
-                          transition={{ delay: 1 + index * 0.1 }}
-                          className="flex items-center gap-3 text-white/70"
-                        >
-                          <div className="w-2 h-2 bg-saffron-400 rounded-full flex-shrink-0"></div>
-                          <span>{item}</span>
-                        </motion.div>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-              </motion.div>
-            </div>
-
-            {/* Features Section */}
-            <motion.div
-              variants={fadeInUp}
-              className="text-center"
-            >
-              <h3 className="mb-4 font-display text-3xl font-bold text-white md:text-4xl">
-                Our Powerful Features
-              </h3>
-              <p className="text-white/45 text-lg mb-12 max-w-2xl mx-auto">
-                Comprehensive tools for all your nutrition tracking needs
-              </p>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                {[
-                  { 
-                    icon: <Camera className="w-10 h-10" />, 
-                    title: "Image Recognition", 
-                    description: "Snap a photo of your food and get instant nutrition analysis",
-                    gradient: "from-leaf-400 to-leaf-600",
-                    link: "/image"
-                  },
-                  { 
-                    icon: <Barcode className="w-10 h-10" />, 
-                    title: "Barcode Scanner", 
-                    description: "Scan product barcodes for instant nutritional information",
-                    gradient: "from-saffron-400 to-saffron-600",
-                    link: "/scan"
-                  },
-                  { 
-                    icon: <Calculator className="w-10 h-10" />, 
-                    title: "Calorie Calculator", 
-                    description: "Personalized calorie and macro calculations for your goals",
-                    gradient: "from-saffron-400 to-saffron-600",
-                    link: "/calculator"
-                  },
-                  { 
-                    icon: <Utensils className="w-10 h-10" />, 
-                    title: "Log Meals", 
-                    description: "Track your daily food intake with detailed nutrition breakdown",
-                    gradient: "from-orange-400 to-red-500",
-                    link: "/logmeals"
-                  }
-                ].map((feature, index) => (
-                  <motion.div
-                    key={feature.title}
-                    initial={{ opacity: 0, y: 30 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 1.4 + index * 0.1 }}
-                    className="group"
-                  >
-                    <Link to={feature.link}>
-                      <div className="bg-zinc-900/80 backdrop-blur-sm border border-zinc-700/50 rounded-2xl p-6 h-full transform transition-all duration-300 hover:scale-105 hover:border-zinc-600/80">
-                        <div className={`p-4 rounded-2xl bg-gradient-to-r ${feature.gradient} w-fit mb-6 mx-auto`}>
-                          {feature.icon}
-                        </div>
-                        <h4 className="mb-3 font-display text-xl font-bold text-white">{feature.title}</h4>
-                        <p className="text-white/45 leading-relaxed">{feature.description}</p>
-                      </div>
-                    </Link>
-                  </motion.div>
-                ))}
-              </div>
-            </motion.div>
-
-            {/* Detailed Features Sections */}
-            <div className="space-y-8">
-              {/* Image Recognition Section */}
-              <motion.div
-                variants={fadeInUp}
-                className="group"
-              >
-                <div className="border border-leaf-400/20 bg-white/[0.03] rounded-3xl p-8 h-full">
-                  <div className="flex flex-col lg:flex-row items-center gap-8">
-                    <div className="lg:w-1/3 text-center lg:text-left">
-                      <div className="p-4 bg-leaf-500/15 rounded-2xl w-fit mb-6 mx-auto lg:mx-0">
-                        <Camera className="w-12 h-12 text-leaf-300" />
-                      </div>
-                      <h3 className="text-2xl md:text-3xl font-bold text-white mb-4">
-                        AI Image Recognition
-                      </h3>
-                      <p className="text-white/60 leading-relaxed">
-                        Simply take a photo of your food and let our advanced AI identify the dish, 
-                        estimate portion sizes, and provide detailed nutritional information.
-                      </p>
-                      <Link 
-                        to="/image"
-                        className="fa-btn fa-btn-primary mt-4 inline-flex"
-                      >
-                        Try Image Scan
-                      </Link>
-                    </div>
-                    <div className="lg:w-2/3 grid grid-cols-1 md:grid-cols-2 gap-4">
-                      {[
-                        { feature: "Instant Food Identification", desc: "Recognizes 1000+ Indian dishes" },
-                        { feature: "Portion Size Estimation", desc: "AI-powered size detection" },
-                        { feature: "Nutrition Analysis", desc: "Calories, macros, and micronutrients" },
-                        { feature: "Health Score", desc: "Get a health rating for your meal" }
-                      ].map((item, index) => (
-                        <div key={index} className="bg-white/[0.04] p-4 rounded-lg border border-green-500/20">
-                          <div className="flex items-center gap-3 mb-2">
-                            <div className="w-2 h-2 bg-leaf-400 rounded-full"></div>
-                            <span className="font-semibold text-leaf-200">{item.feature}</span>
-                          </div>
-                          <p className="text-white/45 text-sm">{item.desc}</p>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-              </motion.div>
-
-              {/* Barcode Scanner Section */}
-              <motion.div
-                variants={fadeInUp}
-                className="group"
-              >
-                <div className="border border-white/10 bg-white/[0.03] rounded-3xl p-8 h-full">
-                  <div className="flex flex-col lg:flex-row items-center gap-8">
-                    <div className="lg:w-2/3 grid grid-cols-1 md:grid-cols-2 gap-4">
-                      {[
-                        { feature: "Instant Product Lookup", desc: "Access 1M+ products database" },
-                        { feature: "Indian Product Focus", desc: "Specialized in Indian brands" },
-                        { feature: "Health Alternatives", desc: "Get healthier product suggestions" },
-                        { feature: "Allergen Detection", desc: "Identify potential allergens" }
-                      ].map((item, index) => (
-                        <div key={index} className="bg-white/[0.04] p-4 rounded-lg border border-blue-500/20">
-                          <div className="flex items-center gap-3 mb-2">
-                            <div className="w-2 h-2 bg-saffron-400 rounded-full"></div>
-                            <span className="font-semibold text-saffron-200">{item.feature}</span>
-                          </div>
-                          <p className="text-white/45 text-sm">{item.desc}</p>
-                        </div>
-                      ))}
-                    </div>
-                    <div className="lg:w-1/3 text-center lg:text-right">
-                      <div className="p-4 bg-saffron-500/15 rounded-2xl w-fit mb-6 mx-auto lg:ml-auto">
-                        <Barcode className="w-12 h-12 text-saffron-300" />
-                      </div>
-                      <h3 className="text-2xl md:text-3xl font-bold text-white mb-4">
-                        Barcode Scanner
-                      </h3>
-                      <p className="text-white/60 leading-relaxed">
-                        Scan any packaged food product to instantly get its nutritional information, 
-                        ingredients, and healthier alternatives.
-                      </p>
-                      <Link 
-                        to="/scan"
-                        className="fa-btn fa-btn-primary mt-4 inline-flex"
-                      >
-                        Start Scanning
-                      </Link>
-                    </div>
-                  </div>
-                </div>
-              </motion.div>
-
-              {/* Calorie Calculator Section */}
-              <motion.div
-                variants={fadeInUp}
-                className="group"
-              >
-                <div className="border border-saffron-400/20 bg-white/[0.03] rounded-3xl p-8 h-full">
-                  <div className="flex flex-col lg:flex-row items-center gap-8">
-                    <div className="lg:w-1/3 text-center lg:text-left">
-                      <div className="p-4 bg-saffron-500/15 rounded-2xl w-fit mb-6 mx-auto lg:mx-0">
-                        <Calculator className="w-12 h-12 text-saffron-300" />
-                      </div>
-                      <h3 className="text-2xl md:text-3xl font-bold text-white mb-4">
-                        Smart Calorie Calculator
-                      </h3>
-                      <p className="text-white/60 leading-relaxed">
-                        Get personalized calorie and macronutrient targets based on your goals, 
-                        body metrics, and activity level.
-                      </p>
-                      <Link 
-                        to="/calculator"
-                        className="fa-btn fa-btn-primary mt-4 inline-flex"
-                      >
-                        Calculate Now
-                      </Link>
-                    </div>
-                    <div className="lg:w-2/3 grid grid-cols-1 md:grid-cols-2 gap-4">
-                      {[
-                        { feature: "Personalized Plans", desc: "Customized for your body and goals" },
-                        { feature: "Macro Tracking", desc: "Protein, carbs, fats breakdown" },
-                        { feature: "Goal Setting", desc: "Weight loss, maintenance, or muscle gain" },
-                        { feature: "Weekly Progress", desc: "Track your journey over time" }
-                      ].map((item, index) => (
-                        <div key={index} className="bg-white/[0.04] p-4 rounded-lg border border-saffron-400/20">
-                          <div className="flex items-center gap-3 mb-2">
-                            <div className="w-2 h-2 bg-saffron-400 rounded-full"></div>
-                            <span className="font-semibold text-saffron-200">{item.feature}</span>
-                          </div>
-                          <p className="text-white/45 text-sm">{item.desc}</p>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-              </motion.div>
-
-              {/* Log Meals Section */}
-              <motion.div
-                variants={fadeInUp}
-                className="group"
-              >
-                <div className="border border-saffron-400/20 bg-white/[0.03] rounded-3xl p-8 h-full">
-                  <div className="flex flex-col lg:flex-row items-center gap-8">
-                    <div className="lg:w-2/3 grid grid-cols-1 md:grid-cols-2 gap-4">
-                      {[
-                        { feature: "Daily Tracking", desc: "Log all your meals and snacks" },
-                        { feature: "Nutrition Summary", desc: "See daily totals and progress" },
-                        { feature: "Food Database", desc: "Access to Indian food database" },
-                        { feature: "Meal History", desc: "Review your eating patterns" }
-                      ].map((item, index) => (
-                        <div key={index} className="bg-white/[0.04] p-4 rounded-lg border border-orange-500/20">
-                          <div className="flex items-center gap-3 mb-2">
-                            <div className="w-2 h-2 bg-orange-400 rounded-full"></div>
-                            <span className="font-semibold text-orange-300">{item.feature}</span>
-                          </div>
-                          <p className="text-white/45 text-sm">{item.desc}</p>
-                        </div>
-                      ))}
-                    </div>
-                    <div className="lg:w-1/3 text-center lg:text-right">
-                      <div className="p-4 bg-orange-500/20 rounded-2xl w-fit mb-6 mx-auto lg:ml-auto">
-                        <Utensils className="w-12 h-12 text-orange-400" />
-                      </div>
-                      <h3 className="text-2xl md:text-3xl font-bold text-white mb-4">
-                        Meal Logging
-                      </h3>
-                      <p className="text-white/60 leading-relaxed">
-                        Easily track everything you eat with our comprehensive meal logging system 
-                        designed specifically for Indian diets.
-                      </p>
-                      <Link 
-                        to="/logmeals"
-                        className="inline-block mt-4 bg-orange-600 hover:bg-orange-700 text-white px-6 py-3 rounded-lg font-medium transition-colors"
-                      >
-                        Log Your Meals
-                      </Link>
-                    </div>
-                  </div>
-                </div>
-              </motion.div>
-            </div>
-
-            {/* Vision Section */}
-            <motion.div
-              variants={fadeInUp}
-              className="group"
-            >
-              <div className="border border-leaf-400/20 bg-white/[0.03] rounded-3xl p-8 h-full">
-                <div className="flex items-center gap-4 mb-6">
-                  <div className="p-3 bg-leaf-500/15 rounded-2xl">
-                    <LineChart className="w-8 h-8 text-leaf-300" />
-                  </div>
-                  <div>
-                    <h2 className="font-display text-2xl font-bold text-white md:text-3xl">
-                      Our Vision
-                    </h2>
-                    <div className="w-16 h-1 bg-leaf-400 rounded-full mt-2"></div>
-                  </div>
-                </div>
-                
-                <div className="space-y-4 text-white/60 leading-relaxed">
-                  <p>
-                    To build clear, source-labeled Indian nutrition tools people can trust 
-                    that understands Indian food diversity and supports 
-                    personalized health, diet, and fitness goals.
-                  </p>
-                  
-                  <div className="grid md:grid-cols-2 gap-4">
-                    {[
-                      "Indian recipe nutrition analysis",
-                      "Personalized AI diet plans",
-                      "Integration with food delivery apps",
-                      "Fitness tracker integration",
-                      "Offline nutrition calculation",
-                      "AI chatbot for diet guidance"
-                    ].map((item, index) => (
-                      <motion.div
-                        key={item}
-                        initial={{ opacity: 0, x: -20 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        transition={{ delay: 1.2 + index * 0.1 }}
-                        className="flex items-center gap-3 text-green-200"
-                      >
-                        <div className="w-2 h-2 bg-leaf-400 rounded-full flex-shrink-0"></div>
-                        <span>{item}</span>
-                      </motion.div>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            </motion.div>
-
-            {/* Indian Food Showcase */}
-            <motion.div
-              variants={fadeInUp}
-              className="text-center"
-            >
-              <h3 className="mb-4 font-display text-3xl font-bold text-white md:text-4xl">
-                Foods We Understand Perfectly
-              </h3>
-
-              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4 max-w-4xl mx-auto">
-                {[
-                  { emoji: "🍛", name: "Curry" },
-                  { emoji: "🫓", name: "Roti" },
-                  { emoji: "🍚", name: "Chawal" },
-                  { emoji: "🥘", name: "Dal" },
-                  { emoji: "🥗", name: "Sabji" },
-                  { emoji: "🫘", name: "Rajma" },
-                  { emoji: "🍲", name: "Sambar" },
-                  { emoji: "🥣", name: "Kadhi" },
-                  { emoji: "🥠", name: "Samosa" },
-                  { emoji: "🍮", name: "Kheer" },
-                  { emoji: "🧆", name: "Chole" }
-                ].map((food, index) => (
-                  <motion.div
-                    key={food.name}
-                    initial={{ opacity: 0, scale: 0.8 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    transition={{ delay: 1.6 + index * 0.05, duration: 0.4 }}
-                    className="text-center p-4 bg-zinc-900/50 backdrop-blur-sm rounded-2xl border border-zinc-700/50"
-                  >
-                    <div className="text-4xl mb-3">
-                      {food.emoji}
-                    </div>
-                    <p className="text-sm font-semibold text-white/60">{food.name}</p>
-                  </motion.div>
-                ))}
-              </div>
-            </motion.div>
-
-            {/* User Reviews Section — vertical infinite wall */}
-            <motion.div variants={fadeInUp} className="text-center">
-              <div className="mb-2 flex flex-col items-center justify-between gap-4 sm:mb-0 lg:flex-row lg:items-end">
-                <div className="hidden lg:block lg:w-40" />
-                <div className="lg:flex-1" />
-                <Link
-                  to="/review"
-                  className="fa-btn fa-btn-primary order-first whitespace-nowrap lg:order-last"
-                >
-                  <MessageSquare className="h-4 w-4" />
-                  Share your experience
-                </Link>
-              </div>
-
-              <TestimonialsSection
-                reviews={reviews}
-                className="pt-2"
-                title="What our users say"
-                subtitle="Real experiences from people logging Indian meals — IFCT, INDB, and regional data."
-              />
-
-              <div className="mx-auto mt-8 grid max-w-md grid-cols-2 gap-6 text-center">
-                <div>
-                  <div className="font-display text-2xl font-bold text-white">{totalReviews}</div>
-                  <div className="text-sm text-white/45">User reviews</div>
-                </div>
-                <div>
-                  <div className="font-display text-2xl font-bold text-white">{averageRating}</div>
-                  <div className="text-sm text-white/45">Average rating</div>
-                </div>
-              </div>
-            </motion.div>
-
-            {/* Mission & CTA */}
-            <motion.div
-              variants={fadeInUp}
-              className="text-center"
-            >
-              <div className="fa-card mx-auto max-w-4xl border-saffron-400/20 p-10 sm:p-12">
-                <div className="text-6xl mb-6">🌟</div>
-                <h3 className="text-3xl md:text-4xl font-bold text-white mb-6">
-                  Your Health Journey Starts Here
-                </h3>
-                <p className="text-xl text-white/60 leading-relaxed mb-8 max-w-2xl mx-auto">
-                  &quot;We believe everyone deserves clear, source-labeled nutrition info for the foods they actually eat.&quot;
-                </p>
-                
-                <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-                  <Link
-                    to="/scan"
-                    className="bg-gradient-to-r from-green-500 to-blue-500 hover:from-green-600 hover:to-blue-600 text-white font-bold py-4 px-8 rounded-2xl transition-all duration-300 text-lg flex items-center gap-3"
-                  >
-                    <Scan className="w-5 h-5" />
-                    Start Scanning Now
-                  </Link>
-                </div>
-              </div>
+              <span className="inline-flex items-center gap-2">
+                <span className="h-1.5 w-1.5 rounded-full bg-saffron-300/80" />
+                IFCT 2017 · ICMR–NIN
+              </span>
+              <span className="inline-flex items-center gap-2">
+                <span className="h-1.5 w-1.5 rounded-full bg-leaf-400/80" />
+                INDB recipe database
+              </span>
+              <span className="inline-flex items-center gap-2">
+                <span className="h-1.5 w-1.5 rounded-full bg-white/40" />
+                Regional Assam & Northeast
+              </span>
             </motion.div>
           </motion.div>
+
+          {/* Hero image — floating card, parallax, soft mask */}
+          <motion.div
+            {...fadeUp(0.15, 30, 1)}
+            className="relative"
+          >
+            <motion.div
+              style={{ y: imageY, scale: imageScale }}
+              className="relative mx-auto aspect-[4/5] w-full max-w-md overflow-hidden rounded-[2rem] border border-white/10 bg-white/[0.03] shadow-[0_40px_80px_-30px_rgba(0,0,0,0.7),0_0_0_1px_rgba(232,168,74,0.06)] sm:max-w-lg"
+            >
+              {/* colour wash so the cartoon reads as premium art, not a stock illustration */}
+              <div className="pointer-events-none absolute inset-0 z-10 bg-gradient-to-b from-transparent via-transparent to-ink-950/70" />
+              <div className="pointer-events-none absolute inset-0 z-10 bg-[radial-gradient(ellipse_60%_50%_at_50%_0%,rgba(232,168,74,0.10),transparent_60%)] mix-blend-screen" />
+              <div className="pointer-events-none absolute inset-0 z-10 ring-1 ring-inset ring-white/10" />
+
+              {/* subtle continuous float */}
+              <motion.img
+                src={HERO_IMG}
+                alt="A group of people, curious about the food they eat"
+                loading="eager"
+                animate={reduce ? undefined : { y: [0, -10, 0] }}
+                transition={
+                  reduce
+                    ? undefined
+                    : { duration: 9, ease: "easeInOut", repeat: Infinity }
+                }
+                className="absolute inset-0 h-full w-full object-cover object-[center_35%] saturate-[0.92] contrast-[1.02]"
+              />
+
+              {/* floating micro-labels — the "data" flavour */}
+              <motion.div
+                {...fadeUp(0.6, 10, 0.7)}
+                className="absolute left-4 top-4 z-20 rounded-full border border-white/15 bg-black/40 px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.2em] text-white/80 backdrop-blur-md"
+              >
+                Real people · real plates
+              </motion.div>
+              <motion.div
+                {...fadeUp(0.75, 10, 0.7)}
+                className="absolute bottom-4 right-4 z-20 flex items-center gap-2 rounded-full border border-saffron-300/25 bg-saffron-500/15 px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.2em] text-saffron-100 backdrop-blur-md"
+              >
+                <span className="h-1.5 w-1.5 rounded-full bg-saffron-300 animate-pulse" />
+                Reading nutrition, live
+              </motion.div>
+            </motion.div>
+
+            {/* Ambient bloom behind the card */}
+            <div className="pointer-events-none absolute -inset-8 -z-10 rounded-[2.5rem] bg-[radial-gradient(ellipse_70%_60%_at_50%_40%,rgba(232,168,74,0.12),transparent_70%)] blur-2xl" />
+          </motion.div>
         </div>
-      </div>
+      </section>
+
+      {/* ─────────────────── MANIFESTO PULL-QUOTE ─────────────────── */}
+      <section className="relative mx-auto max-w-5xl px-5 py-24 sm:px-8 sm:py-32">
+        <motion.div
+          {...fadeUp(0, 30, 0.9)}
+          className="relative"
+        >
+          <span className="absolute -top-8 left-0 font-display text-[7rem] leading-none text-saffron-300/15 sm:text-[9rem]">
+            &ldquo;
+          </span>
+          <blockquote className="relative font-display text-2xl font-medium leading-snug tracking-tight text-white/85 sm:text-3xl md:text-[2.35rem] md:leading-[1.2]">
+            Every bite is a decision. Every meal, a signal your body will act
+            on for the next twelve hours. The least we can do is{" "}
+            <span className="text-saffron-200">read the label</span>.
+          </blockquote>
+          <div className="mt-8 flex items-center gap-3 text-xs uppercase tracking-[0.28em] text-white/40">
+            <span className="h-px w-8 bg-white/30" />
+            The FoodAnalyser principle
+          </div>
+        </motion.div>
+      </section>
+
+      {/* ─────────────────── VALUES / 3 COLUMNS ─────────────────── */}
+      <section className="relative mx-auto max-w-6xl px-5 pb-24 sm:px-8">
+        <motion.div
+          {...fadeUp(0, 22, 0.8)}
+          className="mb-14 flex flex-col items-start gap-3"
+        >
+          <span className="text-[11px] font-semibold uppercase tracking-[0.28em] text-saffron-300/90">
+            02 &nbsp;— &nbsp;What we believe
+          </span>
+          <h2 className="max-w-3xl font-display text-3xl font-extrabold leading-tight tracking-tight sm:text-4xl md:text-5xl">
+            Three quiet rules the whole app is built on.
+          </h2>
+        </motion.div>
+
+        <div className="grid gap-px overflow-hidden rounded-3xl border border-white/10 bg-white/5 sm:grid-cols-3">
+          {VALUES.map((v, i) => (
+            <motion.div
+              key={v.label}
+              {...fadeUp(i * 0.12, 20, 0.85)}
+              className="group relative bg-ink-950 p-8 transition-colors duration-500 hover:bg-white/[0.02] sm:p-10"
+            >
+              <div className="mb-8 flex items-center justify-between">
+                <span className="font-display text-4xl font-bold text-saffron-300/80 sm:text-5xl">
+                  0{i + 1}
+                </span>
+                <span className="h-px w-10 bg-white/20 transition-all duration-700 group-hover:w-16 group-hover:bg-saffron-300/70" />
+              </div>
+              <h3 className="mb-4 font-display text-xl font-bold text-white sm:text-2xl">
+                {v.label}
+              </h3>
+              <p className="text-sm leading-relaxed text-white/55 sm:text-base">
+                {v.body}
+              </p>
+            </motion.div>
+          ))}
+        </div>
+      </section>
+
+      {/* ─────────────────── METHOD — numbered rows ─────────────────── */}
+      <section className="relative mx-auto max-w-6xl px-5 py-24 sm:px-8 sm:py-32">
+        <motion.div
+          {...fadeUp(0, 22, 0.8)}
+          className="mb-16 flex flex-col items-start gap-3"
+        >
+          <span className="text-[11px] font-semibold uppercase tracking-[0.28em] text-saffron-300/90">
+            03 &nbsp;— &nbsp;How it works
+          </span>
+          <h2 className="max-w-3xl font-display text-3xl font-extrabold leading-tight tracking-tight sm:text-4xl md:text-5xl">
+            Four small tools. One clear idea.
+          </h2>
+        </motion.div>
+
+        <div className="divide-y divide-white/10 border-y border-white/10">
+          {METHOD.map((m, i) => {
+            const Icon = m.icon;
+            return (
+              <motion.div
+                key={m.num}
+                {...fadeUp(i * 0.08, 24, 0.9)}
+                className="group grid gap-4 py-10 sm:grid-cols-[110px_1fr_auto] sm:items-center sm:gap-8 sm:py-12"
+              >
+                <div className="flex items-baseline gap-4 sm:block">
+                  <span className="font-display text-5xl font-bold text-white/25 transition-colors duration-500 group-hover:text-saffron-300/80 sm:text-6xl">
+                    {m.num}
+                  </span>
+                </div>
+
+                <div className="min-w-0">
+                  <div className="mb-2 flex items-center gap-3">
+                    <Icon className="h-4 w-4 text-saffron-300/80" />
+                    <h3 className="font-display text-xl font-bold text-white sm:text-2xl">
+                      {m.title}
+                    </h3>
+                  </div>
+                  <p className="max-w-2xl text-sm leading-relaxed text-white/55 sm:text-base">
+                    {m.body}
+                  </p>
+                </div>
+
+                <Link
+                  to={m.to}
+                  className="group/link inline-flex items-center gap-2 self-start text-sm font-semibold text-white/70 transition-colors hover:text-saffron-200 sm:self-center"
+                >
+                  <span>{m.cta}</span>
+                  <ArrowUpRight className="h-4 w-4 transition-transform duration-500 group-hover/link:translate-x-0.5 group-hover/link:-translate-y-0.5" />
+                </Link>
+              </motion.div>
+            );
+          })}
+        </div>
+      </section>
+
+      {/* ─────────────────── DATA SOURCES ─────────────────── */}
+      <section className="relative mx-auto max-w-6xl px-5 py-24 sm:px-8">
+        <div className="grid gap-14 lg:grid-cols-[0.9fr_1.1fr] lg:gap-20">
+          <motion.div {...fadeUp(0, 22, 0.8)}>
+            <span className="text-[11px] font-semibold uppercase tracking-[0.28em] text-saffron-300/90">
+              04 &nbsp;— &nbsp;Where the numbers come from
+            </span>
+            <h2 className="mt-3 font-display text-3xl font-extrabold leading-tight tracking-tight sm:text-4xl md:text-5xl">
+              Sources on every card.
+            </h2>
+            <p className="mt-6 max-w-md text-base leading-relaxed text-white/55">
+              Nutrition data is only as trustworthy as its origin. Nothing is
+              averaged into anonymity here — every food shows exactly which set
+              it came from, so you can decide what to trust.
+            </p>
+          </motion.div>
+
+          <div className="divide-y divide-white/10 border-y border-white/10">
+            {SOURCES.map((s, i) => (
+              <motion.div
+                key={s.id}
+                {...fadeUp(i * 0.08, 18, 0.8)}
+                className="grid grid-cols-[auto_1fr] items-start gap-6 py-6 sm:grid-cols-[140px_1fr] sm:gap-8"
+              >
+                <div className="pt-1">
+                  <div className="font-display text-lg font-bold text-white">
+                    {s.id}
+                  </div>
+                  <div className="mt-1 text-xs uppercase tracking-[0.18em] text-white/40">
+                    {s.origin}
+                  </div>
+                </div>
+                <p className="text-sm leading-relaxed text-white/55 sm:text-base">
+                  {s.note}
+                </p>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ─────────────────── TESTIMONIALS ─────────────────── */}
+      <section className="relative mx-auto max-w-6xl px-5 pb-8 pt-16 sm:px-8">
+        <motion.div
+          {...fadeUp(0, 22, 0.8)}
+          className="mb-6 flex flex-col items-start justify-between gap-6 lg:flex-row lg:items-end"
+        >
+          <div>
+            <span className="text-[11px] font-semibold uppercase tracking-[0.28em] text-saffron-300/90">
+              05 &nbsp;— &nbsp;What people say
+            </span>
+            <h2 className="mt-3 max-w-2xl font-display text-3xl font-extrabold leading-tight tracking-tight sm:text-4xl md:text-5xl">
+              Small notes from people using it.
+            </h2>
+          </div>
+
+          <Link
+            to="/review"
+            className="fa-btn fa-btn-secondary whitespace-nowrap"
+          >
+            <MessageSquare className="h-4 w-4" />
+            Share your experience
+          </Link>
+        </motion.div>
+
+        <TestimonialsSection reviews={reviews} showHeader={false} className="pt-4" />
+
+        <motion.div
+          {...fadeUp(0, 20, 0.8)}
+          className="mx-auto mt-14 grid max-w-md grid-cols-2 gap-10 border-y border-white/10 py-8 text-center"
+        >
+          <div>
+            <div className="font-display text-3xl font-bold text-white">
+              {totalReviews}
+            </div>
+            <div className="mt-1 text-xs uppercase tracking-[0.22em] text-white/40">
+              User reviews
+            </div>
+          </div>
+          <div>
+            <div className="font-display text-3xl font-bold text-white">
+              {averageRating}
+            </div>
+            <div className="mt-1 text-xs uppercase tracking-[0.22em] text-white/40">
+              Average rating
+            </div>
+          </div>
+        </motion.div>
+      </section>
+
+      {/* ─────────────────── CLOSING ─────────────────── */}
+      <section className="relative mx-auto max-w-5xl px-5 pb-32 pt-16 sm:px-8 sm:pb-40">
+        <motion.div
+          {...fadeUp(0, 26, 0.95)}
+          className="relative overflow-hidden rounded-[2rem] border border-white/10 bg-gradient-to-b from-white/[0.04] to-white/[0.01] p-10 text-center sm:p-16"
+        >
+          <div className="pointer-events-none absolute inset-0 -z-10 bg-[radial-gradient(ellipse_60%_60%_at_50%_0%,rgba(232,168,74,0.10),transparent_65%)]" />
+
+          <p className="text-[11px] font-semibold uppercase tracking-[0.28em] text-saffron-300/90">
+            One last thing
+          </p>
+          <h3 className="mx-auto mt-5 max-w-2xl font-display text-3xl font-extrabold leading-[1.1] tracking-tight text-white sm:text-4xl md:text-5xl">
+            Know what you eat.
+            <br />
+            <span className="text-white/55">The rest gets easier.</span>
+          </h3>
+
+          <div className="mt-10 flex flex-wrap items-center justify-center gap-3">
+            <Link to="/image" className="fa-btn fa-btn-primary group">
+              Start with a photo
+              <ArrowUpRight className="h-4 w-4 transition-transform duration-500 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+            </Link>
+            <Link to="/scan" className="fa-btn fa-btn-secondary">
+              Or scan a barcode
+            </Link>
+          </div>
+        </motion.div>
+      </section>
     </div>
   );
 };
