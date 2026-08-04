@@ -114,8 +114,12 @@ function scoreTone(score) {
 
 /**
  * Horizontal card rail for desktop + mobile.
- * Slow auto-glide while in view (no hover needed). Touch/mouse can still
- * scrub briefly; autoplay resumes when the finger lifts.
+ * Slow auto-glide while in view. Native swipe still works; autoplay
+ * pauses while the finger is down and resumes after release.
+ *
+ * Important: keep scroll-behavior: auto on the rail. Inherited
+ * `html { scroll-behavior: smooth }` breaks per-frame scrollLeft
+ * updates on iOS Safari (each tiny tick gets smoothed away).
  */
 function HorizontalRail({
   children,
@@ -139,10 +143,20 @@ function HorizontalRail({
     raf: 0,
     last: 0,
     visible: false,
+    resumeTimer: 0,
   });
   const reduceMotion = useReducedMotion();
   const [canLeft, setCanLeft] = useState(false);
   const [canRight, setCanRight] = useState(false);
+
+  const releaseHold = () => {
+    // Small delay so momentum from a swipe settles before autoplay resumes
+    window.clearTimeout(auto.current.resumeTimer);
+    auto.current.resumeTimer = window.setTimeout(() => {
+      auto.current.hold = false;
+      auto.current.last = 0;
+    }, 450);
+  };
 
   const updateEdges = () => {
     const el = ref.current;
@@ -182,7 +196,7 @@ function HorizontalRail({
     };
   }, []);
 
-  // Continuous auto-scroll while the rail is on screen
+  // Continuous auto-scroll while any part of the rail is on screen
   useEffect(() => {
     if (!autoPlay || reduceMotion) return;
     const el = ref.current;
@@ -190,13 +204,26 @@ function HorizontalRail({
 
     const io = new IntersectionObserver(
       ([entry]) => {
-        auto.current.visible =
-          entry.isIntersecting && entry.intersectionRatio >= 0.15;
+        // Start as soon as any slice is visible (mobile viewports are short)
+        auto.current.visible = entry.isIntersecting;
         auto.current.last = 0;
       },
-      { threshold: [0, 0.15, 0.35, 0.6] }
+      { threshold: [0, 0.01, 0.1, 0.25, 0.5], rootMargin: "40px 0px" }
     );
     io.observe(el);
+
+    // Always clear hold on window — iOS often skips element pointerup
+    // when the gesture becomes a page scroll or link tap.
+    const onWinUp = () => {
+      if (!auto.current.hold && !drag.current.active) return;
+      drag.current.active = false;
+      drag.current.moved = false;
+      releaseHold();
+    };
+    window.addEventListener("pointerup", onWinUp);
+    window.addEventListener("pointercancel", onWinUp);
+    window.addEventListener("touchend", onWinUp, { passive: true });
+    window.addEventListener("touchcancel", onWinUp, { passive: true });
 
     const tick = (now) => {
       auto.current.raf = requestAnimationFrame(tick);
@@ -214,7 +241,7 @@ function HorizontalRail({
         return;
       }
 
-      const dt = Math.min(40, now - auto.current.last) / 1000;
+      const dt = Math.min(48, now - auto.current.last) / 1000;
       auto.current.last = now;
 
       let next = el.scrollLeft + auto.current.dir * autoSpeed * dt;
@@ -228,6 +255,7 @@ function HorizontalRail({
         auto.current.dir = 1;
       }
 
+      // Instant set — never smooth (breaks rAF autoplay on WebKit)
       el.scrollLeft = next;
     };
 
@@ -235,7 +263,12 @@ function HorizontalRail({
 
     return () => {
       cancelAnimationFrame(auto.current.raf);
+      window.clearTimeout(auto.current.resumeTimer);
       io.disconnect();
+      window.removeEventListener("pointerup", onWinUp);
+      window.removeEventListener("pointercancel", onWinUp);
+      window.removeEventListener("touchend", onWinUp);
+      window.removeEventListener("touchcancel", onWinUp);
     };
   }, [autoPlay, autoSpeed, reduceMotion]);
 
@@ -278,10 +311,13 @@ function HorizontalRail({
           touchAction: "pan-x pan-y",
           overscrollBehaviorX: "contain",
           scrollSnapType: "none",
+          // Override inherited html { scroll-behavior: smooth } — critical for iOS autoplay
+          scrollBehavior: "auto",
         }}
         onPointerDown={(e) => {
-          // Hold autoplay only while interacting — resumes on release (no hover pause)
+          window.clearTimeout(auto.current.resumeTimer);
           auto.current.hold = true;
+          // Mouse drag-to-scrub only; touch uses native overflow swipe
           if (e.pointerType !== "mouse" || e.button !== 0) return;
           if (e.target.closest("a,button,input,select,textarea,label")) return;
           const el = ref.current;
@@ -308,19 +344,18 @@ function HorizontalRail({
           el.scrollLeft = drag.current.startScroll - dx;
         }}
         onPointerUp={() => {
-          auto.current.hold = false;
-          auto.current.last = 0;
-          if (!drag.current.active) return;
-          const wasMoved = drag.current.moved;
-          drag.current.active = false;
-          drag.current.moved = false;
-          if (wasMoved) drag.current.suppressClick = true;
+          if (drag.current.active) {
+            const wasMoved = drag.current.moved;
+            drag.current.active = false;
+            drag.current.moved = false;
+            if (wasMoved) drag.current.suppressClick = true;
+          }
+          releaseHold();
         }}
         onPointerCancel={() => {
-          auto.current.hold = false;
-          auto.current.last = 0;
           drag.current.active = false;
           drag.current.moved = false;
+          releaseHold();
         }}
         onClickCapture={(e) => {
           if (drag.current.suppressClick) {
@@ -513,9 +548,9 @@ function Home({
           initial={{ y: -72, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           transition={{ duration: 0.35, ease: IOS_EASE }}
-          className="fixed top-14 inset-x-0 z-40 px-2 sm:top-16 sm:px-4"
+          className="fixed top-14 inset-x-0 z-40 px-3 sm:top-16 sm:px-4"
         >
-          <div className="mx-auto max-w-3xl rounded-xl border border-white/10 bg-ink-900/95 px-2 py-1.5 shadow-glow backdrop-blur-xl sm:rounded-2xl sm:px-3 sm:py-2">
+          <div className="mx-auto max-w-xl">
             <PlaceholdersAndVanishInputDemo
               foodName={foodName}
               setFoodName={setFoodName}

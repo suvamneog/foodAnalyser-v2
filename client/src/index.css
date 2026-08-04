@@ -395,6 +395,9 @@
   .fa-rail {
     scrollbar-width: thin;
     scrollbar-color: rgba(232, 168, 74, 0.55) var(--fill-soft);
+    /* Must override inherited html { scroll-behavior: smooth } — otherwise
+       per-frame scrollLeft autoplay is smoothed away on iOS Safari. */
+    scroll-behavior: auto;
   }
 
   .fa-rail::-webkit-scrollbar {
