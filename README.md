@@ -133,45 +133,33 @@ The product is deployed (Vercel frontend + Render backend), JWT-secured for pers
 - Multi-week planning table for goal tracking
 - Works fully on the client (no login required)
 
-### 5. Meal Logging & Daily Tracking (`/logmeals`)
-- JWT-protected meal logging
-- Multi-item meals with quantity / unit
-- Nutrition lookup via CalorieNinjas + Indian food search fallback
-- Per-meal macro aggregation (calories, protein, carbs, fat)
-- Daily totals overview
-- Meal history with date / type / calorie filters
-- Delete individual logged meals
+### 5. Daily Tracker (`/tracker`)
+- Log meals from IFCT/INDB search or quick text entry
+- Daily calorie / macro totals against a diet-plan target
+- Water, activity, health score, and weekly overview
+- Cloud sync when signed in; XP / streak progression
 
-### 6. Search History (`/history`)
-- View recent authenticated food searches
-- Delete single items, bulk delete, or clear all history
-- Soft-gated behind login
-
-### 7. Custom Foods (`/addfoods`)
-- Authenticated users can add / edit / manage personal food entries
-- Store name, macros, pros, and cons for reuse in tracking workflows
-
-### 8. Authentication & Security
+### 6. Authentication & Security
 - Email / password signup & login
 - JWT authentication middleware for protected APIs
 - Google & GitHub OAuth (popup + `postMessage` token handoff)
 - Auth context on the frontend (`localStorage` token)
-- Soft route protection for Log Meals, History, and Add Food
+- Soft route protection for Tracker when syncing
 
-### 9. Reviews & Feedback (`/review`, `/about`)
+### 7. Reviews & Feedback (`/review`, `/about`)
 - Guest or authenticated review submission (name, rating, description)
 - Paginated reviews list and rating distribution stats
 - Real-time create / delete updates via Socket.io
 - About page with product story, feature highlights, and live review testimonials
 - Testimonial carousel UI
 
-### 10. Product Experience / UX
+### 8. Product Experience / UX
 - Responsive layout (desktop + mobile nav)
 - Framer Motion / Aceternity-style motion components (stars, vanish input, cards)
 - Loading skeletons for search results
 - Toast notifications (Sonner-based UI)
 - Dark atmospheric home experience with shooting-stars background
-- Fixed global navbar: About, Review, Calculator, Scan, Image + auth actions
+- Fixed global navbar: About, Diet Plan, Tracker, Calculator, Scan, Image + auth actions
 
 ---
 
@@ -183,13 +171,16 @@ The product is deployed (Vercel frontend + Render backend), JWT-secured for pers
 | `/about` | About | Public | Mission, features, testimonials, review stats |
 | `/review` | Reviews | Public | Submit and browse user feedback |
 | `/calculator` | Health Calculator | Public | BMR / TDEE / goal planning |
+| `/tracker` | Daily Tracker | Public / sync with auth | Log meals & daily macros |
+| `/plan` | Diet Plan | Public | Indian meal targets wired to tracker |
 | `/scan` | Barcode Scanner | Public | Scan packaged foods |
 | `/image` | Image Recognition | Public | Photo → food ID + nutrition |
 | `/login` | Login | Public | Email / password auth |
 | `/signup` | Signup | Public | Account creation + OAuth |
-| `/logmeals` | Log Meals | Auth | Log meals & daily macros |
-| `/history` | Search History | Auth | Manage past searches |
-| `/addfoods` | Add Food | Auth | Personal food library |
+| `/logmeals` | → `/tracker` | — | Legacy redirect |
+| `/addfoods` | → `/` | — | Legacy redirect |
+| `/text` | → `/` | — | Legacy redirect |
+| `/history` | → `/` | — | Legacy redirect |
 
 ---
 

@@ -817,7 +817,6 @@ export const FOOTER_LINKS = {
     { label: "Calculator", path: "/calculator" },
     { label: "Image Recognition", path: "/image" },
     { label: "Barcode Scanner", path: "/scan" },
-    { label: "Meal Tracker", path: "/logmeals" },
   ],
   resources: [
     { label: "Reviews", path: "/review" },

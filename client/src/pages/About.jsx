@@ -85,8 +85,8 @@ const METHOD = [
     title: "Log the day.",
     body:
       "Log meals fast, see running totals, watch the week take shape. Fewer numbers. More clarity.",
-    to: "/logmeals",
-    cta: "Log meals",
+    to: "/tracker",
+    cta: "Open tracker",
   },
 ];
 

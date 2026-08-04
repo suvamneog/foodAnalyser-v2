@@ -1,19 +1,15 @@
 import { useState, useEffect } from "react"
-import { Routes, Route, useLocation, useNavigate } from "react-router-dom"
+import { Routes, Route, Navigate, useLocation, useNavigate } from "react-router-dom"
 import { AuthProvider } from "./utils/AuthContext"
 import { ThemeProvider } from "./utils/ThemeContext"
 import { ReviewsProvider } from "./utils/ReviewsContext"
 import { ToastProvider } from "./components/ui/toast"
 import { PageTransition } from "./components/PageTransition"
 import ShootingStarsAndStarsBackgroundDemo from "./pages/background"
-import AddFood from "./pages/addFood"
-import LogMeals from "./pages/logMeals"
 import SignupFormDemo from "./pages/signup"
 import Login from "./pages/login"
 import CalorieCalculator from "./pages/Calculator"
 import Home from "./pages/home"
-import History from "./pages/History"
-import Text from "./pages/Text"
 import BarcodeScanner from "./pages/barcodeScanner"
 import FoodScanner from "./pages/FoodImageRecognition"
 import NavBar from "./pages/navBar"
@@ -115,13 +111,13 @@ function AppRoutes({
         />
         <Route path="/signup" element={<SignupFormDemo />} />
         <Route path="/login" element={<Login />} />
-        <Route path="/text" element={<Text output={[]} originalQuery="" />} />
         <Route path="/scan" element={<BarcodeScanner />} />
         <Route path="/image" element={<FoodScanner />} />
         <Route path="/calculator" element={<CalorieCalculator />} />
-        <Route path="/logmeals" element={<LogMeals />} />
-        <Route path="/history" element={<History />} />
-        <Route path="/addfoods" element={<AddFood />} />
+        <Route path="/logmeals" element={<Navigate to="/tracker" replace />} />
+        <Route path="/text" element={<Navigate to="/" replace />} />
+        <Route path="/addfoods" element={<Navigate to="/" replace />} />
+        <Route path="/history" element={<Navigate to="/" replace />} />
         <Route path="/about" element={<About />} />
         <Route path="/review" element={<Review />} />
         <Route path="/cuisine/:slug" element={<CuisinePage />} />

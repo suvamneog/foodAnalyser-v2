@@ -30,10 +30,6 @@ export const API_ENDPOINTS = {
   FOOD_BY_ID: `${API_BASE_URL}/api/food/by-id`,
   FOOD_CATEGORY: (id) => `${API_BASE_URL}/api/food/category/${encodeURIComponent(id)}`,
   FOOD_CATEGORIES: `${API_BASE_URL}/api/food/categories`,
-  FOOD_HISTORY: `${API_BASE_URL}/api/food/history`,
-  FOOD_HISTORY_ITEM: (id) => `${API_BASE_URL}/api/food/history/${id}`,
-  FOOD_HISTORY_BULK: `${API_BASE_URL}/api/food/history/bulk`,
-  FOOD_HISTORY_CLEAR: `${API_BASE_URL}/api/food/history/clear`,
 
   SCAN_UPLOAD: `${API_BASE_URL}/api/scan/upload`,
   SCAN_PRODUCT: (barcode) => `${API_BASE_URL}/api/scan/product/${barcode}`,
