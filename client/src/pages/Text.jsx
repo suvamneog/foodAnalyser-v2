@@ -178,7 +178,7 @@ function getHealthIndicators(food) {
   return indicators;
 }
 
-function FoodAnalyzer({ output, loading, originalQuery, searchAttempted, regionalPreset = null, onSuggestionClick, onResultSwipe }) {
+function FoodAnalyzer({ output, loading, originalQuery, searchAttempted, regionalPreset = null, onSuggestionClick }) {
   const { isAuthenticated } = useAuth();
   const [isVisible, setIsVisible] = useState(false);
   const [showLoading, setShowLoading] = useState(false);
@@ -188,10 +188,6 @@ function FoodAnalyzer({ output, loading, originalQuery, searchAttempted, regiona
   const [customize, setCustomize] = useState(() => defaultCustomizeState(100));
   const [selectedRegionId, setSelectedRegionId] = useState("all");
   const [selectedVariantId, setSelectedVariantId] = useState(null);
-
-  const notifySwipe = () => {
-    onResultSwipe?.();
-  };
 
   useEffect(() => {
     let loadingTimer;
@@ -318,7 +314,6 @@ function FoodAnalyzer({ output, loading, originalQuery, searchAttempted, regiona
 
   const handleNext = () => {
     if (output && output.length > 0) {
-      notifySwipe();
       setCurrentIndex((prevIndex) =>
         prevIndex === output.length - 1 ? 0 : prevIndex + 1
       );
@@ -327,7 +322,6 @@ function FoodAnalyzer({ output, loading, originalQuery, searchAttempted, regiona
 
   const handlePrevious = () => {
     if (output && output.length > 0) {
-      notifySwipe();
       setCurrentIndex((prevIndex) =>
         prevIndex === 0 ? output.length - 1 : prevIndex - 1
       );
@@ -433,7 +427,7 @@ function FoodAnalyzer({ output, loading, originalQuery, searchAttempted, regiona
       >
         <div className="fa-sticker relative w-full overflow-hidden border-white/12 bg-ink-900/90 p-2 sm:p-3 md:p-4">
           {/* In-card result swipe controls */}
-          {output.length > 1 ? (
+          {output.length > 1 && (
             <div className="absolute right-2 top-2 z-20 flex items-center gap-1 sm:right-3 sm:top-3 sm:gap-1.5">
               <button
                 type="button"
@@ -463,21 +457,10 @@ function FoodAnalyzer({ output, loading, originalQuery, searchAttempted, regiona
                 <ChevronRight className="h-3.5 w-3.5" />
               </button>
             </div>
-          ) : (
-            <button
-              type="button"
-              onClick={(e) => {
-                e.stopPropagation();
-                notifySwipe();
-              }}
-              className="absolute right-2 top-2 z-20 rounded-full border border-white/15 bg-black/45 px-2.5 py-1.5 text-[10px] font-semibold uppercase tracking-[0.14em] text-white/75 shadow-[inset_0_1px_0_rgba(255,255,255,0.08)] backdrop-blur-md transition hover:border-saffron-400/45 hover:text-saffron-200 sm:right-3 sm:top-3"
-            >
-              New search
-            </button>
           )}
 
           <CardItem>
-  <CardHeader className="p-2 pt-10 sm:p-3 sm:pt-11">
+  <CardHeader className={`p-2 sm:p-3 ${output.length > 1 ? "pt-10 sm:pt-11" : ""}`}>
     {/* Food Type Badge */}
     <div className="mb-2 flex justify-center sm:mb-3">
       <span className={`fa-chip-chunky text-[11px] ${badge.color.includes('green') || badge.color.includes('emerald') ? 'fa-sticker-leaf' : badge.color.includes('orange') || badge.color.includes('yellow') || badge.color.includes('red') ? 'fa-sticker-ember' : badge.color.includes('purple') ? 'fa-sticker-plum' : badge.color.includes('blue') ? 'fa-sticker-sky' : 'fa-sticker-saffron'}`}>
@@ -793,10 +776,7 @@ function FoodAnalyzer({ output, loading, originalQuery, searchAttempted, regiona
           {output.map((_, index) => (
             <button
               key={index}
-              onClick={() => {
-                if (index !== currentIndex) notifySwipe();
-                setCurrentIndex(index);
-              }}
+              onClick={() => setCurrentIndex(index)}
               className={`h-2.5 rounded-full transition-all ${
                 index === currentIndex 
                   ? 'w-6 bg-saffron-400 shadow-[0_0_8px_rgba(232,168,74,0.55)]' 

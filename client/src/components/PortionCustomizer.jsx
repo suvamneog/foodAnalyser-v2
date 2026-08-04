@@ -35,7 +35,7 @@ export default function PortionCustomizer({
           <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-saffron-200/90">
             Customise your plate
           </p>
-          <p className="mt-0.5 text-[11px] text-white/50">
+          <p className="mt-0.5 hidden text-[11px] text-white/50 sm:block">
             Portion + oil/ghee — calories update for your household
           </p>
         </div>
@@ -45,22 +45,25 @@ export default function PortionCustomizer({
       </button>
 
       {!state.open && (
-        <div className="relative mt-2.5 space-y-1 text-[11px] text-white/55">
+        <div className="relative mt-2.5 text-[11px] text-white/55">
           <p>
-            Portion: <span className="font-semibold text-white/85">{nutrition.portionGrams} g</span>
+            <span className="font-semibold text-white/85">{nutrition.portionGrams} g</span>
             {nutrition.oilLabel && (
               <>
                 {" · "}
                 <span className="font-semibold text-white/85">{nutrition.oilLabel}</span>
-                <span className="text-amber-300/80"> (+{Math.round(nutrition.oilCalories)} kcal)</span>
+                <span className="text-amber-300/80">
+                  {" "}
+                  (+{Math.round(nutrition.oilCalories)} kcal)
+                </span>
               </>
             )}
-          </p>
-          <p className="text-white/80">
-            Plate total:{" "}
-            <strong className="fa-num text-base text-white">
-              {Math.round(nutrition.calories)} kcal
-            </strong>
+            <span className="hidden text-white/80 sm:inline">
+              {" · "}
+              <strong className="fa-num text-white">
+                {Math.round(nutrition.calories)} kcal
+              </strong>
+            </span>
           </p>
         </div>
       )}
