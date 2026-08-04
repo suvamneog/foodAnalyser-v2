@@ -20,6 +20,7 @@ import NavBar from "./pages/navBar"
 import About from "./pages/About"
 import Review from "./pages/review"
 import CuisinePage from "./pages/CuisinePage"
+import CategoryPage from "./pages/CategoryPage"
 import CompareStaples from "./pages/CompareStaples"
 import DietPlan from "./pages/DietPlan"
 import DailyTracker from "./pages/DailyTracker"
@@ -79,6 +80,7 @@ function AppRoutes({
         <Route path="/about" element={<About />} />
         <Route path="/review" element={<Review />} />
         <Route path="/cuisine/:slug" element={<CuisinePage />} />
+        <Route path="/category/:id" element={<CategoryPage />} />
         <Route path="/compare" element={<CompareStaples />} />
         <Route path="/compare/:familyId" element={<CompareStaples />} />
         <Route path="/plan" element={<DietPlan />} />

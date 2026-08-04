@@ -986,54 +986,49 @@ function Home({
             fadeUp={fadeUp}
             eyebrow="Browse"
             title="Browse by Category"
-            subtitle="Find foods by goal — from high protein plates to lighter breakfasts."
+            subtitle="Open a verified IFCT/INDB list — filters and curated codes, not marketing claims."
           />
           <div className="mt-12 grid grid-cols-2 gap-3.5 sm:gap-4 md:grid-cols-3 lg:grid-cols-5">
             {CATEGORIES.map((cat, i) => {
               const Icon = CATEGORY_ICONS[cat.icon] || Leaf;
               return (
-                <motion.button
+                <motion.div
                   key={cat.id}
-                  type="button"
                   {...fadeUp}
                   transition={{ ...fadeUp.transition, delay: Math.min(i * 0.03, 0.24) }}
                   whileHover={reduceMotion ? undefined : { y: -5 }}
-                  onClick={() =>
-                    runExactFood({
-                      match: cat.match,
-                      label: cat.label,
-                      query: cat.query,
-                    })
-                  }
-                  disabled={loading}
-                  aria-label={`Browse ${cat.label}`}
-                  className="fa-card group relative min-h-[220px] overflow-hidden text-left disabled:opacity-60 sm:min-h-[250px]"
                 >
-                  <img
-                    src={cat.image}
-                    alt=""
-                    className="fa-img-zoom absolute inset-0 h-full w-full object-cover"
-                    loading="lazy"
-                    decoding="async"
-                  />
-                  <div className={`absolute inset-0 bg-gradient-to-t ${cat.accent}`} />
-                  <div className="fa-on-media absolute inset-0 flex flex-col justify-between p-4">
-                    <div className="inline-flex h-9 w-9 items-center justify-center rounded-xl border border-white/10 bg-black/35 text-saffron-300 backdrop-blur-sm">
-                      <Icon className="h-4 w-4" aria-hidden="true" />
+                  <Link
+                    to={`/category/${cat.id}`}
+                    aria-label={`Browse ${cat.label}`}
+                    className="fa-card group relative flex min-h-[220px] overflow-hidden text-left sm:min-h-[250px]"
+                  >
+                    <img
+                      src={cat.image}
+                      alt=""
+                      className="fa-img-zoom absolute inset-0 h-full w-full object-cover"
+                      loading="lazy"
+                      decoding="async"
+                    />
+                    <div className={`absolute inset-0 bg-gradient-to-t ${cat.accent}`} />
+                    <div className="fa-on-media absolute inset-0 flex flex-col justify-between p-4">
+                      <div className="inline-flex h-9 w-9 items-center justify-center rounded-xl border border-white/10 bg-black/35 text-saffron-300 backdrop-blur-sm">
+                        <Icon className="h-4 w-4" aria-hidden="true" />
+                      </div>
+                      <div>
+                        <p className="font-display text-sm font-bold text-white sm:text-base">
+                          {cat.label}
+                        </p>
+                        <p className="mt-1.5 text-[11px] leading-snug text-white/55 sm:text-xs">
+                          {cat.blurb}
+                        </p>
+                        <p className="mt-2.5 text-[10px] font-semibold uppercase tracking-wider text-white/40">
+                          {cat.examples.slice(0, 3).join(" · ")}
+                        </p>
+                      </div>
                     </div>
-                    <div>
-                      <p className="font-display text-sm font-bold text-white sm:text-base">
-                        {cat.label}
-                      </p>
-                      <p className="mt-1.5 text-[11px] leading-snug text-white/55 sm:text-xs">
-                        {cat.examples.slice(0, 3).join(" · ")}
-                      </p>
-                      <p className="mt-2.5 text-[10px] font-semibold uppercase tracking-wider text-white/40">
-                        {cat.count} foods
-                      </p>
-                    </div>
-                  </div>
-                </motion.button>
+                  </Link>
+                </motion.div>
               );
             })}
           </div>

@@ -56,6 +56,7 @@ function mapFoodItems(foodItems) {
       serving_description: foodItem.serving_description || "per 100g",
       source: foodItem.source || "Unknown Source",
       sourceShort: foodItem.sourceShort || null,
+      food_group: foodItem.food_group || null,
       cut: foodItem.cut || null,
       preparation: foodItem.preparation || null,
       isRaw: foodItem.isRaw || false,
@@ -122,6 +123,36 @@ export const fetchFoodById = async ({ source, code, label }) => {
     if (localItem && (localItem.calories != null || localItem.protein_g != null)) {
       return [localItem];
     }
+    attachAxiosMeta(error);
+  }
+};
+
+/**
+ * Browse a verified category list (macro filter or curated codes).
+ */
+export const fetchFoodCategory = async (id, { limit = 48 } = {}) => {
+  const url = `${API_ENDPOINTS.FOOD_CATEGORY(id)}?limit=${encodeURIComponent(limit)}`;
+  try {
+    const response = await axios.get(url, {
+      headers: authHeaders(),
+      timeout: 25000,
+    });
+    const data = response.data || {};
+    const items = mapFoodItems(Array.isArray(data.items) ? data.items : []);
+    return {
+      id: data.id,
+      label: data.label,
+      mode: data.mode,
+      criteria: data.criteria,
+      disclaimer: data.disclaimer,
+      examples: data.examples || [],
+      per: data.per || "100g",
+      sources: data.sources || [],
+      totalMatching: data.totalMatching ?? items.length,
+      shown: data.shown ?? items.length,
+      items,
+    };
+  } catch (error) {
     attachAxiosMeta(error);
   }
 };

@@ -14,6 +14,7 @@ const auth = require("../middleware/authMiddleware");
 const FoodSearch = require("../models/foodSearch");
 const { expandQuery } = require("../utils/foodAliases");
 const { scoreName, rankCandidates, isDishQuery } = require("../utils/searchRanking");
+const { browseCategory, listCategories } = require("../utils/categoryBrowse");
 require("dotenv").config();
 
 // 🥗 Load IFCT dataset
@@ -407,6 +408,55 @@ function searchINDB(query, preferCooked) {
   });
   return ranked.map(({ item, name, score }) => ({ item, name, score }));
 }
+
+// ------------------------------------
+// 🗂️ Browse by category (verified macro filters + curated codes)
+// GET /api/food/category/:id?limit=48
+// GET /api/food/categories
+// ------------------------------------
+router.get("/categories", (_req, res) => {
+  res.json({ categories: listCategories() });
+});
+
+router.get("/category/:id", (req, res) => {
+  try {
+    const id = String(req.params.id || "").trim().toLowerCase();
+    const limit = Math.min(80, Math.max(1, Number(req.query.limit) || 48));
+    const result = browseCategory(id, ifctData, indbData, { limit });
+    if (!result) {
+      return res.status(404).json({
+        error: "Unknown category",
+        categories: listCategories().map((c) => c.id),
+      });
+    }
+
+    const items = result.rows.map(({ kind, item }) => {
+      if (kind === "IFCT") {
+        const row = formatIfctItem(item);
+        row.food_group = item.grup || null;
+        return row;
+      }
+      return formatIndbItem(item);
+    });
+
+    return res.json({
+      id: result.meta.id,
+      label: result.meta.label,
+      mode: result.meta.mode,
+      criteria: result.meta.criteria,
+      disclaimer: result.meta.disclaimer,
+      examples: result.meta.examples,
+      per: result.meta.per,
+      sources: result.meta.sources,
+      totalMatching: result.meta.totalMatching,
+      shown: result.meta.shown,
+      items,
+    });
+  } catch (err) {
+    console.error("❌ /category error:", err.message);
+    return res.status(500).json({ error: "Failed to load category foods" });
+  }
+});
 
 // ------------------------------------
 // 🎯 Exact lookup by dataset code (Discover cards)

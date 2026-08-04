@@ -28,6 +28,8 @@ export const API_ENDPOINTS = {
   FOOD_SEARCH: `${API_BASE_URL}/api/food/search`,
   FOOD_SUGGEST: `${API_BASE_URL}/api/food/suggest`,
   FOOD_BY_ID: `${API_BASE_URL}/api/food/by-id`,
+  FOOD_CATEGORY: (id) => `${API_BASE_URL}/api/food/category/${encodeURIComponent(id)}`,
+  FOOD_CATEGORIES: `${API_BASE_URL}/api/food/categories`,
   FOOD_HISTORY: `${API_BASE_URL}/api/food/history`,
   FOOD_HISTORY_ITEM: (id) => `${API_BASE_URL}/api/food/history/${id}`,
   FOOD_HISTORY_BULK: `${API_BASE_URL}/api/food/history/bulk`,
