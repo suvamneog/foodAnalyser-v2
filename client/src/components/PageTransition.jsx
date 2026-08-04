@@ -1,24 +1,58 @@
 /* eslint-disable react/prop-types */
+import { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { pageVariants, fadeUpProps, mountFadeProps, IOS_EASE, MOTION } from "../utils/motion";
 
+const INSTANT_EVENT = "fa-instant-nav";
+
+/** Call right before navigating to home results — skips blank page-transition wait. */
+export function markInstantNavigation() {
+  try {
+    window.dispatchEvent(new Event(INSTANT_EVENT));
+  } catch {
+    /* ignore */
+  }
+}
+
+const instantVariants = {
+  initial: { opacity: 1 },
+  animate: { opacity: 1, transition: { duration: 0 } },
+  exit: { opacity: 0, transition: { duration: 0 } },
+};
+
 /**
  * Soft route enter/exit — wraps page trees so every navigation feels iOS-smooth.
+ * Analyse handoffs (category/cuisine → home results) skip the wait-for-exit flash.
  */
 export function PageTransition({ children }) {
   const location = useLocation();
   const reduceMotion = useReducedMotion();
+  const [instant, setInstant] = useState(false);
+  const handoff = Boolean(location.state?.cuisineSearch);
+  const skipWait = instant || handoff;
+
+  useEffect(() => {
+    const onInstant = () => setInstant(true);
+    window.addEventListener(INSTANT_EVENT, onInstant);
+    return () => window.removeEventListener(INSTANT_EVENT, onInstant);
+  }, []);
+
+  useEffect(() => {
+    if (!instant) return undefined;
+    const t = window.setTimeout(() => setInstant(false), 400);
+    return () => window.clearTimeout(t);
+  }, [instant, location.pathname]);
 
   if (reduceMotion) {
     return <div key={location.pathname}>{children}</div>;
   }
 
   return (
-    <AnimatePresence mode="wait" initial={false}>
+    <AnimatePresence mode={skipWait ? "sync" : "wait"} initial={false}>
       <motion.div
         key={location.pathname}
-        variants={pageVariants}
+        variants={skipWait ? instantVariants : pageVariants}
         initial="initial"
         animate="animate"
         exit="exit"

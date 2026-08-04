@@ -401,18 +401,30 @@ function Home({
   setLoading,
   setOriginalQuery,
   originalQuery,
+  searchHandoff = false,
 }) {
-  const [searchAttempted, setSearchAttempted] = useState(false);
-  const [stickySearch, setStickySearch] = useState(false);
+  const location = useLocation();
+  const navigate = useNavigate();
+  const [searchAttempted, setSearchAttempted] = useState(
+    () => Boolean(location.state?.cuisineSearch?.query) || searchHandoff
+  );
+  const [stickySearch, setStickySearch] = useState(() =>
+    Boolean(location.state?.cuisineSearch?.query)
+  );
   const [showTop, setShowTop] = useState(false);
   const [regionalPreset, setRegionalPreset] = useState(null);
   const resultsRef = useRef(null);
   const heroSearchRef = useRef(null);
-  const shouldScrollRef = useRef(false);
+  const shouldScrollRef = useRef(Boolean(location.state?.cuisineSearch?.query));
   const reduceMotion = useReducedMotion();
   const fadeUp = useFadeUp(reduceMotion);
-  const location = useLocation();
-  const navigate = useNavigate();
+
+  // Keep results mode if App already applied the handoff before mount
+  useEffect(() => {
+    if (searchHandoff || (originalQuery && Array.isArray(output) && output.length > 0)) {
+      setSearchAttempted(true);
+    }
+  }, [searchHandoff, originalQuery, output]);
 
   /** Results view: keep one compact sticky search; hide the big hero search. */
   const viewingResults =
@@ -425,12 +437,17 @@ function Home({
     []
   );
 
-  // Cuisine / compare pages can hand off a completed IFCT/INDB search
+  // Cuisine / category / compare pages can hand off a completed IFCT/INDB search
   useEffect(() => {
     const payload = location.state?.cuisineSearch;
     if (!payload?.query) return;
 
     const apply = async () => {
+      setSearchAttempted(true);
+      setRegionalPreset(payload.regionalPreset || null);
+      shouldScrollRef.current = true;
+
+      // App may already have applied results — only fetch if missing
       let results = Array.isArray(payload.results) ? payload.results : [];
       if (results.length === 0) {
         try {
@@ -439,18 +456,15 @@ function Home({
         } catch {
           results = [];
         }
+        results.originalQuery = payload.query;
+        setOutput(results);
+        setOriginalQuery(payload.query);
+        setFoodName("");
       }
-      results.originalQuery = payload.query;
-      setOutput(results);
-      setOriginalQuery(payload.query);
-      setFoodName("");
-      setSearchAttempted(true);
-      setRegionalPreset(payload.regionalPreset || null);
-      shouldScrollRef.current = true;
-      navigate(location.pathname, { replace: true, state: {} });
+      // Router state is cleared by App after paint
     };
     apply();
-  }, [location.state, location.pathname, navigate, setFoodName, setOriginalQuery, setOutput]);
+  }, [location.state, setFoodName, setOriginalQuery, setOutput]);
 
   useEffect(() => {
     const onScroll = () => {

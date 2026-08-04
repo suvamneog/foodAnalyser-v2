@@ -9,6 +9,7 @@ import {
 } from "../data/discoveryData";
 import { fetchFoodCategory } from "../utils/fetchFoodData";
 import { IOS_EASE, MOTION } from "../utils/motion";
+import { markInstantNavigation } from "../components/PageTransition";
 
 function fmt(n, digits = 0) {
   if (n == null || !Number.isFinite(Number(n))) return "—";
@@ -56,6 +57,9 @@ export default function CategoryPage() {
     setAnalysing(true);
     setError(null);
     try {
+      markInstantNavigation();
+      // Let PageTransition re-render with instant exit, then navigate
+      await new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r)));
       navigate("/", {
         state: {
           cuisineSearch: {

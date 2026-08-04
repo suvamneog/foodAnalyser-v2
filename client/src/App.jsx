@@ -1,5 +1,5 @@
-import { useState } from "react"
-import { Routes, Route, useLocation } from "react-router-dom"
+import { useState, useEffect } from "react"
+import { Routes, Route, useLocation, useNavigate } from "react-router-dom"
 import { AuthProvider } from "./utils/AuthContext"
 import { ThemeProvider } from "./utils/ThemeContext"
 import { ReviewsProvider } from "./utils/ReviewsContext"
@@ -38,6 +38,36 @@ function AppRoutes({
   setOriginalQuery,
 }) {
   const location = useLocation();
+  const navigate = useNavigate();
+  const handoff = location.state?.cuisineSearch;
+  const handoffId = handoff?.query
+    ? `${handoff.query}::${handoff.results?.[0]?.food_code || ""}::${
+        Array.isArray(handoff.results) ? handoff.results.length : 0
+      }`
+    : null;
+  const [seenHandoff, setSeenHandoff] = useState(null);
+
+  // Apply analyse handoff during render so Home paints with results (no empty-home flash)
+  if (handoffId && handoffId !== seenHandoff) {
+    setSeenHandoff(handoffId);
+    if (Array.isArray(handoff.results) && handoff.results.length > 0) {
+      const results = [...handoff.results];
+      results.originalQuery = handoff.query;
+      setOutput(results);
+      setOriginalQuery(handoff.query);
+      setFoodName("");
+    }
+  }
+
+  // Clear one-shot router state after paint (Home may still read it for scroll/preset)
+  useEffect(() => {
+    if (!handoffId || handoffId !== seenHandoff) return;
+    if (!location.state?.cuisineSearch) return;
+    const t = window.setTimeout(() => {
+      navigate(location.pathname, { replace: true, state: {} });
+    }, 0);
+    return () => window.clearTimeout(t);
+  }, [handoffId, seenHandoff, location.pathname, location.state, navigate]);
 
   return (
     <PageTransition>
@@ -64,6 +94,7 @@ function AppRoutes({
                 setLoading={setLoading}
                 setOriginalQuery={setOriginalQuery}
                 originalQuery={originalQuery}
+                searchHandoff={Boolean(handoffId || (originalQuery && output?.length))}
               />
             </ShootingStarsAndStarsBackgroundDemo>
           }

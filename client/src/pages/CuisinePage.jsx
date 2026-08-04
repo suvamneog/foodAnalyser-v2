@@ -9,6 +9,7 @@ import {
 } from "../data/discoveryData";
 import { fetchFoodData, fetchFoodById } from "../utils/fetchFoodData";
 import { IOS_EASE, MOTION } from "../utils/motion";
+import { markInstantNavigation } from "../components/PageTransition";
 
 export default function CuisinePage() {
   const { slug } = useParams();
@@ -58,6 +59,8 @@ export default function CuisinePage() {
           "Nutrition for this dish isn’t on the live API yet. Try again after the server updates, or search a similar IFCT/INDB dish."
         );
       }
+      markInstantNavigation();
+      await new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r)));
       navigate("/", {
         state: {
           cuisineSearch: {
