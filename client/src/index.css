@@ -365,20 +365,6 @@
     color: var(--text);
   }
 
-  /* Keep light text on photos / dark media overlays in both themes */
-  .fa-on-media .text-white,
-  .fa-on-media [class*="text-white"] {
-    color: #fff !important;
-  }
-  html[data-theme="light"] .fa-on-media .text-saffron-200,
-  html[data-theme="light"] .fa-on-media .text-saffron-300,
-  html[data-theme="light"] .fa-on-media [class*="text-saffron"] {
-    color: #f0c27a !important;
-  }
-  html[data-theme="light"] .fa-on-media .border-white\/10,
-  html[data-theme="light"] .fa-on-media .border-white\/15 {
-    border-color: rgba(255, 255, 255, 0.2) !important;
-  }
 }
 
 @layer utilities {
@@ -653,34 +639,40 @@ html[data-theme="light"] .bg-ink-700 {
   background-color: var(--surface-3) !important;
 }
 
-html[data-theme="light"] .text-white {
-  color: var(--text) !important;
+/* Catch-all so arbitrary opacities (e.g. /52, /58) never stay white on cream */
+html[data-theme="light"] [class*="text-white"] {
+  color: var(--muted) !important;
 }
-html[data-theme="light"] .text-white\/90 {
-  color: rgba(22, 24, 31, 0.9) !important;
-}
+html[data-theme="light"] .text-white,
+html[data-theme="light"] .text-white\/90,
 html[data-theme="light"] .text-white\/85,
 html[data-theme="light"] .text-white\/80 {
-  color: rgba(22, 24, 31, 0.8) !important;
+  color: var(--text) !important;
 }
+html[data-theme="light"] .text-white\/75,
 html[data-theme="light"] .text-white\/70,
 html[data-theme="light"] .text-white\/65 {
-  color: rgba(22, 24, 31, 0.68) !important;
+  color: var(--muted-strong) !important;
 }
 html[data-theme="light"] .text-white\/60,
+html[data-theme="light"] .text-white\/58,
 html[data-theme="light"] .text-white\/55,
+html[data-theme="light"] .text-white\/52,
 html[data-theme="light"] .text-white\/50 {
   color: var(--muted) !important;
 }
 html[data-theme="light"] .text-white\/45,
+html[data-theme="light"] .text-white\/42,
 html[data-theme="light"] .text-white\/40,
 html[data-theme="light"] .text-white\/35 {
-  color: rgba(22, 24, 31, 0.42) !important;
+  color: rgba(22, 24, 31, 0.45) !important;
 }
+html[data-theme="light"] .text-white\/32,
 html[data-theme="light"] .text-white\/30,
+html[data-theme="light"] .text-white\/28,
 html[data-theme="light"] .text-white\/25,
 html[data-theme="light"] .text-white\/20 {
-  color: rgba(22, 24, 31, 0.28) !important;
+  color: rgba(22, 24, 31, 0.32) !important;
 }
 
 html[data-theme="light"] .border-white\/8,
@@ -858,12 +850,13 @@ html[data-theme="light"] .fa-collage-glass {
     filter: blur(2.5px) saturate(1.08);
   }
 
-html[data-theme="light"] .fa-collage-glass {
-  background: linear-gradient(
-    160deg,
-    rgba(255, 255, 255, 0.35) 0%,
-    rgba(255, 248, 240, 0.2) 100%
-  );
+  html[data-theme="light"] .fa-collage-glass {
+    background: linear-gradient(
+      160deg,
+      rgba(255, 255, 255, 0.35) 0%,
+      rgba(255, 248, 240, 0.2) 100%
+    );
+  }
 }
 
 /* Testimonials wall cards — soft surface in light mode */
@@ -872,5 +865,69 @@ html[data-theme="light"] .fa-testimonial-card {
   background: rgba(255, 255, 255, 0.92) !important;
   box-shadow: 0 16px 36px rgba(40, 28, 10, 0.08) !important;
 }
+
+/*
+ * Photo / media overlays must keep light text in light mode.
+ * These rules are unlayered and come AFTER the cream remaps so they win
+ * over `html[data-theme=light] .text-white { color: ink }` (cascade layers
+ * previously let remaps beat .fa-on-media inside @layer base).
+ */
+html[data-theme="light"] .fa-on-media,
+html[data-theme="light"] .fa-on-media .text-white,
+html[data-theme="light"] .fa-on-media [class*="text-white"],
+html[data-theme="light"] .fa-on-media .hover\:text-white:hover {
+  color: #fff !important;
+}
+
+html[data-theme="light"] .fa-on-media .text-white\/90,
+html[data-theme="light"] .fa-on-media .text-white\/85,
+html[data-theme="light"] .fa-on-media .text-white\/80 {
+  color: rgba(255, 255, 255, 0.88) !important;
+}
+
+html[data-theme="light"] .fa-on-media .text-white\/70,
+html[data-theme="light"] .fa-on-media .text-white\/65,
+html[data-theme="light"] .fa-on-media .text-white\/60,
+html[data-theme="light"] .fa-on-media .text-white\/58,
+html[data-theme="light"] .fa-on-media .text-white\/55 {
+  color: rgba(255, 255, 255, 0.62) !important;
+}
+
+html[data-theme="light"] .fa-on-media .text-white\/50,
+html[data-theme="light"] .fa-on-media .text-white\/45,
+html[data-theme="light"] .fa-on-media .text-white\/40,
+html[data-theme="light"] .fa-on-media .text-white\/35 {
+  color: rgba(255, 255, 255, 0.45) !important;
+}
+
+html[data-theme="light"] .fa-on-media .text-saffron-100,
+html[data-theme="light"] .fa-on-media .text-saffron-200,
+html[data-theme="light"] .fa-on-media .text-saffron-300,
+html[data-theme="light"] .fa-on-media [class*="text-saffron"] {
+  color: #f0c27a !important;
+}
+
+html[data-theme="light"] .fa-on-media .border-white\/8,
+html[data-theme="light"] .fa-on-media .border-white\/10,
+html[data-theme="light"] .fa-on-media .border-white\/12,
+html[data-theme="light"] .fa-on-media .border-white\/15,
+html[data-theme="light"] .fa-on-media .border-white\/20 {
+  border-color: rgba(255, 255, 255, 0.22) !important;
+}
+
+html[data-theme="light"] .fa-on-media .bg-white\/10,
+html[data-theme="light"] .fa-on-media .bg-white\/\[0\.1\],
+html[data-theme="light"] .fa-on-media .hover\:bg-white\/20:hover {
+  background-color: rgba(255, 255, 255, 0.14) !important;
+}
+
+html[data-theme="light"] .fa-on-media .bg-black\/20,
+html[data-theme="light"] .fa-on-media .bg-black\/25,
+html[data-theme="light"] .fa-on-media .bg-black\/30,
+html[data-theme="light"] .fa-on-media .bg-black\/35,
+html[data-theme="light"] .fa-on-media .bg-black\/40,
+html[data-theme="light"] .fa-on-media .bg-ink-950\/75,
+html[data-theme="light"] .fa-on-media .bg-ink-950\/50 {
+  background-color: rgba(0, 0, 0, 0.4) !important;
 }
 
