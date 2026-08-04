@@ -425,7 +425,7 @@ function FoodAnalyzer({ output, loading, originalQuery, searchAttempted, regiona
         onMouseUp={handleMouseUp}
         style={{ cursor: output.length > 1 ? 'grab' : 'default' }}
       >
-        <div className="fa-sticker relative w-full overflow-hidden border-white/12 bg-ink-900/90 p-2 sm:p-3 md:p-4">
+        <div className="fa-sticker fa-result-card relative w-full overflow-hidden border-white/12 bg-ink-900/90 p-2 sm:p-3 md:p-4">
           {/* In-card result swipe controls */}
           {output.length > 1 && (
             <div className="fa-result-swap absolute right-2 top-2 z-20 flex items-center gap-1 sm:right-3 sm:top-3 sm:gap-1.5">

@@ -1009,3 +1009,129 @@ html[data-theme="light"] .fa-on-media .bg-ink-950\/50 {
   background-color: rgba(0, 0, 0, 0.4) !important;
 }
 
+/* Accent utilities with opacity modifiers (text-saffron-200/80 etc.) */
+html[data-theme="light"] [class*="text-saffron"] {
+  color: #8f5a12 !important;
+}
+html[data-theme="light"] [class*="text-mint"],
+html[data-theme="light"] [class*="text-leaf"] {
+  color: #1f6b3d !important;
+}
+html[data-theme="light"] [class*="text-ember"],
+html[data-theme="light"] [class*="text-amber"] {
+  color: #b45309 !important;
+}
+html[data-theme="light"] [class*="text-sky2"],
+html[data-theme="light"] .text-sky-300,
+html[data-theme="light"] .text-blue-400 {
+  color: #1d6aa5 !important;
+}
+html[data-theme="light"] .text-green-400 {
+  color: #1f7a3a !important;
+}
+html[data-theme="light"] .text-yellow-400 {
+  color: #a16207 !important;
+}
+html[data-theme="light"] .text-gray-400 {
+  color: rgba(22, 24, 31, 0.55) !important;
+}
+
+/*
+ * Nutrition result card — bump muted labels so cream surfaces stay readable.
+ * (Global /35–/45 remaps are still a bit soft on white stickers.)
+ */
+html[data-theme="light"] .fa-result-card .text-white,
+html[data-theme="light"] .fa-result-card .text-white\/90,
+html[data-theme="light"] .fa-result-card .text-white\/85,
+html[data-theme="light"] .fa-result-card .text-white\/80,
+html[data-theme="light"] .fa-result-card .fa-num {
+  color: var(--text) !important;
+}
+
+html[data-theme="light"] .fa-result-card .text-white\/75,
+html[data-theme="light"] .fa-result-card .text-white\/70,
+html[data-theme="light"] .fa-result-card .text-white\/65,
+html[data-theme="light"] .fa-result-card .text-white\/60,
+html[data-theme="light"] .fa-result-card .text-white\/55,
+html[data-theme="light"] .fa-result-card .text-white\/50 {
+  color: rgba(22, 24, 31, 0.68) !important;
+}
+
+html[data-theme="light"] .fa-result-card .text-white\/45,
+html[data-theme="light"] .fa-result-card .text-white\/42,
+html[data-theme="light"] .fa-result-card .text-white\/40,
+html[data-theme="light"] .fa-result-card .text-white\/35,
+html[data-theme="light"] .fa-result-card .text-white\/30 {
+  color: rgba(22, 24, 31, 0.55) !important;
+}
+
+html[data-theme="light"] .fa-result-card [class*="text-saffron"] {
+  color: #8f5a12 !important;
+}
+
+html[data-theme="light"] .fa-result-card .fa-sticker-leaf .text-white\/60,
+html[data-theme="light"] .fa-result-card .fa-sticker-leaf .text-white\/50 {
+  color: #1a5c32 !important;
+}
+html[data-theme="light"] .fa-result-card .fa-sticker-sky .text-white\/60,
+html[data-theme="light"] .fa-result-card .fa-sticker-sky .text-white\/50 {
+  color: #1a5f96 !important;
+}
+html[data-theme="light"] .fa-result-card .fa-sticker-ember .text-white\/60,
+html[data-theme="light"] .fa-result-card .fa-sticker-ember .text-white\/50 {
+  color: #9a3412 !important;
+}
+
+html[data-theme="light"] .fa-result-card .fa-sticker-leaf .fa-num,
+html[data-theme="light"] .fa-result-card .fa-sticker-leaf .text-white,
+html[data-theme="light"] .fa-result-card .fa-sticker-sky .fa-num,
+html[data-theme="light"] .fa-result-card .fa-sticker-sky .text-white,
+html[data-theme="light"] .fa-result-card .fa-sticker-ember .fa-num,
+html[data-theme="light"] .fa-result-card .fa-sticker-ember .text-white,
+html[data-theme="light"] .fa-result-card .fa-sticker-saffron .fa-num,
+html[data-theme="light"] .fa-result-card .fa-sticker-saffron .text-white {
+  color: var(--text) !important;
+}
+
+html[data-theme="light"] .fa-result-card .fa-sticker-saffron [class*="text-saffron"],
+html[data-theme="light"] .fa-result-card .fa-sticker-saffron .text-saffron-200\/80,
+html[data-theme="light"] .fa-result-card .fa-sticker-saffron .text-saffron-200\/90 {
+  color: #7a4a0e !important;
+}
+
+html[data-theme="light"] .fa-result-card .rounded-xl.border.border-white\/10.bg-black\/30,
+html[data-theme="light"] .fa-result-card .bg-black\/30 {
+  background-color: rgba(22, 24, 31, 0.04) !important;
+  border-color: rgba(22, 24, 31, 0.1) !important;
+}
+
+/* Keep swap controls themed (already handled) — don't inherit result-card ink onto icons wrongly */
+html[data-theme="light"] .fa-result-card .fa-result-swap-btn {
+  color: #16181f !important;
+}
+html[data-theme="light"] .fa-result-card .fa-result-swap-btn:hover {
+  color: #a8691a !important;
+}
+html[data-theme="light"] .fa-result-card .fa-result-swap-count {
+  color: rgba(22, 24, 31, 0.72) !important;
+}
+html[data-theme="light"] .fa-result-card .fa-result-swap-current {
+  color: #a8691a !important;
+}
+html[data-theme="light"] .fa-result-card .fa-result-swap-sep {
+  color: rgba(22, 24, 31, 0.28) !important;
+}
+
+/* Restore pale-gold accents only on photo overlays */
+html[data-theme="light"] .fa-on-media [class*="text-saffron"] {
+  color: #f0c27a !important;
+}
+html[data-theme="light"] .fa-on-media [class*="text-mint"],
+html[data-theme="light"] .fa-on-media [class*="text-leaf"] {
+  color: #9ee0b8 !important;
+}
+html[data-theme="light"] .fa-on-media [class*="text-ember"],
+html[data-theme="light"] .fa-on-media [class*="text-amber"] {
+  color: #ffb089 !important;
+}
+
