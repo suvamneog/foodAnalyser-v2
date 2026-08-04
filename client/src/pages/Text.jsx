@@ -428,21 +428,21 @@ function FoodAnalyzer({ output, loading, originalQuery, searchAttempted, regiona
         <div className="fa-sticker relative w-full overflow-hidden border-white/12 bg-ink-900/90 p-2 sm:p-3 md:p-4">
           {/* In-card result swipe controls */}
           {output.length > 1 && (
-            <div className="absolute right-2 top-2 z-20 flex items-center gap-1 sm:right-3 sm:top-3 sm:gap-1.5">
+            <div className="fa-result-swap absolute right-2 top-2 z-20 flex items-center gap-1 sm:right-3 sm:top-3 sm:gap-1.5">
               <button
                 type="button"
                 onClick={(e) => {
                   e.stopPropagation();
                   handlePrevious();
                 }}
-                className="grid h-8 w-8 place-items-center rounded-full border border-white/15 bg-black/45 text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.08)] backdrop-blur-md transition hover:border-saffron-400/45 hover:bg-black/60"
+                className="fa-result-swap-btn"
                 aria-label="Previous result"
               >
                 <ChevronLeft className="h-3.5 w-3.5" />
               </button>
-              <div className="min-w-[2.75rem] rounded-full border border-white/12 bg-black/45 px-2 py-1 text-center text-[10px] font-semibold tabular-nums text-white/80 backdrop-blur-md">
-                <span className="text-saffron-200">{currentIndex + 1}</span>
-                <span className="text-white/35">/</span>
+              <div className="fa-result-swap-count">
+                <span className="fa-result-swap-current">{currentIndex + 1}</span>
+                <span className="fa-result-swap-sep">/</span>
                 <span>{output.length}</span>
               </div>
               <button
@@ -451,7 +451,7 @@ function FoodAnalyzer({ output, loading, originalQuery, searchAttempted, regiona
                   e.stopPropagation();
                   handleNext();
                 }}
-                className="grid h-8 w-8 place-items-center rounded-full border border-white/15 bg-black/45 text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.08)] backdrop-blur-md transition hover:border-saffron-400/45 hover:bg-black/60"
+                className="fa-result-swap-btn"
                 aria-label="Next result"
               >
                 <ChevronRight className="h-3.5 w-3.5" />
