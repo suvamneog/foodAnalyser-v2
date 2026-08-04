@@ -804,7 +804,6 @@ export const QUICK_ACTIONS = [
   { label: "Analyze Food Image", path: "/image" },
   { label: "Scan Barcode", path: "/scan" },
   { label: "Compare regions", path: "/compare/roti" },
-  { label: "Calculate Calories", path: "/calculator" },
 ];
 
 export const FOOTER_LINKS = {
@@ -814,7 +813,7 @@ export const FOOTER_LINKS = {
     { label: "Daily Tracker", path: "/tracker" },
     { label: "Recipe Nutrition", path: "/recipe" },
     { label: "Compare staples", path: "/compare/roti" },
-    { label: "Calculator", path: "/calculator" },
+    { label: "Advanced calculator", path: "/calculator" },
     { label: "Image Recognition", path: "/image" },
     { label: "Barcode Scanner", path: "/scan" },
   ],

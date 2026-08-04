@@ -544,13 +544,18 @@ function FoodAnalyzer({ output, loading, originalQuery, searchAttempted, regiona
       </CardDescription>
     )}
     
-    {/* Source + trust — keep sober */}
+    {/* Source + portion — always explicit */}
     <CardDescription className="mt-1.5 flex flex-wrap items-center justify-center gap-1 text-xs">
       <Database className="h-3 w-3 text-white/45" />
       <span className="text-white/45">Source:</span>
       <span className={`font-semibold ${sourceColor}`}>
-        {currentFood.source || "Unknown"}
+        {currentFood.source || currentFood.sourceShort || "Unverified"}
       </span>
+      {currentFood.sourceShort && (
+        <span className="rounded-full border border-white/10 bg-white/[0.04] px-1.5 py-0.5 text-[10px] font-bold tracking-wide text-white/55">
+          {String(currentFood.sourceShort).toUpperCase()}
+        </span>
+      )}
     </CardDescription>
     <div className="mt-2 flex flex-wrap items-center justify-center gap-1.5">
       <TrustBadge
@@ -570,13 +575,16 @@ function FoodAnalyzer({ output, loading, originalQuery, searchAttempted, regiona
       </CardDescription>
     )}
 
-    <CardDescription className="mt-1.5 flex flex-wrap items-center justify-center gap-1 text-xs">
-      <Scale className="h-3 w-3 text-white/45" />
-      <span className="text-white/45">Showing for:</span>
+    <CardDescription className="mt-1.5 flex flex-wrap items-center justify-center gap-1 px-2 text-center text-xs">
+      <Scale className="h-3 w-3 shrink-0 text-white/45" />
+      <span className="text-white/45">Portion basis:</span>
       <span className="font-semibold text-white/80">
         {plate.portionGrams}g
+        {servingSize && servingSize !== plate.portionGrams
+          ? ` (table serving ${servingSize}g)`
+          : " edible portion"}
         {plate.oilCalories > 0 && (
-          <span className="text-amber-300/80"> + fat</span>
+          <span className="text-amber-300/80"> + cooking fat</span>
         )}
       </span>
     </CardDescription>
@@ -585,7 +593,7 @@ function FoodAnalyzer({ output, loading, originalQuery, searchAttempted, regiona
       <CardDescription className="mt-2 flex items-center justify-center gap-1.5 text-xs text-saffron-200/90">
         <LogIn className="h-3 w-3" />
         <Link to="/login" className="font-semibold underline decoration-saffron-400/50 underline-offset-2 hover:text-saffron-100">
-          Log in to save history
+          Log in to sync tracker across devices
         </Link>
       </CardDescription>
     )}

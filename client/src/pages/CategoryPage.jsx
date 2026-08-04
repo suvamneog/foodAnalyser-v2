@@ -32,11 +32,12 @@ export default function CategoryPage() {
   const [loading, setLoading] = useState(!cached);
   const [error, setError] = useState(null);
   const [analysing, setAnalysing] = useState(false);
+  const [retryTick, setRetryTick] = useState(0);
 
   useEffect(() => {
     let cancelled = false;
     const warm = peekFoodCategory(id, { limit: 48 });
-    if (warm) {
+    if (warm && retryTick === 0) {
       setPayload(warm);
       setLoading(false);
       setError(null);
@@ -55,7 +56,14 @@ export default function CategoryPage() {
       .catch((err) => {
         if (cancelled) return;
         setPayload(null);
-        setError(err.message || "Could not load this category");
+        const msg = err.message || "Could not load this category";
+        const cold =
+          /timeout|network|failed to fetch|503|502|504|ECONN|awake|render/i.test(msg);
+        setError(
+          cold
+            ? `${msg} — the API may be waking up (free hosting). Wait a few seconds and retry.`
+            : msg
+        );
       })
       .finally(() => {
         if (!cancelled) setLoading(false);
@@ -64,7 +72,7 @@ export default function CategoryPage() {
     return () => {
       cancelled = true;
     };
-  }, [id]);
+  }, [id, retryTick]);
 
   const analyseFood = async (food) => {
     if (!food || analysing) return;
@@ -173,8 +181,15 @@ export default function CategoryPage() {
         )}
 
         {error && (
-          <div className="mb-6 rounded-xl border border-red-500/30 bg-red-950/40 px-4 py-3 text-sm text-red-200">
-            {error}
+          <div className="mb-6 rounded-xl border border-red-500/30 bg-red-950/40 px-4 py-4 text-sm text-red-100">
+            <p>{error}</p>
+            <button
+              type="button"
+              onClick={() => setRetryTick((n) => n + 1)}
+              className="mt-3 rounded-full border border-red-300/30 bg-red-500/15 px-3 py-1.5 text-xs font-semibold text-red-100 hover:bg-red-500/25"
+            >
+              Retry load
+            </button>
           </div>
         )}
 

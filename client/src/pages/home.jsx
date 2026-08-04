@@ -834,7 +834,7 @@ function Home({
       <SectionDivider />
 
       {/* REGIONAL */}
-      <section className="px-4 py-16 sm:px-6 sm:py-24">
+      <section className="fa-defer-section px-4 py-16 sm:px-6 sm:py-24">
         <div className="mx-auto max-w-6xl">
           <SectionHeader
             fadeUp={fadeUp}
@@ -912,7 +912,7 @@ function Home({
       <SectionDivider />
 
       {/* TRENDING */}
-      <section className="px-4 py-16 sm:px-6 sm:py-24">
+      <section className="fa-defer-section px-4 py-16 sm:px-6 sm:py-24">
         <div className="mx-auto max-w-6xl">
           <SectionHeader
             fadeUp={fadeUp}
@@ -1004,7 +1004,7 @@ function Home({
       <SectionDivider />
 
       {/* CATEGORIES */}
-      <section className="px-4 py-16 sm:px-6 sm:py-24">
+      <section className="fa-defer-section px-4 py-16 sm:px-6 sm:py-24">
         <div className="mx-auto max-w-6xl">
           <SectionHeader
             fadeUp={fadeUp}
@@ -1065,7 +1065,7 @@ function Home({
       <SectionDivider />
 
       {/* FEATURED */}
-      <section className="px-4 py-16 sm:px-6 sm:py-24">
+      <section className="fa-defer-section px-4 py-16 sm:px-6 sm:py-24">
         <div className="mx-auto max-w-6xl">
           <SectionHeader
             fadeUp={fadeUp}
@@ -1170,7 +1170,7 @@ function Home({
       <SectionDivider />
 
       {/* WHY */}
-      <section className="px-4 py-16 sm:px-6 sm:py-24">
+      <section className="fa-defer-section px-4 py-16 sm:px-6 sm:py-24">
         <div className="mx-auto max-w-6xl">
           <SectionHeader
             fadeUp={fadeUp}

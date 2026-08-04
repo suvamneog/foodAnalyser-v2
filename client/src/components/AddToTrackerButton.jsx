@@ -85,7 +85,7 @@ export default function AddToTrackerButton({
           </>
         ) : (
           <>
-            <Plus className="h-3.5 w-3.5" /> Add to tracker
+            <Plus className="h-3.5 w-3.5" /> Log to tracker
           </>
         )}
       </button>

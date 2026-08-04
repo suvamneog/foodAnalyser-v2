@@ -1,5 +1,6 @@
 /* eslint-disable react/prop-types */
 import { createContext, useContext, useState, useEffect } from 'react';
+import { API_BASE_URL } from './apiConfig';
 
 const ReviewsContext = createContext();
 
@@ -19,26 +20,7 @@ export const ReviewsProvider = ({ children }) => {
   // Consistent profile photo for all users
   const DEFAULT_USER_PHOTO = "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?q=80&w=2080&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D";
 
-  // API configuration for both environments
-  const getApiBaseUrl = () => {
-    // Use environment variable if set, otherwise detect automatically
-    const apiUrl = "https://foodanalyser.onrender.com"
-    
-    if (apiUrl) {
-      return apiUrl;
-    }
-    
-    // Auto-detection based on current URL
-    const isDevelopment = window.location.hostname === 'localhost' || 
-                         window.location.hostname === '127.0.0.1';
-    
-    if (isDevelopment) {
-      return 'http://localhost:3000'; // Development server
-    } else {
-      // Production - use same origin (relative URL)
-      return '';
-    }
-  };
+  const getApiBaseUrl = () => API_BASE_URL;
 
   // Test API connectivity
   const testApiConnection = async () => {

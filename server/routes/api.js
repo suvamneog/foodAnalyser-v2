@@ -1129,19 +1129,9 @@ router.get("/history/test", auth, (req, res) => {
   });
 });
 
-// 🧾 Helper: Save to User Search History
-async function saveSearch(req, query, food) {
-  const authHeader = req.header("Authorization");
-  if (!authHeader) return;
-
-  try {
-    const token = authHeader.replace("Bearer ", "");
-    const verified = jwt.verify(token, process.env.JWT_SECRET);
-    await FoodSearch.create({ userID: verified.id, query, result: [food] });
-    console.log(`💾 Saved search for user ${verified.id}: ${query}`);
-  } catch (error) {
-    console.log("⚠️ Token invalid or expired. Skipping save.", error.message);
-  }
+// 🧾 Helper: search history UI removed — no longer persist FoodSearch rows
+async function saveSearch() {
+  return;
 }
 
 module.exports = router;

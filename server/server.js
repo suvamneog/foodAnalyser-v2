@@ -59,7 +59,6 @@ const authRoutes = require("./routes/auth");
 const foodRoutes = require("./routes/foodRoutes");
 const calRoutes = require("./routes/calculator");
 const apiRoutes = require("./routes/api");
-const mealRoutes = require("./routes/mealRoutes");
 const scanRoutes = require("./routes/scanRoutes");
 const imageRoutes = require("./routes/imageRoutes");
 const reviewRoutes = require("./routes/reviewsRoutes");
@@ -67,7 +66,6 @@ const syncRoutes = require("./routes/syncRoutes");
 
 app.use("/api/auth", authRoutes);
 app.use("/api/food", apiRoutes, foodRoutes);
-app.use("/api/meal", mealRoutes);
 app.use("/api/calories", calRoutes);
 app.use("/api/scan", scanRoutes);
 app.use("/api/image", imageRoutes);

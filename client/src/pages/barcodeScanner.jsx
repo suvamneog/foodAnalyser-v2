@@ -6,6 +6,7 @@ import axios from 'axios';
 import { AlertCircle, Check, AlertTriangle, Utensils, Leaf, Camera, RotateCcw, Upload, Image as ImageIcon, Frown, ScanBarcode } from 'lucide-react';
 import { API_ENDPOINTS } from "../utils/apiConfig";
 import ToolPageShell from "../components/ToolPageShell";
+import AddToTrackerButton from "../components/AddToTrackerButton";
 
 const BarcodeScanner = () => {
   const [scanResult, setScanResult] = useState(null);
@@ -329,7 +330,7 @@ const BarcodeScanner = () => {
           setProductNotFound(true);
           
           if (directErr.code === 'ECONNABORTED' || directErr.code === 'ERR_NETWORK') {
-            setError('Network error. Please check your internet connection and try again.');
+            setError('Network error — the API may be waking up. Wait a few seconds and scan again.');
           } else {
             setError('Sorry, food not found in our database. This product might not be available yet.');
           }
@@ -807,6 +808,26 @@ const BarcodeScanner = () => {
                             <p><strong>Fiber:</strong> {product.nutriments.fiber_100g || 0}g</p>
                             <p><strong>Protein:</strong> {product.nutriments.proteins_100g || 0}g</p>
                             <p><strong>Salt:</strong> {product.nutriments.salt_100g || 0}g</p>
+                          </div>
+                          <div className="mt-4">
+                            <p className="mb-2 text-[11px] text-white/45">
+                              Log 100g to today&apos;s tracker
+                            </p>
+                            <AddToTrackerButton
+                              name={product.product_name || "Scanned product"}
+                              calories={
+                                Number(
+                                  product.nutriments["energy-kcal_100g"] ??
+                                    product.nutriments.energy_kcal_100g ??
+                                    product.nutriments.energy_100g
+                                ) || 0
+                              }
+                              protein={Number(product.nutriments.proteins_100g) || 0}
+                              carbs={Number(product.nutriments.carbohydrates_100g) || 0}
+                              fat={Number(product.nutriments.fat_100g) || 0}
+                              grams={100}
+                              source="Open Food Facts · per 100g"
+                            />
                           </div>
                         </div>
                       )}

@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { motion, useReducedMotion } from "framer-motion";
 import {
@@ -8,6 +8,7 @@ import {
   Target as TargetIcon,
   Dumbbell,
   HeartPulse,
+  Calculator,
 } from "lucide-react";
 import { Reveal, RevealMount } from "../components/PageTransition";
 import {
@@ -76,8 +77,10 @@ export default function DietPlan() {
   ]);
 
   const persona = derived.target.persona;
+  const autoSaveTimer = useRef(null);
+  const hasEdited = useRef(false);
 
-  const activateTarget = () => {
+  const persistTarget = (announce = false) => {
     saveTarget({
       calories: derived.target.targetCalories,
       proteinG: derived.target.macros.proteinG,
@@ -87,10 +90,33 @@ export default function DietPlan() {
       dietType: form.dietType,
       setAt: Date.now(),
     });
-    recordPlanSaved();
-    setSaved(true);
-    setTimeout(() => setSaved(false), 2500);
+    if (announce) {
+      recordPlanSaved();
+      setSaved(true);
+      setTimeout(() => setSaved(false), 2500);
+    }
   };
+
+  // Auto-save target when plan inputs settle (Tracker picks it up immediately)
+  useEffect(() => {
+    if (!hasEdited.current) {
+      hasEdited.current = true;
+      return undefined;
+    }
+    clearTimeout(autoSaveTimer.current);
+    autoSaveTimer.current = setTimeout(() => persistTarget(false), 600);
+    return () => clearTimeout(autoSaveTimer.current);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [
+    derived.target.targetCalories,
+    derived.target.macros.proteinG,
+    derived.target.macros.carbsG,
+    derived.target.macros.fatG,
+    form.personaId,
+    form.dietType,
+  ]);
+
+  const activateTarget = () => persistTarget(true);
 
   return (
     <div className="min-h-screen bg-ink-950 text-white">
@@ -250,7 +276,7 @@ export default function DietPlan() {
             onClick={activateTarget}
             className="ml-auto rounded-full border border-saffron-400/30 bg-saffron-500/15 px-3 py-1.5 text-xs font-semibold text-saffron-100 hover:bg-saffron-500/25"
           >
-            {saved ? "Saved for tracker ✓" : "Use as tracker target"}
+            {saved ? "Synced to tracker ✓" : "Sync target to tracker"}
           </button>
         </Reveal>
 
@@ -332,7 +358,7 @@ export default function DietPlan() {
           </ul>
         </section>
 
-        <section className="mt-10 grid gap-3 sm:grid-cols-3">
+        <section className="mt-10 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
           <Link
             to="/tracker"
             className="rounded-2xl border border-white/10 bg-white/[0.03] p-5 transition hover:border-saffron-400/40"
@@ -340,6 +366,16 @@ export default function DietPlan() {
             <HeartPulse className="h-5 w-5 text-saffron-300" />
             <p className="mt-2 font-semibold text-white">Open daily tracker</p>
             <p className="mt-1 text-[11px] text-white/45">Log meals against this target.</p>
+          </Link>
+          <Link
+            to="/calculator"
+            className="rounded-2xl border border-white/10 bg-white/[0.03] p-5 transition hover:border-saffron-400/40"
+          >
+            <Calculator className="h-5 w-5 text-saffron-300" />
+            <p className="mt-2 font-semibold text-white">Advanced calculator</p>
+            <p className="mt-1 text-[11px] text-white/45">
+              Body-fat, recomp, and multi-week cut/bulk math.
+            </p>
           </Link>
           <Link
             to="/recipe"

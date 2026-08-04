@@ -99,7 +99,13 @@ export default function DailyTracker() {
       const items = await fetchFoodData(term);
       setResults(Array.isArray(items) ? items : items ? [items] : []);
     } catch (err) {
-      setError(err.message || "Search failed");
+      const msg = err.message || "Search failed";
+      const cold = /timeout|network|failed to fetch|503|502|504/i.test(msg);
+      setError(
+        cold
+          ? `${msg}. The API may be waking up — retry in a few seconds.`
+          : msg
+      );
       setSuggestions(Array.isArray(err?.suggestions) ? err.suggestions : []);
       setHints(Array.isArray(err?.hints) ? err.hints : []);
       setResults([]);
@@ -174,11 +180,18 @@ export default function DailyTracker() {
               Daily tracker
             </h1>
             <p className="mt-2 max-w-xl text-sm text-white/50">
-              Log Indian foods for today, compare against your target. All data stays on
-              this device (localStorage).
+              Log Indian foods for today and compare against your diet-plan target.
+              Targets auto-save from Diet Plan.
             </p>
           </div>
-          {!target && (
+          {target ? (
+            <Link
+              to="/plan"
+              className="rounded-full border border-white/15 bg-white/[0.04] px-3 py-1.5 text-xs font-semibold text-white/70 hover:bg-white/[0.08]"
+            >
+              Edit plan →
+            </Link>
+          ) : (
             <Link
               to="/plan"
               className="rounded-full border border-saffron-400/30 bg-saffron-500/15 px-3 py-1.5 text-xs font-semibold text-saffron-100 hover:bg-saffron-500/25"
@@ -187,6 +200,11 @@ export default function DailyTracker() {
             </Link>
           )}
         </RevealMount>
+
+        {/* Today vs plan — always visible */}
+        <Reveal className="mt-6">
+          <TodayVsPlan summary={summary} target={target} />
+        </Reveal>
 
         {/* Quick log */}
         <Reveal className="mt-6">
@@ -373,6 +391,13 @@ export default function DailyTracker() {
           {error && (
             <div className="mt-3 rounded-xl border border-red-500/30 bg-red-950/40 px-3 py-2 text-xs text-red-200">
               <p>{error}</p>
+              <button
+                type="button"
+                onClick={() => runSearch(query)}
+                className="mt-2 rounded-full border border-red-300/30 bg-red-500/15 px-2.5 py-1 text-[11px] font-semibold text-red-100 hover:bg-red-500/25"
+              >
+                Retry search
+              </button>
               {suggestions.length > 0 && (
                 <div className="mt-2">
                   <p className="text-[10px] font-semibold uppercase tracking-wider text-red-100/80">
@@ -628,6 +653,79 @@ function ActivityBox({ activity, onChange }) {
             {p.l}
           </button>
         ))}
+      </div>
+    </div>
+  );
+}
+
+function TodayVsPlan({ summary, target }) {
+  const rows = [
+    { key: "calories", label: "Calories", actual: summary.calories, goal: target?.calories, unit: "kcal" },
+    { key: "protein", label: "Protein", actual: summary.protein, goal: target?.proteinG, unit: "g" },
+    { key: "carbs", label: "Carbs", actual: summary.carbs, goal: target?.carbsG, unit: "g" },
+    { key: "fat", label: "Fat", actual: summary.fat, goal: target?.fatG, unit: "g" },
+  ];
+
+  if (!target) {
+    return (
+      <div className="rounded-2xl border border-dashed border-saffron-400/30 bg-saffron-500/[0.06] px-4 py-4 text-sm text-white/60">
+        No diet-plan target yet.{" "}
+        <Link to="/plan" className="font-semibold text-saffron-300 underline underline-offset-2">
+          Set one on Diet Plan
+        </Link>{" "}
+        — it auto-saves here.
+      </div>
+    );
+  }
+
+  return (
+    <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-4 sm:p-5">
+      <div className="flex flex-wrap items-end justify-between gap-2">
+        <div>
+          <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-saffron-300/90">
+            Today vs plan
+          </p>
+          <p className="mt-1 text-sm text-white/50">
+            Live progress against your Diet Plan target
+            {target.personaId ? ` · ${target.personaId.replace(/-/g, " ")}` : ""}.
+          </p>
+        </div>
+        <Link to="/plan" className="text-[11px] font-semibold text-saffron-300 hover:underline">
+          Adjust plan
+        </Link>
+      </div>
+      <div className="mt-4 grid gap-3 sm:grid-cols-2">
+        {rows.map((row) => {
+          const goal = Math.max(1, Number(row.goal) || 1);
+          const actual = Number(row.actual) || 0;
+          const pct = Math.min(100, Math.round((actual / goal) * 100));
+          const left = Math.max(0, Math.round(goal - actual));
+          const over = actual > goal * 1.05;
+          return (
+            <div key={row.key}>
+              <div className="flex items-baseline justify-between gap-2 text-xs">
+                <span className="font-medium text-white/70">{row.label}</span>
+                <span className="fa-num text-white/90">
+                  {Math.round(actual)}
+                  <span className="text-white/40"> / {Math.round(goal)} {row.unit}</span>
+                </span>
+              </div>
+              <div className="mt-1.5 h-2 overflow-hidden rounded-full bg-white/10">
+                <div
+                  className={`h-full rounded-full transition-all ${
+                    over ? "bg-ember-400" : "bg-saffron-400"
+                  }`}
+                  style={{ width: `${pct}%` }}
+                />
+              </div>
+              <p className="mt-1 text-[10px] text-white/40">
+                {over
+                  ? `${Math.round(actual - goal)} ${row.unit} over plan`
+                  : `${left} ${row.unit} left`}
+              </p>
+            </div>
+          );
+        })}
       </div>
     </div>
   );

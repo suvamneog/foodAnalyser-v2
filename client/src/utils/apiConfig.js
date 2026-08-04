@@ -1,29 +1,32 @@
-// src/utils/apiConfig.js
+// Single API base — prefer VITE_API_URL, else local / production defaults.
 
-const getBaseURL = () => {
-  if (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1") {
-    return "http://localhost:3001";
-  }
-  return "https://foodanalyser.onrender.com";
-};
+const isLocalHost =
+  typeof window !== "undefined" &&
+  (window.location.hostname === "localhost" ||
+    window.location.hostname === "127.0.0.1");
 
-const API_BASE_URL = getBaseURL();
+const DEFAULT_API = isLocalHost
+  ? "http://localhost:3001"
+  : "https://foodanalyser.onrender.com";
 
-const getFrontendURL = () => {
-  if (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1") {
-    return `${window.location.protocol}//${window.location.host}`;
-  }
-  return "https://foodanalyserr.vercel.app";
-};
+const DEFAULT_FRONTEND = isLocalHost
+  ? `${window.location.protocol}//${window.location.host}`
+  : "https://foodanalyserr.vercel.app";
 
-const FRONTEND_BASE_URL = getFrontendURL();
+export const API_BASE_URL = (
+  import.meta.env.VITE_API_URL ||
+  DEFAULT_API
+).replace(/\/$/, "");
+
+export const FRONTEND_BASE_URL = (
+  import.meta.env.VITE_FRONTEND_URL ||
+  DEFAULT_FRONTEND
+).replace(/\/$/, "");
 
 export const API_ENDPOINTS = {
   AUTH_LOGIN: `${API_BASE_URL}/api/auth/login`,
   AUTH_SIGNUP: `${API_BASE_URL}/api/auth/signup`,
-  // OAuth must hit the host that owns the registered callback URLs
-  AUTH_PROVIDER: (provider) =>
-    `https://foodanalyser.onrender.com/api/auth/${provider}`,
+  AUTH_PROVIDER: (provider) => `${API_BASE_URL}/api/auth/${provider}`,
 
   FOOD_SEARCH: `${API_BASE_URL}/api/food/search`,
   FOOD_SUGGEST: `${API_BASE_URL}/api/food/suggest`,
@@ -38,6 +41,7 @@ export const API_ENDPOINTS = {
   IMAGE_ANALYZE: `${API_BASE_URL}/api/image/analyzefood`,
   IMAGE_QUICK: `${API_BASE_URL}/api/image/quick-score`,
 
+  REVIEWS: `${API_BASE_URL}/api/reviews`,
   SYNC: `${API_BASE_URL}/api/sync`,
 };
 
@@ -47,7 +51,6 @@ export const FRONTEND_URLS = {
   PRODUCTION: "https://foodanalyserr.vercel.app",
 };
 
-export const isDevelopment =
-  window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1";
+export const isDevelopment = isLocalHost;
 
 export default API_BASE_URL;

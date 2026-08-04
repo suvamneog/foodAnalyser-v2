@@ -198,6 +198,12 @@
     box-shadow: var(--shadow-hover);
   }
 
+  /* Below-fold home sections — skip layout work until near viewport */
+  .fa-defer-section {
+    content-visibility: auto;
+    contain-intrinsic-size: auto 520px;
+  }
+
   .fa-btn {
     display: inline-flex;
     align-items: center;
@@ -250,8 +256,8 @@
   }
 
   .fa-collage-mask {
-    -webkit-mask-image: radial-gradient(ellipse 70% 70% at 50% 50%, #000 20%, transparent 75%);
-    mask-image: radial-gradient(ellipse 70% 70% at 50% 50%, #000 20%, transparent 75%);
+    -webkit-mask-image: radial-gradient(ellipse 75% 72% at 50% 48%, #000 12%, transparent 78%);
+    mask-image: radial-gradient(ellipse 75% 72% at 50% 48%, #000 12%, transparent 78%);
   }
 
   /* Floating GravityGallery-style food tiles */

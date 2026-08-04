@@ -184,7 +184,7 @@ const handleSubmit = (e) => {
   return (
     <form
       className={cn(
-        "fa-search-shell w-full relative max-w-2xl mx-auto h-[4.5rem] rounded-full overflow-hidden border-[1.5px] border-white/14 bg-white/[0.08] shadow-[0_16px_48px_rgba(0,0,0,0.4),inset_0_1px_0_rgba(255,255,255,0.06)] backdrop-blur-2xl transition duration-300 focus-within:border-saffron-400/50 focus-within:bg-white/[0.11] focus-within:shadow-[0_0_0_1px_rgba(232,168,74,0.4),0_0_0_8px_rgba(232,168,74,0.08),0_20px_50px_rgba(0,0,0,0.45)]",
+        "fa-search-shell w-full relative max-w-2xl mx-auto h-[4.75rem] rounded-full overflow-hidden border-2 border-white/16 bg-white/[0.09] shadow-[0_18px_52px_rgba(0,0,0,0.42),inset_0_1px_0_rgba(255,255,255,0.1)] backdrop-blur-2xl transition duration-300 focus-within:border-saffron-400/55 focus-within:bg-white/[0.13] focus-within:shadow-[0_0_0_1px_rgba(232,168,74,0.45),0_0_0_10px_rgba(232,168,74,0.1),0_22px_56px_rgba(0,0,0,0.48)]",
         value && "bg-white/[0.1] border-saffron-400/35"
       )}
       onSubmit={handleSubmit}
