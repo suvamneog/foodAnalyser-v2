@@ -59,12 +59,26 @@ function AppRoutes({
     }
   }
 
-  // Clear one-shot router state after paint (Home may still read it for scroll/preset)
+  // Clear one-shot router state after paint (Home may still read it for scroll/preset).
+  // preventScrollReset: clearing state must not yank the viewport back to an old "/" scroll.
   useEffect(() => {
     if (!handoffId || handoffId !== seenHandoff) return;
     if (!location.state?.cuisineSearch) return;
     const t = window.setTimeout(() => {
-      navigate(location.pathname, { replace: true, state: {} });
+      navigate(location.pathname, {
+        replace: true,
+        state: {},
+        preventScrollReset: true,
+      });
+      // Beat any late browser scroll restoration after the replace
+      const pin = () => {
+        window.scrollTo({ top: 0, left: 0, behavior: "auto" });
+        document
+          .getElementById("search-results")
+          ?.scrollIntoView({ behavior: "auto", block: "start" });
+      };
+      pin();
+      requestAnimationFrame(pin);
     }, 0);
     return () => window.clearTimeout(t);
   }, [handoffId, seenHandoff, location.pathname, location.state, navigate]);

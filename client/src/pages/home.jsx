@@ -476,14 +476,21 @@ function Home({
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  // Focus result card after search / category handoff (hero collapses when viewing)
+  // Focus result card after search / category handoff.
+  // Retries beat browser scroll restoration + the App state-clear navigate.
   useLayoutEffect(() => {
     if (!searchAttempted || loading || !shouldScrollRef.current) return;
     if (!Array.isArray(output) || output.length === 0) return;
     shouldScrollRef.current = false;
-    // Jump to top — with hero collapsed, the result card is the first focus
-    window.scrollTo({ top: 0, left: 0, behavior: "auto" });
-    resultsRef.current?.scrollIntoView({ behavior: "auto", block: "start" });
+
+    const pin = () => {
+      window.scrollTo({ top: 0, left: 0, behavior: "auto" });
+      resultsRef.current?.scrollIntoView({ behavior: "auto", block: "start" });
+    };
+
+    pin();
+    const timers = [0, 50, 120, 280].map((ms) => window.setTimeout(pin, ms));
+    return () => timers.forEach((id) => window.clearTimeout(id));
   }, [loading, searchAttempted, output]);
 
   const runSearch = async (query) => {
@@ -589,6 +596,7 @@ function Home({
 
       {/* HERO — hidden while a result card is focused */}
       {!viewingResults && (
+      <>
       <section className="relative overflow-hidden px-4 sm:px-6">
         <div className="pointer-events-none absolute inset-0 overflow-hidden" aria-hidden="true">
           <motion.div
@@ -803,6 +811,7 @@ function Home({
           </motion.div>
         </div>
       </section>
+      </>
       )}
 
       <div
@@ -826,6 +835,9 @@ function Home({
         )}
       </div>
 
+      {/* Keep analyse handoff focused — hide long home discovery until results are cleared */}
+      {!viewingResults && (
+      <>
       <SectionDivider />
 
       {/* REGIONAL */}
@@ -1258,6 +1270,8 @@ function Home({
           </p>
         </motion.div>
       </section>
+      </>
+      )}
 
       {/* FOOTER */}
       <footer className="mt-10 border-t border-white/8 bg-ink-950 px-4 pb-14 pt-16 sm:px-6 sm:pt-20">

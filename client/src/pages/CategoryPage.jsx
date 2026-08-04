@@ -72,6 +72,7 @@ export default function CategoryPage() {
     setError(null);
     try {
       markInstantNavigation();
+      window.scrollTo({ top: 0, left: 0, behavior: "auto" });
       await new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r)));
       navigate("/", {
         state: {
@@ -80,6 +81,7 @@ export default function CategoryPage() {
             results: [food],
           },
         },
+        preventScrollReset: true,
       });
     } finally {
       setAnalysing(false);

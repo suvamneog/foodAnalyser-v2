@@ -60,6 +60,7 @@ export default function CuisinePage() {
         );
       }
       markInstantNavigation();
+      window.scrollTo({ top: 0, left: 0, behavior: "auto" });
       await new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r)));
       navigate("/", {
         state: {
@@ -68,6 +69,7 @@ export default function CuisinePage() {
             results: Array.isArray(data) ? data : [data],
           },
         },
+        preventScrollReset: true,
       });
     } catch (err) {
       setError(err.message || "Search failed");
