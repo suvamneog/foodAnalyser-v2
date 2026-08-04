@@ -594,9 +594,7 @@ function Home({
         </motion.div>
       )}
 
-      {/* HERO — hidden while a result card is focused */}
-      {!viewingResults && (
-      <>
+      {/* HERO */}
       <section className="relative overflow-hidden px-4 sm:px-6">
         <div className="pointer-events-none absolute inset-0 overflow-hidden" aria-hidden="true">
           <motion.div
@@ -811,8 +809,6 @@ function Home({
           </motion.div>
         </div>
       </section>
-      </>
-      )}
 
       <div
         id="search-results"
@@ -835,9 +831,6 @@ function Home({
         )}
       </div>
 
-      {/* Keep analyse handoff focused — hide long home discovery until results are cleared */}
-      {!viewingResults && (
-      <>
       <SectionDivider />
 
       {/* REGIONAL */}
@@ -1270,8 +1263,6 @@ function Home({
           </p>
         </motion.div>
       </section>
-      </>
-      )}
 
       {/* FOOTER */}
       <footer className="mt-10 border-t border-white/8 bg-ink-950 px-4 pb-14 pt-16 sm:px-6 sm:pt-20">
