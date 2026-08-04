@@ -1,13 +1,17 @@
 /* eslint-disable react/prop-types */
 import { useEffect, useMemo, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
-import { ArrowLeft, Database, Info, Search } from "lucide-react";
+import { ArrowLeft, Database, Info, Loader2, Search } from "lucide-react";
 import { motion, useReducedMotion } from "framer-motion";
 import {
   CATEGORIES,
   getCategoryById,
 } from "../data/discoveryData";
-import { fetchFoodCategory } from "../utils/fetchFoodData";
+import {
+  fetchFoodCategory,
+  peekFoodCategory,
+  prefetchFoodCategory,
+} from "../utils/fetchFoodData";
 import { IOS_EASE, MOTION } from "../utils/motion";
 import { markInstantNavigation } from "../components/PageTransition";
 
@@ -22,17 +26,26 @@ export default function CategoryPage() {
   const navigate = useNavigate();
   const reduceMotion = useReducedMotion();
   const local = useMemo(() => getCategoryById(id), [id]);
+  const cached = useMemo(() => peekFoodCategory(id, { limit: 48 }), [id]);
 
-  const [payload, setPayload] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [payload, setPayload] = useState(cached);
+  const [loading, setLoading] = useState(!cached);
   const [error, setError] = useState(null);
   const [analysing, setAnalysing] = useState(false);
 
   useEffect(() => {
     let cancelled = false;
+    const warm = peekFoodCategory(id, { limit: 48 });
+    if (warm) {
+      setPayload(warm);
+      setLoading(false);
+      setError(null);
+      return undefined;
+    }
+
     setLoading(true);
     setError(null);
-    setPayload(null);
+    // Keep previous list visible while switching — don't clear to null
 
     fetchFoodCategory(id, { limit: 48 })
       .then((data) => {
@@ -41,6 +54,7 @@ export default function CategoryPage() {
       })
       .catch((err) => {
         if (cancelled) return;
+        setPayload(null);
         setError(err.message || "Could not load this category");
       })
       .finally(() => {
@@ -58,7 +72,6 @@ export default function CategoryPage() {
     setError(null);
     try {
       markInstantNavigation();
-      // Let PageTransition re-render with instant exit, then navigate
       await new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r)));
       navigate("/", {
         state: {
@@ -87,7 +100,7 @@ export default function CategoryPage() {
           >
             <ArrowLeft className="h-4 w-4" /> Back home
           </Link>
-          <div className="mt-10 flex flex-wrap justify-center gap-2">
+          <div className="mt-10 flex flex-wrap gap-2 justify-center">
             {CATEGORIES.map((c) => (
               <Link
                 key={c.id}
@@ -103,12 +116,15 @@ export default function CategoryPage() {
     );
   }
 
-  const title = payload?.label || local?.label || "Category";
-  const blurb = payload?.criteria || local?.blurb || "";
-  const disclaimer = payload?.disclaimer || "";
   const items = payload?.items || [];
+  const listMatchesPage = !payload?.id || payload.id === (local?.id || id);
+  const title = local?.label || payload?.label || "Category";
+  const blurb =
+    (listMatchesPage && payload?.criteria) || local?.blurb || payload?.criteria || "";
+  const disclaimer = listMatchesPage ? payload?.disclaimer || "" : "";
   const total = payload?.totalMatching ?? items.length;
   const shown = payload?.shown ?? items.length;
+  const showInitialLoader = loading && (items.length === 0 || !listMatchesPage);
 
   return (
     <div className="min-h-screen bg-ink-950 text-white">
@@ -136,7 +152,7 @@ export default function CategoryPage() {
             <p className="mt-3 max-w-2xl text-sm leading-relaxed text-white/65 sm:text-base">
               {blurb}
             </p>
-            {!loading && payload && (
+            {!showInitialLoader && payload && listMatchesPage && (
               <p className="mt-2 text-xs text-white/40">
                 Showing {shown}
                 {total > shown ? ` of ${total} matching` : ""} · values per 100 g
@@ -147,7 +163,7 @@ export default function CategoryPage() {
       </div>
 
       <div className="mx-auto max-w-4xl px-4 py-8 sm:px-6 sm:py-12">
-        {disclaimer && (
+        {disclaimer && listMatchesPage && (
           <div className="mb-6 flex gap-2.5 rounded-xl border border-saffron-400/20 bg-saffron-500/[0.07] px-4 py-3 text-[12px] leading-relaxed text-white/70">
             <Info className="mt-0.5 h-4 w-4 shrink-0 text-saffron-300" aria-hidden="true" />
             <p>{disclaimer}</p>
@@ -160,35 +176,40 @@ export default function CategoryPage() {
           </div>
         )}
 
-        {loading && (
-          <div className="grid gap-3 sm:grid-cols-2">
-            {Array.from({ length: 6 }).map((_, i) => (
-              <div
-                key={i}
-                className="h-[88px] animate-pulse rounded-2xl border border-white/8 bg-white/[0.03]"
-              />
-            ))}
+        {showInitialLoader && (
+          <div
+            className="flex min-h-[220px] flex-col items-center justify-center gap-3 rounded-2xl border border-white/8 bg-white/[0.02] px-6 py-12 text-center"
+            role="status"
+            aria-live="polite"
+          >
+            <Loader2 className="h-6 w-6 animate-spin text-saffron-300" aria-hidden="true" />
+            <p className="font-display text-base font-semibold text-white/80">
+              Loading verified foods…
+            </p>
+            <p className="max-w-sm text-xs leading-relaxed text-white/40">
+              Pulling IFCT / INDB matches for this category. Usually quick after the first open.
+            </p>
           </div>
         )}
 
-        {!loading && items.length === 0 && !error && (
+        {!showInitialLoader && items.length === 0 && !error && (
           <p className="text-center text-sm text-white/45">
             No verified foods matched this filter yet.
           </p>
         )}
 
-        {!loading && items.length > 0 && (
-          <div className="grid gap-3 sm:grid-cols-2">
+        {items.length > 0 && listMatchesPage && !showInitialLoader && (
+          <div className={`grid gap-3 sm:grid-cols-2 ${loading ? "opacity-85" : ""}`}>
             {items.map((food, i) => (
               <motion.button
                 key={`${food.sourceShort}-${food.food_code}-${food.name}`}
                 type="button"
                 disabled={analysing}
                 onClick={() => analyseFood(food)}
-                initial={reduceMotion ? false : { opacity: 0, y: MOTION.ySm }}
+                initial={reduceMotion || cached ? false : { opacity: 0, y: MOTION.ySm }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{
-                  delay: Math.min(i * MOTION.stagger, 0.4),
+                  delay: reduceMotion || cached ? 0 : Math.min(i * MOTION.stagger, 0.4),
                   duration: MOTION.section.duration,
                   ease: IOS_EASE,
                 }}
@@ -243,10 +264,12 @@ export default function CategoryPage() {
             More categories
           </p>
           <div className="mt-4 flex flex-wrap gap-2">
-            {CATEGORIES.filter((c) => c.id !== (payload?.id || local?.id)).map((c) => (
+            {CATEGORIES.filter((c) => c.id !== (local?.id || id)).map((c) => (
               <Link
                 key={c.id}
                 to={`/category/${c.id}`}
+                onMouseEnter={() => prefetchFoodCategory(c.id)}
+                onFocus={() => prefetchFoodCategory(c.id)}
                 className="rounded-full border border-white/10 px-3 py-1.5 text-xs text-white/55 transition hover:border-saffron-400/30 hover:text-white"
               >
                 {c.label}

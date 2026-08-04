@@ -129,8 +129,23 @@ export const fetchFoodById = async ({ source, code, label }) => {
 
 /**
  * Browse a verified category list (macro filter or curated codes).
+ * Results are cached in-memory so revisits don't flash an empty grid.
  */
+const categoryCache = new Map();
+
+function categoryCacheKey(id, limit) {
+  return `${String(id || "").toLowerCase()}::${limit}`;
+}
+
+export function peekFoodCategory(id, { limit = 48 } = {}) {
+  return categoryCache.get(categoryCacheKey(id, limit)) || null;
+}
+
 export const fetchFoodCategory = async (id, { limit = 48 } = {}) => {
+  const key = categoryCacheKey(id, limit);
+  const cached = categoryCache.get(key);
+  if (cached) return cached;
+
   const url = `${API_ENDPOINTS.FOOD_CATEGORY(id)}?limit=${encodeURIComponent(limit)}`;
   try {
     const response = await axios.get(url, {
@@ -139,7 +154,7 @@ export const fetchFoodCategory = async (id, { limit = 48 } = {}) => {
     });
     const data = response.data || {};
     const items = mapFoodItems(Array.isArray(data.items) ? data.items : []);
-    return {
+    const payload = {
       id: data.id,
       label: data.label,
       mode: data.mode,
@@ -152,10 +167,19 @@ export const fetchFoodCategory = async (id, { limit = 48 } = {}) => {
       shown: data.shown ?? items.length,
       items,
     };
+    categoryCache.set(key, payload);
+    return payload;
   } catch (error) {
     attachAxiosMeta(error);
   }
 };
+
+/** Warm the cache without blocking UI (e.g. home tile hover). */
+export function prefetchFoodCategory(id, opts) {
+  const key = categoryCacheKey(id, opts?.limit ?? 48);
+  if (categoryCache.has(key)) return;
+  fetchFoodCategory(id, opts).catch(() => {});
+}
 
 export const fetchFoodData = async (foodName) => {
   const url = `${API_ENDPOINTS.FOOD_SEARCH}?q=${encodeURIComponent(

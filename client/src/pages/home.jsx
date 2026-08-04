@@ -37,7 +37,7 @@ import {
 } from "lucide-react";
 import PlaceholdersAndVanishInputDemo from "./input";
 import FoodAnalyzer from "./Text";
-import { fetchFoodData, fetchFoodById } from "../utils/fetchFoodData";
+import { fetchFoodData, fetchFoodById, prefetchFoodCategory } from "../utils/fetchFoodData";
 import { pushRecentSearch } from "../utils/recentSearches";
 import {
   TRENDING_DISHES,
@@ -1015,6 +1015,9 @@ function Home({
                   <Link
                     to={`/category/${cat.id}`}
                     aria-label={`Browse ${cat.label}`}
+                    onMouseEnter={() => prefetchFoodCategory(cat.id)}
+                    onFocus={() => prefetchFoodCategory(cat.id)}
+                    onTouchStart={() => prefetchFoodCategory(cat.id)}
                     className="fa-card group relative flex min-h-[220px] overflow-hidden text-left sm:min-h-[250px]"
                   >
                     <img
