@@ -1,5 +1,5 @@
 /* eslint-disable react/prop-types */
-import { Children, useEffect, useMemo, useRef, useState } from "react";
+import { Children, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { motion, useReducedMotion } from "framer-motion";
 import { TextShimmer } from "../components/ui/text-shimmer";
@@ -476,11 +476,14 @@ function Home({
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  useEffect(() => {
-    if (!loading && searchAttempted && shouldScrollRef.current) {
-      shouldScrollRef.current = false;
-      resultsRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
-    }
+  // Focus result card after search / category handoff (hero collapses when viewing)
+  useLayoutEffect(() => {
+    if (!searchAttempted || loading || !shouldScrollRef.current) return;
+    if (!Array.isArray(output) || output.length === 0) return;
+    shouldScrollRef.current = false;
+    // Jump to top — with hero collapsed, the result card is the first focus
+    window.scrollTo({ top: 0, left: 0, behavior: "auto" });
+    resultsRef.current?.scrollIntoView({ behavior: "auto", block: "start" });
   }, [loading, searchAttempted, output]);
 
   const runSearch = async (query) => {
@@ -584,7 +587,8 @@ function Home({
         </motion.div>
       )}
 
-      {/* HERO */}
+      {/* HERO — hidden while a result card is focused */}
+      {!viewingResults && (
       <section className="relative overflow-hidden px-4 sm:px-6">
         <div className="pointer-events-none absolute inset-0 overflow-hidden" aria-hidden="true">
           <motion.div
@@ -799,12 +803,13 @@ function Home({
           </motion.div>
         </div>
       </section>
+      )}
 
       <div
         id="search-results"
         ref={resultsRef}
         className={`scroll-mt-28 px-4 sm:scroll-mt-36 sm:px-6 ${
-          viewingResults ? "pt-14 sm:pt-4" : ""
+          viewingResults ? "pt-20 sm:pt-8 pb-10" : ""
         }`}
       >
         {(loading || searchAttempted) && (
