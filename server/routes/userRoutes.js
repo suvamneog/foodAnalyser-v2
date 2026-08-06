@@ -24,7 +24,6 @@ router.post("/signup", async (req, res) => {
     // Hash the password
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
-    console.log("Hashed Password:", hashedPassword); // Debugging
 
     // Create a new user
     const newUser = new User({
@@ -35,7 +34,6 @@ router.post("/signup", async (req, res) => {
 
     // Save the user to the database
     await newUser.save();
-    console.log("User saved:", newUser); // Debugging
 
     // Respond with success message
     res.status(201).json({ message: "User registered successfully" });
@@ -56,7 +54,6 @@ router.post("/login", async (req, res) => {
 
     // Compare the provided password with the hashed password in the database
     const isMatch = await bcrypt.compare(password, user.password);
-    console.log("Password Match:", isMatch); // Debugging
 
     if (!isMatch) {
       return res.status(400).json({ message: "Invalid email or password" });
@@ -66,7 +63,6 @@ router.post("/login", async (req, res) => {
     const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
       expiresIn: "1h",
     });
-    console.log("Generated Token:", token); // Debugging
 
     // Respond with the token
     res.status(200).json({ message: "Login successful", token });

@@ -1,0 +1,48 @@
+# Environment & secrets
+.env
+.env.*
+!.env.example
+!**/.env.example
+**/.env
+**/.env.local
+**/.env.*.local
+
+# Dependencies
+node_modules/
+**/node_modules/
+
+# Build output
+client/dist/
+dist/
+build/
+.vite/
+
+# Logs & debug
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# OS / editor
+.DS_Store
+**/.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Local assets / personal (keep out of public repo)
+resume.tex
+resume.pdf
+resume-preview*.png
+background.jpg
+*.jpeg
+WhatsApp*
+
+# Uploads / runtime
+uploads/
+tmp/
+.cache/
+coverage/
