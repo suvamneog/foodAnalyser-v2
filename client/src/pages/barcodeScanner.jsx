@@ -175,7 +175,11 @@ const BarcodeScanner = () => {
       
       let errorMessage = 'Failed to process image. ';
       
-      if (err.response?.data?.error) {
+      if (err.response?.status === 429) {
+        errorMessage =
+          err.response.data?.error ||
+          "Too many uploads. Please wait and try again.";
+      } else if (err.response?.data?.error) {
         errorMessage += err.response.data.error;
       } else if (err.code === 'ERR_NETWORK') {
         errorMessage += 'Network error. Please check your connection.';

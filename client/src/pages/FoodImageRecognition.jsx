@@ -251,15 +251,25 @@ const FoodScanner = () => {
 
     try {
       const endpoint = quickMode ? API_ENDPOINTS.IMAGE_QUICK : API_ENDPOINTS.IMAGE_ANALYZE;
-      
+      const headers = {};
+      const token = localStorage.getItem("authToken");
+      if (token) headers.Authorization = `Bearer ${token}`;
+
       const response = await fetch(endpoint, {
         method: 'POST',
         body: formData,
+        headers,
         signal: abortControllerRef.current.signal
       });
 
       if (!response.ok) {
-        const errorData = await response.json();
+        const errorData = await response.json().catch(() => ({}));
+        if (response.status === 429) {
+          throw new Error(
+            errorData.error ||
+              "Rate limit reached. Please wait before analyzing more images."
+          );
+        }
         throw new Error(errorData.error || 'Analysis failed');
       }
 

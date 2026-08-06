@@ -13,11 +13,27 @@ const passport = require("passport");
 dotenv.config();
 connectDB();
 
+const ALLOWED_ORIGINS = [
+  process.env.CLIENT_URL,
+  "http://localhost:5173",
+  "http://127.0.0.1:5173",
+  "http://localhost:3000",
+  "https://foodanalyserr.vercel.app",
+].filter(Boolean);
+
+function corsOrigin(origin, callback) {
+  // Allow non-browser clients (no Origin) and known frontends
+  if (!origin || ALLOWED_ORIGINS.includes(origin)) {
+    return callback(null, true);
+  }
+  return callback(null, false);
+}
+
 const server = http.createServer(app);
 
 const io = new Server(server, {
   cors: {
-    origin: "*",
+    origin: ALLOWED_ORIGINS,
     methods: ["GET", "POST"],
     credentials: true,
   },
@@ -43,7 +59,7 @@ app.set("io", io);
 
 app.use(
   cors({
-    origin: true,
+    origin: corsOrigin,
     credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With"],
@@ -63,10 +79,11 @@ const scanRoutes = require("./routes/scanRoutes");
 const imageRoutes = require("./routes/imageRoutes");
 const reviewRoutes = require("./routes/reviewsRoutes");
 const syncRoutes = require("./routes/syncRoutes");
+const { apiSearchLimiter } = require("./middleware/rateLimits");
 
 app.use("/api/auth", authRoutes);
-app.use("/api/food", apiRoutes, foodRoutes);
-app.use("/api/calories", calRoutes);
+app.use("/api/food", apiSearchLimiter, apiRoutes, foodRoutes);
+app.use("/api/calories", apiSearchLimiter, calRoutes);
 app.use("/api/scan", scanRoutes);
 app.use("/api/image", imageRoutes);
 app.use("/api/reviews", reviewRoutes);

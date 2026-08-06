@@ -335,8 +335,16 @@ const storage = {
 };
 
 const upload = require('multer')({ storage });
+const {
+  imageAnalyzeLimiter,
+  imageQuickLimiter,
+} = require('../middleware/rateLimits');
 
-router.post('/analyzefood', upload.single('foodImage'), async (req, res) => {
+router.post(
+  '/analyzefood',
+  imageAnalyzeLimiter,
+  upload.single('foodImage'),
+  async (req, res) => {
   if (!req.file) {
     return res.status(400).json({ error: 'No image file provided' });
   }
@@ -480,7 +488,11 @@ router.post('/analyzefood', upload.single('foodImage'), async (req, res) => {
   }
 });
 
-router.post('/quick-score', upload.single('foodImage'), async (req, res) => {
+router.post(
+  '/quick-score',
+  imageQuickLimiter,
+  upload.single('foodImage'),
+  async (req, res) => {
   if (!req.file) {
     return res.status(400).json({ error: 'No image file provided' });
   }

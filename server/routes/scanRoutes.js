@@ -19,7 +19,9 @@ const storage = multer.diskStorage({
     cb(null, uploadDir);
   },
   filename: (req, file, cb) => {
-    cb(null, Date.now() + '-' + file.originalname);
+    const rawExt = path.extname(file.originalname || "").toLowerCase();
+    const ext = /^\.(jpe?g|png|gif|webp|bmp)$/.test(rawExt) ? rawExt : ".jpg";
+    cb(null, `${Date.now()}-${Math.random().toString(36).slice(2, 10)}${ext}`);
   }
 });
 
@@ -41,6 +43,11 @@ const upload = multer({
     }
   }
 });
+
+const {
+  scanUploadLimiter,
+  scanLookupLimiter,
+} = require('../middleware/rateLimits');
 
 // Decode barcode from image using ZXing
 async function decodeBarcode(imagePath) {
@@ -171,7 +178,7 @@ async function decodeBarcodeSimple(imagePath) {
 }
 
 // Upload and decode barcode from image
-router.post('/upload', upload.single('image'), async (req, res) => {
+router.post('/upload', scanUploadLimiter, upload.single('image'), async (req, res) => {
   try {
     if (!req.file) {
       return res.status(400).json({ 
@@ -247,7 +254,7 @@ router.post('/upload', upload.single('image'), async (req, res) => {
 });
 
 // Get product info from OpenFoodFacts API
-router.get('/product/:barcode', async (req, res) => {
+router.get('/product/:barcode', scanLookupLimiter, async (req, res) => {
   const { barcode } = req.params;
 
   // Validate barcode format
@@ -272,7 +279,7 @@ router.get('/product/:barcode', async (req, res) => {
 });
 
 // Calculate health score
-router.post('/health-score', async (req, res) => {
+router.post('/health-score', scanLookupLimiter, async (req, res) => {
   try {
     const { product, indianMatch } = req.body;
     
