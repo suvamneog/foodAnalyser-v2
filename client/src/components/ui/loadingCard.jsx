@@ -1,66 +1,73 @@
-import { Card, CardContent, CardHeader } from "./card";
-import { CardBody, CardContainer, CardItem } from "./3D-card";
+import { useEffect, useState } from "react";
+
+// Rotating "still working" lines shown once the wait crosses ~5s.
+// Written in plain, human wording — never mention server/idle/wake.
+const ROTATING_HINTS = [
+  "Almost there…",
+  "Warming up the kitchen…",
+  "Just a few more seconds…",
+  "Loading fresh nutrition data…",
+  "Nearly ready…",
+];
 
 function LoadingCard() {
+  const [hintIndex, setHintIndex] = useState(-1); // -1 = only the primary line
+
+  useEffect(() => {
+    // Keep the primary line alone for a few seconds so brief searches never
+    // flash a "taking longer" message. Only after ~4.5s do we start rotating.
+    const start = window.setTimeout(() => {
+      setHintIndex(0);
+    }, 4500);
+
+    const rotate = window.setInterval(() => {
+      setHintIndex((prev) => {
+        if (prev < 0) return 0;
+        return (prev + 1) % ROTATING_HINTS.length;
+      });
+    }, 3200);
+
+    return () => {
+      window.clearTimeout(start);
+      window.clearInterval(rotate);
+    };
+  }, []);
+
+  const rotatingHint = hintIndex >= 0 ? ROTATING_HINTS[hintIndex] : "";
+
   return (
-    <CardContainer className="w-full max-w-xs mx-auto">
-      <CardBody className="bg-[#0C0C0C]/90 rounded-xl p-1 sm:p-2 md:p-3">
-        <CardItem>
-          <CardHeader className="p-2 sm:p-3">
-            <div className="animate-pulse space-y-2">
-              {/* Title Skeleton */}
-              <div className="h-6 bg-gray-700 rounded w-3/4 sm:w-2/3 md:w-3/4"></div>
-              {/* Subtitle Skeleton */}
-              <div className="h-4 bg-gray-700 rounded w-1/2 sm:w-1/2 md:w-1/2"></div>
-            </div>
-          </CardHeader>
-        </CardItem>
+    <div
+      className="fa-sticker mx-auto flex w-full max-w-sm flex-col items-center gap-5 px-6 py-8 sm:py-9"
+      role="status"
+      aria-live="polite"
+    >
+      <div className="fa-pacman-wrap" aria-hidden="true">
+        <div className="fa-pacman">
+          <div className="fa-pac-top" />
+          <div className="fa-pac-bottom" />
+        </div>
+        <div className="fa-pac-dots">
+          <span className="fa-pac-dot" />
+          <span className="fa-pac-dot" />
+          <span className="fa-pac-dot" />
+        </div>
+      </div>
 
-        <CardItem>
-          <CardContent className="px-2 py-1 sm:p-3">
-            <div className="grid gap-2 sm:gap-3">
-              {/* Calories Skeleton */}
-              <div className="animate-pulse flex items-center justify-between">
-                <div className="h-4 bg-gray-700 rounded w-1/3 sm:w-1/4"></div>
-                <div className="h-6 bg-gray-700 rounded w-1/4 sm:w-1/5"></div>
-              </div>
+      <div className="text-center">
+        <p className="text-sm font-semibold text-white/85 sm:text-[15px]">
+          First search of the day may take a bit longer
+        </p>
+        <p className="mt-1.5 min-h-[1.15em] text-xs text-white/50 sm:text-[13px]">
+          {rotatingHint && (
+            <span key={hintIndex} className="fa-loader-hint">
+              {rotatingHint}
+            </span>
+          )}
+        </p>
+      </div>
 
-         
-              <div className="grid grid-cols-3 gap-1 sm:gap-2 md:gap-3">
-                {[1, 2, 3].map((i) => (
-                  <CardItem key={i}>
-                    <Card className="bg-[#0C0C0C] border-white/[0.05]">
-                      <CardHeader className="p-1 sm:p-2 md:p-3">
-                        <div className="animate-pulse space-y-2">
-                          {/* Nutrition Label Skeleton */}
-                          <div className="h-4 bg-gray-700 rounded w-2/3 sm:w-1/2"></div>
-                          {/* Nutrition Value Skeleton */}
-                          <div className="h-5 bg-gray-700 rounded w-1/2 sm:w-1/3"></div>
-                        </div>
-                      </CardHeader>
-                    </Card>
-                  </CardItem>
-                ))}
-              </div>
-
-              {/* Pros & Cons Skeleton */}
-              <CardItem>
-                <div className="animate-pulse space-y-4">
-                  {/* Pros & Cons Title Skeleton */}
-                  <div className="h-4 bg-gray-700 rounded w-1/3 sm:w-1/4"></div>
-                  {/* Pros & Cons List Skeleton */}
-                  <div className="space-y-2">
-                    <div className="h-3 bg-gray-700 rounded w-3/4 sm:w-4/5"></div>
-                    <div className="h-3 bg-gray-700 rounded w-5/6 sm:w-5/6"></div>
-                    <div className="h-3 bg-gray-700 rounded w-full sm:w-full"></div>
-                  </div>
-                </div>
-              </CardItem>
-            </div>
-          </CardContent>
-        </CardItem>
-      </CardBody>
-    </CardContainer>
+      <span className="sr-only">Loading nutrition data…</span>
+    </div>
   );
 }
 

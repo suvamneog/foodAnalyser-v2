@@ -694,6 +694,126 @@
     font-weight: 800;
     letter-spacing: -0.02em;
   }
+
+  /* -----------------------------------------------------------
+   * Pacman loader — used while backend cold-starts / first fetch.
+   * Two half-circles rotate to chomp; dots slide in from the right.
+   * ----------------------------------------------------------- */
+  .fa-pacman-wrap {
+    position: relative;
+    display: block;
+    width: 140px;
+    height: 60px;
+    margin: 0 auto;
+  }
+
+  .fa-pacman {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 60px;
+    height: 60px;
+    filter: drop-shadow(0 6px 14px rgba(232, 168, 74, 0.35));
+  }
+
+  .fa-pac-top,
+  .fa-pac-bottom {
+    position: absolute;
+    left: 0;
+    width: 60px;
+    height: 30px;
+    background: linear-gradient(180deg, #ffcf7a, #e8a84a);
+  }
+
+  .fa-pac-top {
+    top: 0;
+    border-radius: 60px 60px 0 0;
+    transform-origin: 50% 100%;
+    animation: fa-pac-top 0.45s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  }
+
+  .fa-pac-bottom {
+    bottom: 0;
+    border-radius: 0 0 60px 60px;
+    transform-origin: 50% 0%;
+    background: linear-gradient(0deg, #d4892a, #e8a84a);
+    animation: fa-pac-bottom 0.45s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  }
+
+  @keyframes fa-pac-top {
+    0%, 100% { transform: rotate(0); }
+    50% { transform: rotate(-38deg); }
+  }
+
+  @keyframes fa-pac-bottom {
+    0%, 100% { transform: rotate(0); }
+    50% { transform: rotate(38deg); }
+  }
+
+  .fa-pac-dots {
+    position: absolute;
+    left: 70px;
+    right: 0;
+    top: 27px;
+    height: 8px;
+  }
+
+  .fa-pac-dot {
+    position: absolute;
+    top: 0;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #f0c27a;
+    box-shadow: 0 0 8px rgba(240, 194, 122, 0.55);
+    animation: fa-pac-dot 1.35s linear infinite;
+    opacity: 0;
+  }
+
+  .fa-pac-dot:nth-child(1) { animation-delay: 0s; }
+  .fa-pac-dot:nth-child(2) { animation-delay: 0.45s; }
+  .fa-pac-dot:nth-child(3) { animation-delay: 0.9s; }
+
+  @keyframes fa-pac-dot {
+    0% { transform: translateX(70px); opacity: 1; }
+    75% { transform: translateX(-6px); opacity: 1; }
+    76%, 100% { opacity: 0; transform: translateX(-10px); }
+  }
+
+  html[data-theme="light"] .fa-pac-top {
+    background: linear-gradient(180deg, #f0c27a, #d4892a);
+  }
+
+  html[data-theme="light"] .fa-pac-bottom {
+    background: linear-gradient(0deg, #a8691a, #d4892a);
+  }
+
+  html[data-theme="light"] .fa-pac-dot {
+    background: #d4892a;
+    box-shadow: 0 0 6px rgba(200, 134, 36, 0.5);
+  }
+
+  /* Rotating hint below the spinner — soft crossfade */
+  .fa-loader-hint {
+    display: inline-block;
+    min-height: 1.15em;
+    animation: fa-loader-hint-in 380ms var(--ease) both;
+  }
+
+  @keyframes fa-loader-hint-in {
+    from { opacity: 0; transform: translateY(4px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .fa-pac-top,
+    .fa-pac-bottom,
+    .fa-pac-dot {
+      animation: none !important;
+    }
+    .fa-pac-dot { opacity: 1; }
+    .fa-loader-hint { animation: none; }
+  }
 }
 
 /* ------------------------------------------------------------------

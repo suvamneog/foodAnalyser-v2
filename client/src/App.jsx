@@ -22,6 +22,8 @@ import DietPlan from "./pages/DietPlan"
 import DailyTracker from "./pages/DailyTracker"
 import RecipeAnalyzer from "./pages/RecipeAnalyzer"
 import Profile from "./pages/Profile"
+import NotFoundPage from "./components/ui/page-not-found"
+import { API_BASE_URL } from "./utils/apiConfig"
 
 function AppRoutes({
   foodName,
@@ -128,6 +130,7 @@ function AppRoutes({
         <Route path="/tracker" element={<DailyTracker />} />
         <Route path="/recipe" element={<RecipeAnalyzer />} />
         <Route path="/profile" element={<Profile />} />
+        <Route path="*" element={<NotFoundPage />} />
       </Routes>
     </PageTransition>
   );
@@ -137,7 +140,30 @@ function App() {
   const [foodName, setFoodName] = useState("");
   const [output, setOutput] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [originalQuery, setOriginalQuery] = useState(""); 
+  const [originalQuery, setOriginalQuery] = useState("");
+
+  // Warm up the backend as soon as the site opens. Render free-tier services
+  // sleep after ~15 min idle, so the first real request can take 20-30s.
+  // Pinging /health here starts the wake while the user reads the page —
+  // by the time they hit search it's usually already up. Fire-and-forget.
+  useEffect(() => {
+    const controller = new AbortController();
+    const timer = window.setTimeout(() => {
+      fetch(`${API_BASE_URL}/health`, {
+        method: "GET",
+        cache: "no-store",
+        signal: controller.signal,
+        credentials: "omit",
+      }).catch(() => {
+        /* silent — this is just a warm-up */
+      });
+    }, 250);
+
+    return () => {
+      window.clearTimeout(timer);
+      controller.abort();
+    };
+  }, []);
 
   return (
     <ThemeProvider>
