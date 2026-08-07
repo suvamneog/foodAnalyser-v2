@@ -431,9 +431,12 @@ function Home({
     }
   }, [searchHandoff, originalQuery, output]);
 
-  /** Results view: keep one compact sticky search; hide the big hero search. */
+  /** Results view: sticky search + compact hero — includes empty “not found” outcomes. */
   const viewingResults =
-    searchAttempted && (loading || (Array.isArray(output) && output.length > 0));
+    searchAttempted &&
+    (loading ||
+      Boolean(originalQuery) ||
+      (Array.isArray(output) && output.length > 0));
   const showHeroSearch = !viewingResults;
   const showStickySearch = viewingResults || stickySearch;
 
@@ -487,7 +490,7 @@ function Home({
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  // First search only: slide from centered hero down to the result card.
+  // First search only: slide from centered hero down to the result / not-found card.
   useLayoutEffect(() => {
     if (!searchAttempted || !shouldScrollRef.current) return;
 
@@ -500,17 +503,22 @@ function Home({
       });
     };
 
-    // Smooth slide once search starts; a couple of auto retries catch layout settle.
+    // Smooth slide once search starts; retries catch loader → card / not-found settle.
     pin(true);
-    const timers = [180, 450, 900].map((ms, i) =>
+    const timers = [180, 450, 900, 1400].map((ms, i) =>
       window.setTimeout(() => pin(i === 0), ms)
     );
 
-    if (!loading) {
+    // Settled = have hits, or a confirmed empty search (not-found card).
+    const settled =
+      !loading &&
+      (Boolean(originalQuery) || (Array.isArray(output) && output.length > 0));
+
+    if (settled) {
       hasLandedResultsRef.current = true;
       const clearTimer = window.setTimeout(() => {
         shouldScrollRef.current = false;
-      }, 1100);
+      }, 1500);
       return () => {
         timers.forEach((id) => window.clearTimeout(id));
         window.clearTimeout(clearTimer);
