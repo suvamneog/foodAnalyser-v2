@@ -12,11 +12,11 @@
 
 ## Indian Food Nutrition Intelligence & Health Scoring System
 
-**FoodAnalyser × Fit** is a full-stack nutrition intelligence platform built specifically for Indian dietary patterns. It combines official Indian nutrition datasets (**IFCT 2017** & **INDB**) with AI food image recognition, barcode analysis, meal tracking, and personalized health scoring.
+**FoodAnalyser × Fit** is a full-stack nutrition platform built for Indian diets. It combines official Indian food composition data (**IFCT 2017**, **INDB**, and Northeast regional estimates) with AI image recognition, barcode scanning, diet planning, daily tracking, recipe analysis, and health scoring.
 
-Unlike generic calorie apps that rely mainly on Western food databases, FoodAnalyser prioritizes authentic Indian nutrition data first, then falls back to global sources only when needed.
+Unlike generic calorie apps that lean on Western databases, FoodAnalyser searches Indian sources first and only falls back to global APIs when needed.
 
-**Designed for:** Indian consumers, fitness enthusiasts, dieticians, health-tech builders, and nutrition research.
+**Built for:** Indian consumers, fitness enthusiasts, dieticians, students, and nutrition research.
 
 | Live App | API |
 |----------|-----|
@@ -31,6 +31,7 @@ Unlike generic calorie apps that rely mainly on Western food databases, FoodAnal
 - [Data Sources](#data-sources)
 - [Features](#features)
 - [App Pages & Routes](#app-pages--routes)
+- [UX Details](#ux-details)
 - [System Architecture](#system-architecture)
 - [API Overview](#api-overview)
 - [Tech Stack](#tech-stack)
@@ -40,35 +41,40 @@ Unlike generic calorie apps that rely mainly on Western food databases, FoodAnal
 - [Accuracy Notes](#accuracy-notes)
 - [Research & Publication](#research--publication)
 - [Roadmap](#roadmap)
+- [Project Structure](#project-structure)
 - [Author](#author)
 
 ---
 
 ## Overview
 
-FoodAnalyser helps users understand what they eat in an Indian context:
+FoodAnalyser helps people understand Indian food in context:
 
-1. **Search** Indian foods and get macros from IFCT / INDB
-2. **Scan** packaged products via barcode and map them to Indian equivalents
-3. **Photograph** a dish and get AI-assisted identification + nutrition estimates
-4. **Calculate** BMR, TDEE, and calorie/protein goals
-5. **Log meals** and review daily nutrition history
-6. **Leave reviews** with real-time updates across clients
+1. **Search** dishes and ingredients with IFCT / INDB / regional matches
+2. **Browse** by state cuisine, category, or staple comparison
+3. **Scan** packaged products and map them to Indian equivalents
+4. **Photograph** a plate for AI-assisted identification + nutrition
+5. **Plan** calorie / protein targets with Indian meal patterns
+6. **Track** daily intake, water, activity, streaks, and XP
+7. **Analyse** homemade recipes by ingredient list
+8. **Review** the product with live Socket.io updates
 
-The product is deployed (Vercel frontend + Render backend), JWT-secured for personal data, and research-backed (IEEE CCPIS 2025).
+Deployed on **Vercel** (frontend) + **Render** (backend) + **MongoDB Atlas**, with JWT auth for personal sync data. Research-backed (IEEE CCPIS 2025).
 
 ---
 
 ## Why FoodAnalyser Is Different
 
 1. Built on **IFCT 2017 (ICMR–NIN)** — India’s official food composition table
-2. Uses **INDB (Indian Nutrient Databank)** for cooked & traditional recipes
-3. **AI-powered** food image recognition (OpenAI Vision)
-4. **Barcode scanning** with Open Food Facts + Indian food mapping
-5. Nutrition-aware **health scoring** and healthier alternative suggestions
-6. Secure **meal logging**, search history, and analytics
-7. Real-time **reviews** via Socket.io
-8. Deployed, scalable, and research-ready
+2. Uses **INDB** for cooked & traditional recipes
+3. Adds **Northeast regional estimates** (Assam, Manipur, Meghalaya, Nagaland) with clear trust labels
+4. **AI food image recognition** (OpenAI Vision) with Indian-name preference
+5. **Barcode scanning** via Open Food Facts + Indian mapping
+6. **Diet plan → daily tracker** loop with cloud sync when signed in
+7. **Recipe analyser**, regional cuisine pages, category browse, and staple compare tools
+8. Light / dark theme, premium motion UI, cold-start friendly search loading
+9. Real-time **reviews** via Socket.io
+10. Deployed and research-ready
 
 ---
 
@@ -82,10 +88,15 @@ The product is deployed (Vercel frontend + Render backend), JWT-secured for pers
 
 ### INDB (Indian Nutrient Databank)
 - Cooked foods & traditional Indian recipes (~1000+)
-- Serving-oriented nutrition for everyday Indian meals
+- Serving-oriented nutrition for everyday meals
 - Beverage & regional preparation coverage
 
+### Northeast Regional Estimates
+- Assam / Manipur / Meghalaya / Nagaland dishes where official tables are sparse
+- Shown with explicit trust badges (“regional estimate”) so nothing is oversold
+
 ### External (Fallback / Packaged Foods)
+
 | Source | Used for |
 |--------|----------|
 | **Open Food Facts** | Packaged products by barcode |
@@ -96,70 +107,69 @@ The product is deployed (Vercel frontend + Render backend), JWT-secured for pers
 
 ## Features
 
-### 1. Indian-Optimized Food Search
-- Home-page search with vanishing-input UI and starfield background
-- Ranked matching across IFCT → INDB → CalorieNinjas (fallback only)
-- Intelligent grouping / diversification (raw, cooked, fried, curry, beverage, etc.)
-- Chicken cut & preparation specificity (breast, thigh, curry, fried, etc.)
-- Result carousel with macros, source badges, and gram-based scaling from the query
-- Heuristic pros / cons style insights for each match
-- Authenticated search history logging in MongoDB
+### 1. Indian-Optimized Food Search (`/`)
+- Vanishing-input search, popular chips, and discovery homepage
+- Ranked matching: **IFCT → INDB → regional → CalorieNinjas** (fallback only)
+- Autocomplete / typo-tolerant suggestions
+- Result carousel with macros, source badges, portion customizer, and cooking-fat add-ons
+- Regional variant chips (e.g. Assamese / Punjabi style adjustments)
+- Heuristic pros / cons insights per match
+- Add-to-tracker from any result plate
 
-### 2. AI Food Image Recognition (`/image`)
+### 2. Discover & Browse
+- **Regional cuisine pages** (`/cuisine/:slug`) — state dishes with quick analyse
+- **Category browse** (`/category/:id`) — verified IFCT/INDB lists (high protein, low cal, etc.)
+- **Staple compare** (`/compare`, `/compare/:familyId`) — roti, rice, dal, breakfast by region
+- Featured dish, trending rails, and credibility / trust badges on home
+
+### 3. AI Food Image Recognition (`/image`)
 - Camera capture or image upload
-- Image optimization (Sharp) before analysis
-- OpenAI Vision (`gpt-4-turbo`) identifies the main food item (Indian names preferred)
+- Sharp preprocessing before analysis
+- OpenAI Vision identifies the main food (Indian names preferred)
 - Nutrition resolved against IFCT when possible
-- Heuristic glycemic index (GI) estimate
-- Health score (0–100) from calories, macros, and GI
-- Healthier Indian alternative suggestions
-- Quick-score mode for faster health scoring
-- In-memory analysis cache (TTL) + client-side daily upload limit
+- Health score (0–100) + healthier Indian alternative suggestions
+- Quick-score mode + daily client upload limit
 
-### 3. Barcode / QR Scanning (`/scan`)
-- Live camera scanning (`html5-qrcode`) or image upload
-- Server-side decode via Sharp preprocessing + ZXing
-- Product lookup from Open Food Facts
-- Nutrition normalization and display
+### 4. Barcode / QR Scanning (`/scan`)
+- Live camera (`html5-qrcode`) or image upload
+- Server-side decode (Sharp + ZXing) and Open Food Facts lookup
 - Indian food equivalent mapping (IFCT / INDB)
-- Health score computation (Nutri-Score when available, else nutrient heuristic)
-- Healthier Indian alternatives for packaged products
+- Health score + healthier Indian alternatives for packaged products
 
-### 4. Health & Diet Calculator (`/calculator`)
-- BMR via Mifflin–St Jeor / Katch–McArdle style calculations
+### 5. Health & Diet Calculator (`/calculator`)
+- BMR (Mifflin–St Jeor / Katch–McArdle style)
 - TDEE from activity multipliers
-- Cut / bulk / recomp calorie targets
-- Protein intake estimation
-- Multi-week planning table for goal tracking
-- Works fully on the client (no login required)
+- Cut / bulk / recomp calorie targets and protein estimates
+- Multi-week planning table
+- Fully client-side (no login required)
 
-### 5. Daily Tracker (`/tracker`)
-- Log meals from IFCT/INDB search or quick text entry
-- Daily calorie / macro totals against a diet-plan target
+### 6. Diet Plan (`/plan`)
+- Indian meal-pattern targets wired into the tracker
+- Calorie / macro goals that daily logging can follow
+
+### 7. Daily Tracker (`/tracker`)
+- Log meals from search results or quick text entry
+- Daily calorie / macro totals vs plan target
 - Water, activity, health score, and weekly overview
-- Cloud sync when signed in; XP / streak progression
+- Cloud sync when signed in (`/api/sync`)
+- XP / streak / progression on **Profile** (`/profile`)
 
-### 6. Authentication & Security
+### 8. Recipe Analyser (`/recipe`)
+- Paste or type ingredients for homemade dishes
+- Estimated plate nutrition from Indian DB matches where possible
+
+### 9. Authentication & Security
 - Email / password signup & login
-- JWT authentication middleware for protected APIs
+- JWT middleware for protected APIs
 - Google & GitHub OAuth (popup + `postMessage` token handoff)
-- Auth context on the frontend (`localStorage` token)
-- Soft route protection for Tracker when syncing
+- Soft route protection when syncing personal tracker data
+- Rate limits on costly food / calorie / image / scan routes
 
-### 7. Reviews & Feedback (`/review`, `/about`)
-- Guest or authenticated review submission (name, rating, description)
-- Paginated reviews list and rating distribution stats
-- Real-time create / delete updates via Socket.io
-- About page with product story, feature highlights, and live review testimonials
-- Testimonial carousel UI
-
-### 8. Product Experience / UX
-- Responsive layout (desktop + mobile nav)
-- Framer Motion / Aceternity-style motion components (stars, vanish input, cards)
-- Loading skeletons for search results
-- Toast notifications (Sonner-based UI)
-- Dark atmospheric home experience with shooting-stars background
-- Fixed global navbar: About, Diet Plan, Tracker, Calculator, Scan, Image + auth actions
+### 10. Reviews & About (`/review`, `/about`)
+- Guest or authenticated reviews (name, rating, description)
+- Paginated list + rating distribution
+- Real-time create / delete via Socket.io
+- About page with product story and live testimonials
 
 ---
 
@@ -167,20 +177,54 @@ The product is deployed (Vercel frontend + Render backend), JWT-secured for pers
 
 | Route | Page | Access | Purpose |
 |-------|------|--------|---------|
-| `/` | Home + Food Search | Public | Brand landing, Indian food search, results carousel |
-| `/about` | About | Public | Mission, features, testimonials, review stats |
-| `/review` | Reviews | Public | Submit and browse user feedback |
-| `/calculator` | Health Calculator | Public | BMR / TDEE / goal planning |
+| `/` | Home + Food Search | Public | Landing, Indian search, discovery rails, results |
+| `/cuisine/:slug` | Regional Cuisine | Public | Browse state dishes & analyse |
+| `/category/:id` | Category Browse | Public | Verified IFCT/INDB category lists |
+| `/compare` | Compare Staples | Public | Pick a staple family |
+| `/compare/:familyId` | Compare Family | Public | Region-wise staple comparison |
+| `/plan` | Diet Plan | Public | Indian meal targets |
 | `/tracker` | Daily Tracker | Public / sync with auth | Log meals & daily macros |
-| `/plan` | Diet Plan | Public | Indian meal targets wired to tracker |
-| `/scan` | Barcode Scanner | Public | Scan packaged foods |
+| `/profile` | Profile | Public / richer with auth | XP, streaks, progression |
+| `/recipe` | Recipe Analyser | Public | Ingredient → nutrition estimate |
+| `/calculator` | Health Calculator | Public | BMR / TDEE / goals |
+| `/scan` | Barcode Scanner | Public | Packaged food scan |
 | `/image` | Image Recognition | Public | Photo → food ID + nutrition |
-| `/login` | Login | Public | Email / password auth |
+| `/about` | About | Public | Mission, features, testimonials |
+| `/review` | Reviews | Public | Submit & browse feedback |
+| `/login` | Login | Public | Email / password + OAuth |
 | `/signup` | Signup | Public | Account creation + OAuth |
+| `*` | 404 Not Found | Public | Immersive themed 404 |
 | `/logmeals` | → `/tracker` | — | Legacy redirect |
 | `/addfoods` | → `/` | — | Legacy redirect |
 | `/text` | → `/` | — | Legacy redirect |
 | `/history` | → `/` | — | Legacy redirect |
+
+---
+
+## UX Details
+
+### Themes
+- **Light / dark / system** via `ThemeProvider` (`fa-theme` in `localStorage`)
+- Applied with `data-theme` on `<html>` so UI stays readable in both modes
+
+### Search cold-start (Render free tier)
+Render free web services sleep after idle time, so the first search after a long gap can take ~20–30s. The app softens that:
+
+1. **Background warm-up** — on first page load, the client quietly pings `GET /health` so the backend starts waking while the user reads the home page
+2. **Pacman loader** — if a search still takes time, a Pacman spinner appears with friendly copy:
+   - “First search of the day may take a bit longer”
+   - Then rotating lines like “Almost there…” / “Warming up the kitchen…”
+
+No technical “server wake” jargon — just calm, human messaging.
+
+### 404 page
+Unknown routes render an immersive, theme-aware **404** (expanding circles + stick figures) with **Go Back** and **Go Home**.
+
+### Motion & polish
+- Framer Motion page transitions and section reveals
+- Sticky compact search while viewing results
+- Trust badges on sources and portion-adjusted plates
+- Responsive layout (desktop + mobile nav)
 
 ---
 
@@ -189,15 +233,17 @@ The product is deployed (Vercel frontend + Render backend), JWT-secured for pers
 ```
 Frontend (React + Vite + Tailwind)          Backend (Node.js + Express)
 ─────────────────────────────────          ────────────────────────────
+ThemeProvider (light / dark / system)
 AuthContext (JWT / OAuth)          ──►     /api/auth
 ReviewsContext + Socket.io         ──►     /api/reviews + Socket.io
-Food Search UI                     ──►     /api/food/search (IFCT → INDB → CalorieNinjas)
+Food Search / Discover UI          ──►     /api/food (IFCT → INDB → regional → CalorieNinjas)
 Barcode Scanner                    ──►     /api/scan (ZXing + Open Food Facts)
 Image Recognition UI               ──►     /api/image (OpenAI Vision + IFCT)
-Meal Logging & History             ──►     /api/meal + /api/food/history
+Daily Tracker + Profile            ──►     /api/sync (cloud meal / progress sync)
 Calculator (client-side)                   /api/calories (optional server calculator)
-                                           MongoDB (users, meals, searches, reviews)
-                                           Local JSON: IFCT + INDB datasets
+Warm-up ping on visit              ──►     GET /health
+                                           MongoDB (users, sync, reviews, …)
+                                           Local JSON: IFCT + INDB + Assam datasets
 ```
 
 **Deployment**
@@ -211,25 +257,27 @@ Calculator (client-side)                   /api/calories (optional server calcul
 
 | Mount | Capabilities |
 |-------|----------------|
-| `GET /health` | Service + MongoDB readiness |
-| `/api/auth` | Signup, login, Google/GitHub OAuth |
-| `/api/food` | Indian search, product-by-barcode, health-score, search history CRUD |
-| `/api/meal` | Nutrition proxy, meal log create / list / delete |
-| `/api/calories` | Server-side BMR / TDEE calculator |
+| `GET /health` | Service + MongoDB readiness (also used for client warm-up) |
+| `/api/auth` | Signup, login, Google / GitHub OAuth |
+| `/api/food` | Indian search, suggest, by-id, categories, health-score (rate-limited) |
+| `/api/calories` | Server-side BMR / TDEE calculator (rate-limited) |
 | `/api/scan` | Image barcode upload/decode, product fetch, health score |
 | `/api/image` | `analyzefood`, `quick-score`, cache info |
+| `/api/reviews` | Create / list / delete reviews |
+| `/api/sync` | Authenticated GET / PUT for tracker & progression cloud sync |
+
+Unknown API paths return JSON 404 from Express.
 
 ---
 
 ## Tech Stack
 
 ### Frontend
-- React 19 (JSX) + Vite 6
-- React Router 7
-- Tailwind CSS + Radix / shadcn-style UI
-- Context API (`AuthContext`, `ReviewsContext`)
+- React 19 + Vite 6 + React Router 7
+- Tailwind CSS + Radix / shadcn-style UI (`src/components/ui`)
+- Context API (`AuthContext`, `ReviewsContext`, `ThemeContext`)
+- Framer Motion, Lucide icons
 - Axios / Fetch
-- Framer Motion, Lucide / Tabler icons
 - `html5-qrcode` for camera barcode scanning
 - Three.js / React Three Fiber (optional visual components)
 
@@ -241,16 +289,14 @@ Calculator (client-side)                   /api/calories (optional server calcul
 - Sharp (image processing)
 - ZXing (barcode decoding)
 - Socket.io (real-time reviews)
-- Multer (uploads)
-- Morgan, CORS, dotenv
+- Multer, Morgan, CORS, dotenv
+- Rate limiting on costly routes
 
-### Data & Persistence Models
+### Data & Persistence
 - `User` — accounts + OAuth identities
-- `MealLog` — logged meals & macros
-- `FoodSearch` — authenticated search history
+- `UserSync` — cloud tracker / progression payload
 - `Review` — ratings & feedback
-- `Food` — user / app food documents
-- Local JSON datasets — IFCT & INDB
+- Local JSON datasets — IFCT, INDB, Assam / regional
 
 ---
 
@@ -271,7 +317,7 @@ Calculator (client-side)                   /api/calories (optional server calcul
 ### Health & Diet Calculator
 ![Calculator](./screenshots/CaloriesCal.png)
 
-### Meal Logging & Nutrition History
+### Meal Logging & Tracker
 ![Meal Logging](./screenshots/Logmeal.png)
 
 ### Reviews & Feedback
@@ -338,12 +384,13 @@ curl http://localhost:3001/health
 | `MONGODB_URL` | Core | MongoDB connection string |
 | `JWT_SECRET` | Auth | JWT signing secret |
 | `PORT` | Core | Backend port (use `3001` for local client defaults) |
-| `CALORIE_NINJA_API_KEY` | Search fallback / meal nutrition | CalorieNinjas API |
+| `CALORIE_NINJA_API_KEY` | Search fallback | CalorieNinjas API |
 | `OPENAI_API_KEY` | Image recognition | OpenAI Vision |
 | `GOOGLE_CLIENT_ID` / `GOOGLE_CLIENT_SECRET` | OAuth | Google login |
 | `GITHUB_CLIENT_ID` / `GITHUB_CLIENT_SECRET` | OAuth | GitHub login |
-| `CLIENT_URL` | Optional | Frontend origin (logged / reference) |
+| `CLIENT_URL` | Optional | Frontend origin (CORS / reference) |
 | `UPLOAD_DIR` | Optional | Upload directory name |
+| `VITE_API_URL` | Frontend (optional) | Override API base (defaults to localhost / Render) |
 
 > Never commit real `.env` files. Keep secrets out of git.
 
@@ -353,12 +400,14 @@ curl http://localhost:3001/health
 
 | Capability | Trust level | Notes |
 |------------|-------------|--------|
-| IFCT / INDB text search | High (reference data) | Official tables; values are typically per 100g / dataset serving |
+| IFCT / INDB text search | High (reference data) | Official tables; values typically per 100g / listed serving |
+| Northeast regional estimates | Directional | Explicitly labelled; home recipes may differ |
 | Barcode / Open Food Facts | Medium | Depends on product listing completeness |
-| Image → food name | Medium | Vision model identification; wrong name → wrong nutrition |
+| Image → food name | Medium | Vision model ID; wrong name → wrong nutrition |
 | Health score / GI | Directional | Heuristic formulas, not clinical lab measures |
 | CalorieNinjas fallback | Medium | Useful when Indian DBs miss; may be Western-biased |
-| BMR / TDEE calculator | Estimate | Standard equations, not metabolic testing |
+| BMR / TDEE / recipe estimates | Estimate | Standard equations / ingredient matching |
+| First search after idle | Timing | Free Render may cold-start ~20–30s; warm-up + Pacman loader help UX |
 
 Use FoodAnalyser as an **Indian nutrition intelligence assistant**, not medical advice.
 
@@ -376,12 +425,13 @@ This system has been extended into academic research and accepted at:
 ## Roadmap
 
 - Portion size estimation from images
-- Personalized AI diet planning
+- Stronger personalized AI diet planning
 - Multilingual Indian food recognition
 - Mobile app (React Native)
 - Dietician & hospital dashboards
-- Stronger confidence reporting (replace hardcoded image confidence)
+- Stronger confidence reporting for image analysis
 - Measured GI datasets where available
+- Optional paid / always-on hosting to remove cold starts entirely
 
 ---
 
@@ -389,17 +439,28 @@ This system has been extended into academic research and accepted at:
 
 ```
 foodAnalyser-v2/
-├── client/                 # React + Vite frontend
-│   ├── src/pages/          # Home, scan, image, meals, auth, reviews, …
-│   ├── src/components/ui/  # Shared UI primitives & motion components
-│   └── src/utils/          # Auth, reviews, API config, fetch helpers
-├── server/                 # Express API
-│   ├── routes/             # auth, food, meal, scan, image, reviews, calculator
-│   ├── models/             # Mongoose schemas
-│   ├── middleware/         # JWT auth
-│   └── data/               # IFCT & INDB JSON datasets
-├── screenshots/            # Product screenshots
-└── README.md
+├── client/                      # React + Vite frontend
+│   ├── src/
+│   │   ├── pages/               # Home, cuisine, category, compare, plan,
+│   │   │                        # tracker, profile, recipe, scan, image,
+│   │   │                        # calculator, auth, about, reviews
+│   │   ├── components/          # Feature components + ui/ (shadcn-style)
+│   │   │   └── ui/
+│   │   │       ├── loadingCard.jsx      # Pacman cold-start loader
+│   │   │       └── page-not-found.tsx   # Immersive 404
+│   │   ├── utils/               # Auth, theme, sync, fetch, API config
+│   │   ├── data/                # Discovery / regional variant content
+│   │   └── App.jsx              # Routes + backend warm-up ping
+│   ├── public/                  # Static food / image assets
+│   └── vercel.json              # SPA rewrites for client routes
+├── server/                      # Express API
+│   ├── routes/                  # auth, food, scan, image, reviews,
+│   │                            # calories, sync
+│   ├── models/                  # Mongoose schemas
+│   ├── middleware/              # JWT auth, rate limits
+│   └── data/                    # IFCT, INDB, Assam JSON datasets
+├── screenshots/                 # Product screenshots for this README
+└── README.md                    # You are here
 ```
 
 ---
