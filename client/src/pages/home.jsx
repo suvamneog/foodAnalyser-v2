@@ -415,7 +415,11 @@ function Home({
   const [regionalPreset, setRegionalPreset] = useState(null);
   const resultsRef = useRef(null);
   const heroSearchRef = useRef(null);
+  // Only auto-scroll on the first search from the centered hero (or cuisine handoff).
   const shouldScrollRef = useRef(Boolean(location.state?.cuisineSearch?.query));
+  const hasLandedResultsRef = useRef(
+    Boolean(location.state?.cuisineSearch?.query) || Boolean(searchHandoff)
+  );
   const reduceMotion = useReducedMotion();
   const fadeUp = useFadeUp(reduceMotion);
 
@@ -423,6 +427,7 @@ function Home({
   useEffect(() => {
     if (searchHandoff || (originalQuery && Array.isArray(output) && output.length > 0)) {
       setSearchAttempted(true);
+      hasLandedResultsRef.current = true;
     }
   }, [searchHandoff, originalQuery, output]);
 
@@ -436,6 +441,12 @@ function Home({
     () => FEATURED_DISHES[Math.floor(Math.random() * FEATURED_DISHES.length)],
     []
   );
+
+  const markFirstSearchScroll = () => {
+    // Later searches use the top sticky bar — don't jump the page again.
+    if (hasLandedResultsRef.current) return;
+    shouldScrollRef.current = true;
+  };
 
   // Cuisine / category / compare pages can hand off a completed IFCT/INDB search
   useEffect(() => {
@@ -476,39 +487,38 @@ function Home({
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  // Scroll to the results block as soon as a search starts (loader), and again
-  // when the card arrives. First-search used to stay stuck on the full-height
-  // hero because we only scrolled after loading finished — and even then a
-  // scrollTo(0) raced scrollIntoView on mobile.
+  // First search only: slide from centered hero down to the result card.
   useLayoutEffect(() => {
     if (!searchAttempted || !shouldScrollRef.current) return;
 
-    const pin = () => {
+    const pin = (smooth) => {
       const el = resultsRef.current || document.getElementById("search-results");
       if (!el) return;
-      // Prefer instant jump — CSS html { scroll-behavior: smooth } fights retries
-      el.scrollIntoView({ behavior: "auto", block: "start" });
+      el.scrollIntoView({
+        behavior: smooth && !reduceMotion ? "smooth" : "auto",
+        block: "start",
+      });
     };
 
-    pin();
-    requestAnimationFrame(pin);
-    const timers = [50, 120, 280, 500, 900].map((ms) =>
-      window.setTimeout(pin, ms)
+    // Smooth slide once search starts; a couple of auto retries catch layout settle.
+    pin(true);
+    const timers = [180, 450, 900].map((ms, i) =>
+      window.setTimeout(() => pin(i === 0), ms)
     );
 
-    // Clear the flag once results (or empty state) have settled, after retries
-    let clearTimer = 0;
     if (!loading) {
-      clearTimer = window.setTimeout(() => {
+      hasLandedResultsRef.current = true;
+      const clearTimer = window.setTimeout(() => {
         shouldScrollRef.current = false;
-      }, 1000);
+      }, 1100);
+      return () => {
+        timers.forEach((id) => window.clearTimeout(id));
+        window.clearTimeout(clearTimer);
+      };
     }
 
-    return () => {
-      timers.forEach((id) => window.clearTimeout(id));
-      window.clearTimeout(clearTimer);
-    };
-  }, [loading, searchAttempted, output, originalQuery]);
+    return () => timers.forEach((id) => window.clearTimeout(id));
+  }, [loading, searchAttempted, output, originalQuery, reduceMotion]);
 
   const runSearch = async (query) => {
     const trimmed = query.trim();
@@ -520,7 +530,7 @@ function Home({
       return;
     }
 
-    shouldScrollRef.current = true;
+    markFirstSearchScroll();
     setRegionalPreset(null);
     setFoodName(trimmed);
     setLoading(true);
@@ -552,7 +562,7 @@ function Home({
     const friendly = (label || query || "").trim();
     if (loading) return;
     if (match?.source && match?.code) {
-      shouldScrollRef.current = true;
+      markFirstSearchScroll();
       setRegionalPreset(null);
       setFoodName(friendly);
       setLoading(true);
@@ -601,7 +611,7 @@ function Home({
               setOriginalQuery={setOriginalQuery}
               setSearchAttempted={setSearchAttempted}
               onSearchStart={() => {
-                shouldScrollRef.current = true;
+                markFirstSearchScroll();
                 setRegionalPreset(null);
               }}
               compact
@@ -741,7 +751,7 @@ function Home({
               setOriginalQuery={setOriginalQuery}
               setSearchAttempted={setSearchAttempted}
               onSearchStart={() => {
-                shouldScrollRef.current = true;
+                markFirstSearchScroll();
                 setRegionalPreset(null);
               }}
             />

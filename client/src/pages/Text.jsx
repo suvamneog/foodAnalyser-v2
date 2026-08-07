@@ -193,27 +193,35 @@ function FoodAnalyzer({ output, loading, originalQuery, searchAttempted, regiona
     let loadingTimer;
 
     if (loading) {
-      // Show Pacman quickly so first-search scroll has a visible target
-      loadingTimer = setTimeout(() => {
-        setShowLoading(true);
-      }, 220);
+      // First search only: show Pacman when there is no previous card to keep.
+      // Follow-up searches keep the last card visible (no blink).
+      if (!output?.length) {
+        loadingTimer = setTimeout(() => {
+          setShowLoading(true);
+        }, 220);
+      } else {
+        setShowLoading(false);
+      }
     } else {
       setShowLoading(false);
     }
 
     return () => clearTimeout(loadingTimer);
-  }, [loading]);
+  }, [loading, output]);
 
   useEffect(() => {
     if (!loading && output?.length > 0) {
-      const timer = setTimeout(() => {
-        setIsVisible(true);
-      }, 300);
-      return () => clearTimeout(timer);
-    } else {
-      setIsVisible(false);
+      setIsVisible(true);
+      return undefined;
     }
+    // Follow-up search: keep the previous card painted (no fade-out blink)
+    if (loading && output?.length > 0) return undefined;
+    setIsVisible(false);
+    return undefined;
   }, [loading, output]);
+
+  // Soft busy state on the card during follow-up searches (no full remount)
+  const refreshing = loading && Array.isArray(output) && output.length > 0;
 
   // Reset to first item when new results come in
   useEffect(() => {
@@ -391,9 +399,12 @@ function FoodAnalyzer({ output, loading, originalQuery, searchAttempted, regiona
     /assam|manipur|meghalaya|nagaland/i.test(String(currentFood.source || ""));
 
   return (
-   <div className={`flex flex-col justify-center items-center w-full gap-4 transition-opacity duration-500 ease-in-out ${
-      isVisible ? 'opacity-100' : 'opacity-0'
-    }`}>
+   <div
+      className={`flex w-full flex-col items-center justify-center gap-4 transition-opacity duration-300 ease-in-out ${
+        !isVisible ? "opacity-0" : refreshing ? "opacity-70" : "opacity-100"
+      } ${refreshing ? "pointer-events-none" : ""}`}
+      aria-busy={refreshing || undefined}
+    >
 
       <RegionChips
         query={originalQuery}
