@@ -39,30 +39,8 @@ const Navbar = () => {
   const lvl = levelFromXp(progress.xp)
   const health = computeHealthScore()
 
-  useEffect(() => {
-    const path = window.location.pathname
-    const publicPaths = [
-      "/",
-      "/calculator",
-      "/signup",
-      "/login",
-      "/scan",
-      "/image",
-      "/about",
-      "/review",
-      "/plan",
-      "/tracker",
-      "/recipe",
-      "/profile",
-    ]
-    const isPublic =
-      publicPaths.includes(path) ||
-      path.startsWith("/cuisine/") ||
-      path.startsWith("/compare")
-    if (isAuthenticated === false && !isPublic) {
-      navigate("/login")
-    }
-  }, [isAuthenticated, navigate])
+  // Guest-friendly: discovery tools and unknown URLs (404) stay public.
+  // Auth is only required for cloud sync actions, not for browsing pages.
 
   const handleLogout = () => {
     logout()

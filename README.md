@@ -302,26 +302,52 @@ Unknown API paths return JSON 404 from Express.
 
 ## Screenshots
 
-### Home & Food Search
-![Home](./screenshots/Homepage.png)
+Fresh captures from the live app ([foodanalyserr.vercel.app](https://foodanalyserr.vercel.app)).
 
-### Indian Food Nutrition Search
-![Food Search](./screenshots/Foodsearch.png)
+### Home
+![Home](./screenshots/home.png)
 
-### AI Food Image Recognition
-![Image Recognition](./screenshots/Imagerecognition.png)
+### Food Search Results
+![Food Search](./screenshots/food-search.png)
 
-### Barcode Scanning & Product Analysis
-![Barcode Scanner](./screenshots/BarcodeScan.png)
+### Regional Cuisine
+![Cuisine](./screenshots/cuisine.png)
 
-### Health & Diet Calculator
-![Calculator](./screenshots/CaloriesCal.png)
+### Category Browse
+![Category](./screenshots/category.png)
 
-### Meal Logging & Tracker
-![Meal Logging](./screenshots/Logmeal.png)
+### Compare Staples
+![Compare](./screenshots/compare.png)
 
-### Reviews & Feedback
-![Reviews](./screenshots/Reviews.png)
+### Diet Plan
+![Diet Plan](./screenshots/diet-plan.png)
+
+### Daily Tracker
+![Tracker](./screenshots/tracker.png)
+
+### Recipe Analyser
+![Recipe](./screenshots/recipe.png)
+
+### Health Calculator
+![Calculator](./screenshots/calculator.png)
+
+### Barcode Scanner
+![Barcode Scanner](./screenshots/barcode-scan.png)
+
+### AI Image Recognition
+![Image Recognition](./screenshots/image-recognition.png)
+
+### About
+![About](./screenshots/about.png)
+
+### Reviews
+![Reviews](./screenshots/reviews.png)
+
+### Profile
+![Profile](./screenshots/profile.png)
+
+### 404 Not Found
+![404](./screenshots/not-found.png)
 
 ---
 
