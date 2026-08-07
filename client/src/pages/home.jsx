@@ -476,22 +476,39 @@ function Home({
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  // Focus result card after search / category handoff.
-  // Retries beat browser scroll restoration + the App state-clear navigate.
+  // Scroll to the results block as soon as a search starts (loader), and again
+  // when the card arrives. First-search used to stay stuck on the full-height
+  // hero because we only scrolled after loading finished — and even then a
+  // scrollTo(0) raced scrollIntoView on mobile.
   useLayoutEffect(() => {
-    if (!searchAttempted || loading || !shouldScrollRef.current) return;
-    if (!Array.isArray(output) || output.length === 0) return;
-    shouldScrollRef.current = false;
+    if (!searchAttempted || !shouldScrollRef.current) return;
 
     const pin = () => {
-      window.scrollTo({ top: 0, left: 0, behavior: "auto" });
-      resultsRef.current?.scrollIntoView({ behavior: "auto", block: "start" });
+      const el = resultsRef.current || document.getElementById("search-results");
+      if (!el) return;
+      // Prefer instant jump — CSS html { scroll-behavior: smooth } fights retries
+      el.scrollIntoView({ behavior: "auto", block: "start" });
     };
 
     pin();
-    const timers = [0, 50, 120, 280].map((ms) => window.setTimeout(pin, ms));
-    return () => timers.forEach((id) => window.clearTimeout(id));
-  }, [loading, searchAttempted, output]);
+    requestAnimationFrame(pin);
+    const timers = [50, 120, 280, 500, 900].map((ms) =>
+      window.setTimeout(pin, ms)
+    );
+
+    // Clear the flag once results (or empty state) have settled, after retries
+    let clearTimer = 0;
+    if (!loading) {
+      clearTimer = window.setTimeout(() => {
+        shouldScrollRef.current = false;
+      }, 1000);
+    }
+
+    return () => {
+      timers.forEach((id) => window.clearTimeout(id));
+      window.clearTimeout(clearTimer);
+    };
+  }, [loading, searchAttempted, output, originalQuery]);
 
   const runSearch = async (query) => {
     const trimmed = query.trim();
@@ -657,7 +674,13 @@ function Home({
             ))}
         </div>
 
-        <div className="relative mx-auto flex min-h-[calc(100svh-3.5rem)] max-w-3xl flex-col items-center justify-center py-20 sm:min-h-[calc(100vh-4rem)] sm:py-28">
+        <div
+          className={`relative mx-auto flex max-w-3xl flex-col items-center justify-center transition-[min-height,padding] duration-500 ${
+            viewingResults
+              ? "min-h-0 py-10 sm:py-12"
+              : "min-h-[calc(100svh-3.5rem)] py-20 sm:min-h-[calc(100vh-4rem)] sm:py-28"
+          }`}
+        >
           <motion.div
             initial={reduceMotion ? false : { opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
@@ -672,6 +695,8 @@ function Home({
             </TextShimmer>
           </motion.div>
 
+          {!viewingResults && (
+            <>
           <motion.h1
             initial={reduceMotion ? false : { opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
@@ -690,6 +715,8 @@ function Home({
             Explore authentic Indian foods, analyze nutrition from IFCT, INDB, and
             regional data, identify dishes with AI, and make clearer food choices.
           </motion.p>
+            </>
+          )}
 
           <motion.div
             ref={heroSearchRef}
@@ -738,6 +765,7 @@ function Home({
             )}
           </motion.div>
 
+          {!viewingResults && (
           <motion.div
             initial={reduceMotion ? false : { opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
@@ -760,11 +788,37 @@ function Home({
               );
             })}
           </motion.div>
+          )}
         </div>
       </section>
 
+      {/* Results sit above the credibility strip so first search lands on the card */}
+      <div
+        id="search-results"
+        ref={resultsRef}
+        className={`scroll-mt-28 px-4 sm:scroll-mt-36 sm:px-6 ${
+          viewingResults ? "pt-16 pb-10 sm:pt-14" : ""
+        }`}
+      >
+        {(loading || searchAttempted) && (
+          <div className="mx-auto mb-8 max-w-5xl">
+            <FoodAnalyzer
+              output={output}
+              loading={loading}
+              originalQuery={originalQuery}
+              searchAttempted={searchAttempted}
+              regionalPreset={regionalPreset}
+              onSuggestionClick={runSearch}
+            />
+          </div>
+        )}
+      </div>
+
       {/* CREDIBILITY STRIP */}
-      <section className="px-4 pb-6 pt-2 sm:px-6">
+      <section
+        className={`px-4 pb-6 pt-2 sm:px-6 ${viewingResults ? "hidden" : ""}`}
+        aria-hidden={viewingResults}
+      >
         <div className="mx-auto max-w-6xl">
           <motion.div
             {...fadeUp}
@@ -809,27 +863,6 @@ function Home({
           </motion.div>
         </div>
       </section>
-
-      <div
-        id="search-results"
-        ref={resultsRef}
-        className={`scroll-mt-28 px-4 sm:scroll-mt-36 sm:px-6 ${
-          viewingResults ? "pt-20 sm:pt-8 pb-10" : ""
-        }`}
-      >
-        {(loading || searchAttempted) && (
-          <div className="mx-auto mb-8 max-w-5xl">
-            <FoodAnalyzer
-              output={output}
-              loading={loading}
-              originalQuery={originalQuery}
-              searchAttempted={searchAttempted}
-              regionalPreset={regionalPreset}
-              onSuggestionClick={runSearch}
-            />
-          </div>
-        )}
-      </div>
 
       <SectionDivider />
 

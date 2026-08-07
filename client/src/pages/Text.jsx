@@ -193,9 +193,10 @@ function FoodAnalyzer({ output, loading, originalQuery, searchAttempted, regiona
     let loadingTimer;
 
     if (loading) {
+      // Show Pacman quickly so first-search scroll has a visible target
       loadingTimer = setTimeout(() => {
         setShowLoading(true);
-      }, 1400);
+      }, 220);
     } else {
       setShowLoading(false);
     }
